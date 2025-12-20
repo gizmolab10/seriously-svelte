@@ -42,12 +42,12 @@ export default class S_Hit_Target {
 	get rect(): Rect | null { return this.element_rect; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get inAWidget(): boolean { return this.isAWidget || this.isADot; }
+	get isAWidget(): boolean { return this.type == T_Hit_Target.widget; }
 	get isHovering(): boolean { return this.hasSameID_as(get(hits.w_s_hover)); }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
 	get detects_longClick(): boolean { return (this.mouse_detection & T_Mouse_Detection.long) !== 0; }
-	get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
 	get detects_autorepeat(): boolean { return this.mouse_detection === T_Mouse_Detection.autorepeat; }
 	get detects_doubleClick(): boolean { return (this.mouse_detection & T_Mouse_Detection.double) !== 0; }
 	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button, T_Hit_Target.glow].includes(this.type); }

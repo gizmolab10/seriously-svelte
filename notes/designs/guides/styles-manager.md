@@ -58,7 +58,7 @@ Centralized color management system driven by the Hits manager and hit targets. 
 ### Implementation Status
 - [x] Define color schema per component/state
 - [x] Centralize color computation logic
-- [x] Create `S_Go` state object class
+- [x] Create `S_Snapshot` state object class
 - [x] Migrate widget, drag, reveal, button components
 - [x] Standardize state transitions
 - [x] Document color inheritance rules
@@ -130,7 +130,7 @@ Centralized color management system driven by the Hits manager and hit targets. 
 **Implemented Architecture:**
 
 Created `Styles` utility class (`src/lib/ts/utilities/Styles.ts`) with static methods:
-- Takes inputs: `S_Go` state object, base colors
+- Takes inputs: `S_Snapshot` state object, base colors
 - Returns computed color values based on schema
 - Encapsulates all conditional logic in one place
 - Supports all component types (widget, drag, reveal, button)
@@ -143,16 +143,16 @@ Created `Styles` utility class (`src/lib/ts/utilities/Styles.ts`) with static me
    - `Styles.computeButtonColors(state, element_color, background_color, hoverColor, disabledTextColor, border_thickness, has_widget_context, thing_color)` → `{ fill, stroke, border }`
 
 2. **State object pattern** ✅
-   - `S_Go` class (`src/lib/ts/state/S_Go.ts`) - "state of go" - transient state of user attention/intention
+   - `S_Snapshot` class (`src/lib/ts/state/S_Snapshot.ts`) - "state of go" - transient state of user attention/intention
    - Encapsulates all state flags needed for color computation
    - Constructor accepts `S_Hit_Target | Identifiable | undefined` plus optional flags
    - Getters provide: `hover`, `grabbed`, `editing`, `focus`, `thing_color`
    - Special hover logic: for widgets, also checks if title with same ancestry is hovered
 
 3. **Getters are thin wrappers** ✅
-   - `S_Element`/`S_Widget` getters create `S_Go` instance and call `Styles` methods
+   - `S_Element`/`S_Widget` getters create `S_Snapshot` instance and call `Styles` methods
    - Components remain reactive via getter pattern
-   - Logic centralized in `Styles`, state collected in `S_Go`
+   - Logic centralized in `Styles`, state collected in `S_Snapshot`
 
 4. **Preserve reactive behavior** ✅
    - Getters still reactive - Svelte tracks dependencies
@@ -175,7 +175,7 @@ Created `Styles` utility class (`src/lib/ts/utilities/Styles.ts`) with static me
 
 **S_Element (Implemented):**
 - **Kept as inputs**: `color_background`, `isDisabled`, `isSelected`, `isInverted`, `subtype`
-- **Getters now call Styles**: `fill`, `stroke`, `svg_outline_color`, `border` create `S_Go` and call `Styles.computeDotColors()` or `Styles.computeButtonColors()`
+- **Getters now call Styles**: `fill`, `stroke`, `svg_outline_color`, `border` create `S_Snapshot` and call `Styles.computeDotColors()` or `Styles.computeButtonColors()`
 - **Helper getters**: `s_go`, `thing_color`, `dotColors_forElement`, `buttonColors_forElement` reduce duplication
 - **Removed**: Old inline color logic from getters
 - **Actual implementation:**
@@ -194,28 +194,28 @@ Created `Styles` utility class (`src/lib/ts/utilities/Styles.ts`) with static me
   ```
 
 **S_Widget (Implemented):**
-- **Getters now call Styles**: `color`, `background_color`, `border` create `S_Go` and call `Styles.computeWidgetColors()`
+- **Getters now call Styles**: `color`, `background_color`, `border` create `S_Snapshot` and call `Styles.computeWidgetColors()`
 - **Removed**: `colorFor_grabbed_andEditing()`, `isFilled`, `shows_border`, `isRadial_focus` helper methods
 - **Actual implementation:**
   ```typescript
   get color(): string {
-    const state = new S_Go(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+    const state = new S_Snapshot(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
     return Styles.computeWidgetColors(state, this.thing_color, get(colors.w_background_color)).color;
   }
   ```
 
 **State Collection Pattern:**
 - Each getter collects relevant state from `this`, `this.ancestry`, and stores
-- Passes complete `S_Go` state object to Styles
+- Passes complete `S_Snapshot` state object to Styles
 - Styles handles all conditional logic
 - State objects become data containers + thin computation wrappers
 
-**S_Go (Implemented):**
+**S_Snapshot (Implemented):**
 
-The `S_Go` class (`src/lib/ts/state/S_Go.ts`) - "state of go for style" - represents the transient state of user attention/intention. It's a snapshot of flags and relevances needed for style (for now, color) computation:
+The `S_Snapshot` class (`src/lib/ts/state/S_Snapshot.ts`) - "state of go for style" - represents the transient state of user attention/intention. It's a snapshot of flags and relevances needed for style (for now, color) computation:
 
 ```typescript
-export default class S_Go {
+export default class S_Snapshot {
   hit_target?: S_Hit_Target;      // Hit target for hover detection (includes type + identifiable)
   identifiable?: Identifiable;     // Provides: isGrabbed, isEditing, isFocus, thing.color
   isInverted?: boolean;
@@ -265,7 +265,7 @@ Colors are sourced from different places depending on the color type and compone
 
 **Thing Color Inheritance:**
 - Widgets, drag dots, and reveal dots inherit their base color from `ancestry.thing.color`
-- Accessed via `S_Go.thing_color` getter
+- Accessed via `S_Snapshot.thing_color` getter
 - If no thing exists, defaults to `k.empty` (empty string)
 - This is the primary color identity for a widget/item
 
@@ -288,7 +288,7 @@ Colors are sourced from different places depending on the color type and compone
 ### Inheritance Rules
 
 1. **Thing color flows from Ancestry:**
-   - `ancestry.thing.color` → `S_Go.thing_color` → `Styles` computation functions
+   - `ancestry.thing.color` → `S_Snapshot.thing_color` → `Styles` computation functions
    - Widgets always use thing color for text/base color
    - Dots use thing color for outline color (when not grabbed/editing)
 
@@ -328,7 +328,7 @@ colors.w_background_color (global store)  →  Styles.compute...Colors()
 ### Current Implementation Status
 
 ✅ **Implemented correctly:**
-- Thing color accessed via `S_Go.thing_color` getter (safe null handling)
+- Thing color accessed via `S_Snapshot.thing_color` getter (safe null handling)
 - Element color set explicitly per component
 - Background color from global store
 - Hover color computed consistently
@@ -389,7 +389,7 @@ Color states transition based on user interactions and system events. Each state
 
 **State Collection Pattern:**
 
-States are collected via `S_Go` getters which read from:
+States are collected via `S_Snapshot` getters which read from:
 - `hover`: `S_Hit_Target.isHovering` → `hits.w_s_hover` store
 - `grabbed`: `ancestry.isGrabbed` → `x.si_grabs` (UX manager)
 - `editing`: `ancestry.isEditing` → `s.w_s_title_edit` (Stores)
@@ -400,7 +400,7 @@ States are collected via `S_Go` getters which read from:
 **Current Implementation:**
 
 ✅ States are collected reactively in getters
-✅ `S_Go` provides unified access to all states
+✅ `S_Snapshot` provides unified access to all states
 ✅ `Styles` computation functions handle all state combinations
 ✅ No state transition coordination needed - each state is independent
 
@@ -479,8 +479,8 @@ If we need to standardize state transitions in the future:
 - ✅ Colors respond to: hover, grab, edit, focus, selected, disabled
 - ✅ Inversion logic: `color_isInverted = (isInverted ?? false) !== hover` (computed in Styles)
 - ✅ Background color from `colors.w_background_color`
-- ✅ Thing color from `ancestry.thing?.color` (accessed via `S_Go.thing_color` getter)
-- ✅ Widget title hover: `S_Go.hover` checks if widget/title with same ancestry is hovered
+- ✅ Thing color from `ancestry.thing?.color` (accessed via `S_Snapshot.thing_color` getter)
+- ✅ Widget title hover: `S_Snapshot.hover` checks if widget/title with same ancestry is hovered
 - ✅ Deprecated code removed: `colorFor_grabbed_andEditing()`, `isRadial_focus`, unused `svg_outline_color` fallback logic
 - ✅ Only widgets can have selected, editing or focus state (via ancestry)
 
@@ -519,7 +519,7 @@ Managers are singleton classes exported from `Global_Imports`:
 1. **Overhead for pure functions**
    - Styles is primarily pure computation (functions that take state → return colors)
    - Manager pattern adds class instantiation overhead
-   - State objects (`S_Go`) already passed in - no need for manager to hold state
+   - State objects (`S_Snapshot`) already passed in - no need for manager to hold state
 
 2. **Alternative: Static utility class**
    - Could be `export class Styles { static computeWidgetColors(...) }`
@@ -535,7 +535,7 @@ Managers are singleton classes exported from `Global_Imports`:
 4. **No state management needed**
    - Unlike `Hits` (manages stores, timers) or `UX` (manages S_Items), Styles has no persistent state
    - Pure computation doesn't benefit from singleton instance
-   - All state comes from `S_Go` parameter
+   - All state comes from `S_Snapshot` parameter
 
 **Implementation:**
 
@@ -548,13 +548,13 @@ Used **static utility class** approach:
 
 **File Structure:**
 - `src/lib/ts/utilities/Styles.ts` - Color computation logic
-- `src/lib/ts/state/S_Go.ts` - State object for passing to Styles
+- `src/lib/ts/state/S_Snapshot.ts` - State object for passing to Styles
 - `src/lib/ts/state/S_Element.ts` - Uses Styles for dot/button colors
 - `src/lib/ts/state/S_Widget.ts` - Uses Styles for widget colors
 
 ### Design
 
-The `t_hover_target` property is extracted from the `S_Go` state object (`const t_hover_target = s_go.t_hover_target;`) to determine which specific part of a widget is being hovered. This information enables differentiated visual treatments based on the hover target type:
+The `t_hover_target` property is extracted from the `S_Snapshot` state object (`const t_hover_target = s_go.t_hover_target;`) to determine which specific part of a widget is being hovered. This information provides visual treatments that are specific to the hover target type:
 
 | Type    | Treatment                                                               |
 | ------- | ----------------------------------------------------------------------- |
@@ -565,18 +565,18 @@ The `t_hover_target` property is extracted from the `S_Go` state object (`const 
 
 This design allows the same widget to display different visual feedback depending on which interactive element within it is being hovered, providing more precise user feedback.
 
-### Trade-offs: inject Styles methods into S_Go
+### Trade-offs: inject Styles methods into S_Snapshot
 
-**Pros of migrating methods into `S_Go`:**
+**Pros of migrating methods into `S_Snapshot`:**
 - **Closer to the data**: Color computation lives next to the state it depends on, which can make the API feel more "object-oriented" (`s_go.widgetColors(...)`).
-- **Potentially fewer parameters**: Some calls could avoid threading `S_Go` as an argument if methods read internal fields directly.
-- **Discoverability from state**: Browsing `S_Go` shows both the state and the operations available on that state.
+- **Potentially fewer parameters**: Some calls could avoid threading `S_Snapshot` as an argument if methods read internal fields directly.
+- **Discoverability from state**: Browsing `S_Snapshot` shows both the state and the operations available on that state.
 
-**Cons of migrating methods into `S_Go`:**
-- **Mixes concerns**: `S_Go` stops being a simple state snapshot and becomes a behavior-heavy object, blurring the line between “state carrier” and “color engine”.
-- **Harder to test in isolation**: Pure functions in `Styles` are easy to unit-test; methods on `S_Go` risk picking up extra dependencies over time.
-- **Tighter coupling**: Every change to color logic now touches the state class, increasing churn and making it harder to reuse `S_Go` for non-color purposes later.
-- **Less obvious separation of roles**: Right now `S_Go` = “state of go” and `Styles` = “color computation”; merging them weakens the mental model and the ability to swap out or extend the style engine independently.
+**Cons of migrating methods into `S_Snapshot`:**
+- **Mixes concerns**: `S_Snapshot` stops being a simple state snapshot and becomes a behavior-heavy object, blurring the line between “state carrier” and “color engine”.
+- **Harder to test in isolation**: Pure functions in `Styles` are easy to unit-test; methods on `S_Snapshot` risk picking up extra dependencies over time.
+- **Tighter coupling**: Every change to color logic now touches the state class, increasing churn and making it harder to reuse `S_Snapshot` for non-color purposes later.
+- **Less obvious separation of roles**: Right now `S_Snapshot` = “state of go” and `Styles` = “color computation”; merging them weakens the mental model and the ability to swap out or extend the style engine independently.
 
 ## Analyze set_forHovering
 

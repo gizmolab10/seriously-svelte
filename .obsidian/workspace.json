@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/guides/controls.md",
+                "file": "notes/designs/guides/styles-manager.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "controls"
+              "title": "styles-manager"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/guides/controls.md",
+                "file": "notes/designs/guides/styles-manager.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of controls"
+              "title": "Outline of styles-manager"
             }
           }
         ],
@@ -167,14 +167,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "06e98e76ea4518da",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/designs/guides/controls.md",
     "notes/designs/analysis/widget_title.md",
     "notes/design/controls.md",
-    "notes/designs/guides/controls.md",
     "notes/designs/analysis/stores.md",
     "notes/designs/guides/preferences.md",
-    "notes/designs/analysis/colors.md",
+    "notes/designs/guides/styles-manager.md",
     "notes/designs/analysis",
     "Untitled.md",
     "notes/designs/analysis/geometry.md",

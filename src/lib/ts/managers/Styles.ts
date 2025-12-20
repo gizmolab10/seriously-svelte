@@ -13,24 +13,28 @@ export default class Styles {
 
 	get_widgetColors_for(ss: S_Snapshot, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
+		const isRadialFocus = ss.isFocus && controls.inRadialMode;
 		const t_hover_target = ss.t_hover_target;
-		let color = thing_color ?? 'transparent';
 		let border = 'solid transparent 1px';
 		let background = 'transparent';
+		let color = thing_color;
 		if (ss.isEditing) {
+			background = background_color;
 			border = `dashed ${thing_color} 1px`;
-			color = isLight ? 'black' : color;
+			color = isLight ? 'black' : thing_color;
 		} else if (ss.isGrabbed) {
-			background = ss.isHovering ? colors.background_special_blend(color, k.opacity.faint) ?? thing_color : thing_color;
-			color = ss.isHovering || isLight ? color : 'white';
+			background = ss.isHovering ? colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color : thing_color;
+			color = (ss.isHovering || isLight) ? thing_color : 'white';
+		} else if (isRadialFocus) {
+			border = thing_color !== k.empty ? `solid ${thing_color} 1px` : 'solid transparent 1px';
+			color = (ss.isHovering || isLight) ? thing_color : 'white';
+			background = background_color;
 		} else if (ss.isHovering) {
 			background = this.background_for(t_hover_target, background_color);
-			border = this.border_for(t_hover_target, color);
+			border = this.border_for(t_hover_target, thing_color);
 			if (controls.inRadialMode) {
+				border = `solid ${thing_color} 1px`;
 				background = background_color;
-				if (!ss.isGrabbed) {
-					border = `solid ${color} 1px`;
-				}
 			}
 		}
 		return { color, background_color: background, border };

@@ -33,6 +33,7 @@ export default class S_Element extends S_Hit_Target {
 		}
 	}
 
+	get snapshot():		 S_Snapshot { return new S_Snapshot(this); }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get asTransparent():	boolean { return this.isDisabled || this.subtype == T_Control.details; }
 	get show_help_cursor(): boolean { return get(e.w_control_key_down) && this.type == T_Hit_Target.action; }
@@ -88,8 +89,6 @@ export default class S_Element extends S_Hit_Target {
 		}
 		return 'solid transparent 1px';
 	}
-
-	private get snapshot(): S_Snapshot { return new S_Snapshot(this); }
 
 	private get dotColors_forElement(): ReturnType<typeof styles.get_dotColors_for> {
 		return styles.get_dotColors_for(this.snapshot, this.element_color, this.thing_color, this.color_background, this.hoverColor);

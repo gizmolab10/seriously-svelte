@@ -18,11 +18,13 @@ export default class S_Snapshot {
 	isGrabbed:  	boolean;
 	isEditing:  	boolean;
 	isFocus:    	boolean;
-	subtype:    	string;
 	thing_color:	string;
+	subtype:    	string;
+	type:	    	string;
 
 	constructor(s_element: S_Element) {
 		// snapshot the state of the element
+		this.type			= s_element.type;
 		this.subtype		= s_element.subtype;
 		this.isDisabled 	= s_element.isDisabled;
 		this.isSelected 	= s_element.isSelected;

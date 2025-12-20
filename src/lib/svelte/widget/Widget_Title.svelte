@@ -5,6 +5,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = `${k.font_size.common}px`;
+	const { w_s_hover } = hits;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const { w_mouse_location } = e;
@@ -82,6 +83,7 @@
 	$: {
 		const reactives = `${$w_thing_color}
 			:::${$w_ancestry_focus?.id}
+			:::${$w_s_hover?.id ?? 'null'}
 			:::${u.descriptionBy_titles($w_grabbed)}
 			:::${u.descriptionBy_titles($w_expanded)}`;
 		if (reactives != trigger) {

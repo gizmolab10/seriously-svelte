@@ -72,8 +72,8 @@
 
 	$: {
 		const _ = `${$w_thing_color}
-			:::${$w_s_hover?.id ?? 'null'}
-			:::${$w_ancestry_focus.id}`;
+			:::${$w_ancestry_focus.id}
+			:::${$w_s_hover?.id ?? 'null'}`;
 		update_style();
 	}
 
@@ -98,10 +98,8 @@
 
 	$: if (!!s_component && !!s_component.element && s_component.isComponentLog_enabled && false) {
 		observer = new MutationObserver((mutations) => {
-			debug.log_style('MutationObserver callback fired', mutations.length, 'mutations for:', ancestry?.title);
 			mutations.forEach((mutation) => {
 				const element = s_component?.element;
-				debug.log_style('Mutation on element:', (mutation.target as HTMLElement).tagName, '#', (mutation.target as HTMLElement).id);
 				if (mutation.type === 'attributes' && mutation.attributeName === 'style' && mutation.target === element) {
 					debug.log_style('Style changed on widget div for', ancestry?.title + ':', element.style.cssText);
 				}
