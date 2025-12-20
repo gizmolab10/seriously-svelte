@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, x, show, Rect, Point, colors, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Kinship, T_Auto_Adjust, T_Cluster_Pager } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Kinship, T_Auto_Adjust_Graph, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -20,7 +20,7 @@
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_t_details, w_t_countDots, w_t_auto_adjust, w_t_cluster_pager } = show;
+	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
@@ -50,8 +50,8 @@
 		$w_separator_color = color;
 	}
 
-	function handle_auto_adjust(types: Array<T_Auto_Adjust | null>) {
-		$w_t_auto_adjust = types.length > 0 ? types[0] : null;
+	function handle_auto_adjust(types: Array<T_Auto_Adjust_Graph | null>) {
+		$w_t_auto_adjust_graph = types.length > 0 ? types[0] : null;
 	}
 
 	function handle_pager_type(types: Array<T_Cluster_Pager | null>) {
@@ -118,9 +118,9 @@
 			width={segmented_width}
 			height={segmented_height}
 			origin={Point.y(tops[3])}
-			selected={[$w_t_auto_adjust]}
+			selected={[$w_t_auto_adjust_graph]}
 			handle_selection={handle_auto_adjust}
-			titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
+			titles={[T_Auto_Adjust_Graph.selection, T_Auto_Adjust_Graph.fit]}/>
 	{:else}
 		<Segmented name='paging-style'
 			left={106}

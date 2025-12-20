@@ -8,11 +8,12 @@
 	export let width = g.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
+	const { w_s_title_edit } = e;
+	const { w_s_search } = search;
 	const { w_thing_color } = colors;
 	const { w_rect_ofGraphView } = g;
-	const { w_s_search } = search;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = e;
+	const { w_t_startup, w_ancestry_forDetails } = s;
 	let s_component: S_Component | null = null;
 	let element: HTMLElement | null = null;
 	let things: Array<Thing> = [];

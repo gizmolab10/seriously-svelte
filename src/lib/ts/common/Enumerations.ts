@@ -85,11 +85,6 @@ export enum T_File_Operation {
 	export = 'export',	// fetch
 }
 
-export enum T_Auto_Adjust {
-	selection = 'center the selection',
-	fit		  = 'exactly fit',
-}
-
 export enum T_Theme {
 	standalone = 'standalone',
 	bubble	   = 'bubble',
@@ -103,6 +98,12 @@ export enum T_Cluster_Pager {
 export enum T_Breadcrumbs {
 	ancestry = 'ancestry',
 	history	 = 'history',
+}
+
+export enum T_Auto_Adjust_Graph {
+	selection = 'center the selection',
+	fit		  = 'exactly fit',
+	ignore	  = 'ignore',
 }
 
 export enum T_Search_Preference {

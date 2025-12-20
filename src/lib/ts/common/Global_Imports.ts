@@ -46,7 +46,7 @@ import { T_Thing, T_Trait, T_Kinship, T_Predicate } from './Enumerations';
 import { T_Signal, T_Hit_Target, T_Mouse_Detection } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Drag, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
-import { T_Radial_Zone, T_Preference, T_Auto_Adjust, T_Cluster_Pager } from './Enumerations';
+import { T_Radial_Zone, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager } from './Enumerations';
 
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
@@ -116,7 +116,7 @@ export {
 	T_Debug, T_Timer,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
-	T_Auto_Adjust, T_Cluster_Pager,
+	T_Auto_Adjust_Graph, T_Cluster_Pager,
 	T_Startup, T_Drag, T_Alteration,
 	T_Order, T_Kinship, T_Breadcrumbs,
 	T_Quadrant, T_Orientation, T_Direction,

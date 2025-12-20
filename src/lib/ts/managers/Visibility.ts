@@ -1,4 +1,4 @@
-import { T_Preference, T_Cluster_Pager, T_Auto_Adjust } from '../common/Global_Imports';
+import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { T_Graph, T_Detail, T_Kinship, T_Breadcrumbs } from '../common/Global_Imports';
 import { g, k, p, x, g_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -7,7 +7,7 @@ import { get, writable } from 'svelte/store';
 export class Visibility {
 	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
 	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
-	w_t_auto_adjust			= writable<T_Auto_Adjust | null>(null);
+	w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(null);
 	w_t_directionals		= writable<boolean[]>([false, true]);
 	w_t_graph				= writable<T_Graph>(T_Graph.tree);
 	w_t_details				= writable<Array<T_Detail>>([]);
