@@ -16,12 +16,11 @@
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
-	const { w_t_auto_adjust } = s;
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_t_details, w_t_countDots, w_t_cluster_pager } = show;
+	const { w_t_details, w_t_countDots, w_t_auto_adjust, w_t_cluster_pager } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;

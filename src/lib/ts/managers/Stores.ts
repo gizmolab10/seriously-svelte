@@ -13,14 +13,13 @@ export class Stores {
 
 	static readonly _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 
-	w_hierarchy			  = writable<Hierarchy>();
-	w_ancestry_focus	  = writable<Ancestry>();
 	w_ancestry_forDetails = writable<Ancestry>();
+	w_ancestry_focus	  = writable<Ancestry>();
+	w_hierarchy			  = writable<Hierarchy>();
 
 	static readonly _____OTHER: unique symbol = Symbol('OTHER');
 
 	w_t_startup			  = writable<T_Startup>(T_Startup.start);
-	w_t_auto_adjust		  = writable<T_Auto_Adjust | null>();
 	w_font_size			  = writable<number>();
 }
 
