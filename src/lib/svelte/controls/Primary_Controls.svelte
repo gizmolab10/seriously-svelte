@@ -10,23 +10,23 @@
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
 	const { w_s_search } = search;
-	const { w_id_popupView } = show;
 	const scaling_stroke_width = 1.5;
 	const { w_rect_ofGraphView } = g;
 	const { w_count_window_resized } = e;
 	const size_big = k.height.button + 4;
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
-	const { w_show_search_controls, w_t_graph } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const s_hamburger = elements.s_control_forType(T_Control.details);
-	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
+	const { w_t_graph, w_id_popupView, w_show_search_controls } = show;
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
+	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	let width = g.windowSize.width - 16;
 	let lefts: Array<number> = [];
 	layout_controls();
 
 	// always show controls and breadcrumbs
+	// nicely documented in notes/design/controls.md
 
 	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
@@ -44,14 +44,14 @@
 	function layout_controls() {
 		const left_widths = {
 			0: features.has_details_button ? 18  : -7,									// details
-			1: 11,																		// recents
-			2: features.allow_tree_mode	   ? 54  : 0,									// graph type
-			3: features.has_zoom_controls  ? 100 : features.allow_tree_mode ? 66 : 34,	// plus
-			4: features.has_zoom_controls  ? 26  : 0,									// minus
-			5: features.allow_search	   ? 22  : 6,									// easter egg
-			6: 23,																		// separator
-			7: 42,																		// search toggle
-			8: -40,																		// breadcrumbs
+			1: features.allow_tree_mode	   ? 20  : 0,									// graph type
+			2: features.has_zoom_controls  ? 100 : features.allow_tree_mode ? 66 : 34,	// plus
+			3: features.has_zoom_controls  ? 26  : 0,									// minus
+			4: 78,																		// search toggle
+			5: features.allow_search	   ? -32  : 6,									// easter egg
+			6: 3,																		// separator
+			7: 6,																		// recents
+			8: 44,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
@@ -70,7 +70,7 @@
 		<Next_Previous name='recents'
 			size={28}
 			has_title={false}
-			origin={Point.x(lefts[1])}
+			origin={Point.x(lefts[7])}
 			closure={handle_recents_mouseClick}/>
 		{#if !$w_id_popupView}
 			{#if features.has_details_button}
@@ -95,28 +95,28 @@
 					</svg>
 				</Button>
 			{/if}
-			{#if features.allow_search}
-				<Search_Toggle
-					top={-0.5}
-					left={search_left}
-					width={lefts[7] + (features.has_details_button ? 0 : 26)}/>
-			{/if}
 			{#if features.allow_tree_mode}
 				{#key $w_t_graph}
 					<Segmented name='graph-type'
 						width={80}
-						origin={Point.x(lefts[2])}
+						origin={Point.x(lefts[1])}
 						selected={[$w_t_graph]}
 						titles={[T_Graph.tree, T_Graph.radial]}
 						handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 				{/key}
+			{/if}
+			{#if features.allow_search}
+				<Search_Toggle
+					top={-0.5}
+					left={search_left}
+					width={lefts[4] + (features.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#if features.has_zoom_controls}
 				<div class='scaling-controls'>
 					<Button name={T_Control.grow}
 						width={size_big}
 						height={size_big}
-						center={new Point(lefts[3], y_center)}
+						center={new Point(lefts[2], y_center)}
 						s_button={elements.s_control_forType(T_Control.grow)}
 						handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
 						<svg name='grow-svg' style={svg_style}>
@@ -131,7 +131,7 @@
 					<Button name={T_Control.shrink}
 						width={size_big}
 						height={size_big}
-						center={new Point(lefts[4], y_center)}
+						center={new Point(lefts[3], y_center)}
 						s_button={elements.s_control_forType(T_Control.shrink)}
 						handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
 						<svg name='shrink-svg'
@@ -157,20 +157,20 @@
 					handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			{#if features.allow_tree_mode}
-				<Separator name='before-search'
+				<Separator name='after-controls'
 					isHorizontal={false}
-					origin={new Point(lefts[5], -6)}
+					origin={new Point(lefts[6], -6)}
 					length={g.controls_boxHeight + 0}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
 				<Breadcrumbs
-					left={lefts[6]}
+					left={lefts[8]}
 					centered={true}
-					width={g.windowSize.width - lefts[8]}/>
+					width={g.windowSize.width - lefts[8] - 10}/>
 			{:else}
-				<Separator name='before-search'
+				<Separator name='after-controls'
 					isHorizontal={false}
-					origin={new Point(lefts[5], -8)}
+					origin={new Point(lefts[6], -8)}
 					length={g.controls_boxHeight + 1}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>

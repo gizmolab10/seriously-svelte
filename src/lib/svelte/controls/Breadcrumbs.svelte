@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { c, e, g, h, k, s, u, x, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
-	import { Size, Point, Thing, T_Signal, T_Startup, T_Hit_Target } from '../../ts/common/Global_Imports';
-	import { svgPaths, Ancestry, S_Component} from '../../ts/common/Global_Imports';
+	import { T_Signal, T_Startup, T_Breadcrumbs, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { show, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
+	import { Thing, Ancestry, S_Component} from '../../ts/common/Global_Imports';
+	import { c, e, g, h, k, s, u, x } from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
-	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let width = g.windowSize.width;
 	export let centered: boolean = false;
@@ -11,15 +11,15 @@
 	const { w_s_title_edit } = e;
 	const { w_s_search } = search;
 	const { w_thing_color } = colors;
+	const { w_t_breadcrumbs } = show;
 	const { w_rect_ofGraphView } = g;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_t_startup, w_ancestry_forDetails } = s;
 	let s_component: S_Component | null = null;
+	let crumb_ancestries: Array<Ancestry> = [];
 	let element: HTMLElement | null = null;
-	let things: Array<Thing> = [];
+	let lefts: Array<number> = [];
 	let size = k.height.button;
-	let lefts: string[] = [];
-	let ancestry: Ancestry;
 	let reattachments = 0;
 	let trigger = 0;
 	
@@ -35,33 +35,34 @@
 		:::${$w_s_title_edit?.description}
 		:::${$w_ancestry_forDetails?.id}
 		:::${x.si_found.w_index}
+		:::${$w_t_breadcrumbs}
 		:::${$w_thing_color}
 		:::${$w_t_startup}
 		:::${$w_s_search}`;
 		update();
 	}
 
-	function update() {
-		ancestry = $w_ancestry_forDetails;		// assure we have an ancestry
-		if (!!ancestry && $w_t_startup == T_Startup.ready) {				
-			let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
-			let widths: Array<number> = [];
-			[things, widths, lefts, parent_widths] = g.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
-			trigger = parent_widths * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
-			for (let i = 0; i < things.length; i++) {
-				const state = s_breadcrumbAt(i);
-				if (!!state) {
-					debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
-				}
-			}
-			debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
-			reattachments += 1;
+	function s_breadcrumbAt(index: number): S_Widget | null {
+		return crumb_ancestries[index].g_widget.s_widget ?? null;
+	}
+
+	function ancestries_forBreadcrumbs(): Array<Ancestry> {
+		if ($w_t_breadcrumbs == T_Breadcrumbs.hierarchy) {
+			return $w_ancestry_forDetails.heritage;
+		} else {
+			return x.si_recents.items.map(item => item[0]);
 		}
 	}
 
-	function s_breadcrumbAt(index: number): S_Widget | null {
-		const crumb_ancestry = ancestry?.ancestry_createUnique_byStrippingBack(things.length - index - 1);
-		return crumb_ancestry?.g_widget.s_widget ?? null;
+	function update() {
+		if ($w_t_startup == T_Startup.ready) {				
+			let encoded_counts = 0;				// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
+			let widths: Array<number> = [];		// for debugging
+			const ancestries = ancestries_forBreadcrumbs();
+			[crumb_ancestries, widths, lefts, encoded_counts] = g.layout_breadcrumbs(ancestries, centered, left, width);
+			trigger = encoded_counts * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
+			reattachments += 1;
+		}
 	}
 
 </script>
@@ -74,13 +75,13 @@
 			left:7px;
 			top:-5.5px;
 			position:absolute;'>
-		{#each things as thing, index}
+		{#each crumb_ancestries as a, index}
 			{#if index > 0}
 				<div class='between-breadcrumbs'
 					style='
 						top:5px;
 						position:absolute;
-						color:{thing.color};
+						color:{a.thing.color};
 						left:{lefts[index] - size + 5.5}px;'>
 					>
 				</div>

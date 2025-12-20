@@ -52,6 +52,7 @@ export class Debug {
 	get trace(): boolean { return this.hasOption(T_Debug.trace); }
 	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
 	get radial(): boolean { return this.hasOption(T_Debug.radial); }
+	get crumbs(): boolean { return this.hasOption(T_Debug.crumbs); }
 	get reticle(): boolean { return this.hasOption(T_Debug.reticle); }
 	get actions(): boolean { return this.hasOption(T_Debug.actions); }
 	get fast_load(): boolean { return this.hasOption(T_Debug.fast_load); }

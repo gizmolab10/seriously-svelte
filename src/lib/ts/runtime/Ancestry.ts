@@ -589,6 +589,17 @@ export default class Ancestry extends Identifiable {
 		return ancestries;
 	}
 
+	get heritage(): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [h.rootAncestry];
+		for (const id of this.relationship_ids) {
+			const ancestry = h.ancestry_remember_createUnique(id);
+			if (!!ancestry) {
+				ancestries.push(ancestry);
+			}
+		}
+		return ancestries;
+	}
+
 	get ancestry_ofFirst_visibleChild(): Ancestry {
 		const childAncestries = this.childAncestries;
 		const first = childAncestries[0]

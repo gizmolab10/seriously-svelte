@@ -164,22 +164,21 @@ export default class Geometry {
 
 	get breadcrumbs_top(): number { return this.windowSize.height - this.controls_boxHeight; }
 
-	layout_breadcrumbs_forAncestry_centered_starting_within(ancestry: Ancestry, centered: boolean, left: number, thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
-		const crumb_things: Array<Thing> = [];
+	layout_breadcrumbs(ancestries: Array<Ancestry>, centered: boolean, left: number, thresholdWidth: number): [Array<Ancestry>, Array<number>, Array<number>, number] {
+		const crumb_ancestries: Array<Ancestry> = [];
 		const widths: Array<number> = [];
 		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
 		let total = 0;								// determine how many crumbs will fit
-		const things = ancestry.ancestors?.reverse() ?? [];
-		for (const thing of things) {
-			if (!!thing) {
-				const width = u.getWidthOf(thing.breadcrumb_title) + 29;	// 29 px gap for separator character and button border
+		for (const a of ancestries.reverse()) {
+			if (!!a.thing) {
+				const width = u.getWidthOf(a.thing.breadcrumb_title) + 29;	// 29 px gap for separator character and button border
 				if ((total + width) > thresholdWidth) {
 					break;
 				}
 				total += width;
 				widths.push(width);
-				crumb_things.push(thing);
-				debug.log_crumbs(`ONE ${width} ${thing.title}`);
+				crumb_ancestries.push(a);
+				debug.log_crumbs(`ONE ${width} ${a.thing.title}`);
 				parent_widths = parent_widths * 100 + width;
 			}
 		}
@@ -191,7 +190,7 @@ export default class Geometry {
 			left += width;				// position of next crumb
 			lefts.push(left);
 		}
-		return [crumb_things.reverse(), widths.reverse(), lefts, parent_widths];
+		return [crumb_ancestries.reverse(), widths.reverse(), lefts, parent_widths];
 	}
 
 	static readonly _____WINDOW: unique symbol;
