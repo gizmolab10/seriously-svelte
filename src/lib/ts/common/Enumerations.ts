@@ -96,8 +96,8 @@ export enum T_Cluster_Pager {
 }
 
 export enum T_Breadcrumbs {
-	ancestry = 'ancestry',
-	history	 = 'history',
+	hierarchy  = 'hierarchy',
+	navigation = 'navigation',
 }
 
 export enum T_Auto_Adjust_Graph {
@@ -310,6 +310,7 @@ export enum T_Preference {
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
 	auto_adjust		  = 'auto_adjust',
+	breadcrumbs		  = 'breadcrumbs',
 	search_text		  = 'search_text',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',

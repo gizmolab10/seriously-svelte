@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/design/colors.md",
+                "file": "notes/design/preferences.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "colors"
+              "title": "preferences"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/design/colors.md",
+                "file": "notes/design/preferences.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of colors"
+              "title": "Outline of preferences"
             }
           }
         ],
@@ -167,8 +167,17 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "06e98e76ea4518da",
   "lastOpenFiles": [
+    "notes/design/timers.md",
+    "notes/design/preferences.md",
+    "notes/design/stores.md",
+    "notes/design/guides/layout-guide.md",
+    "notes/design/guides/markdown.md",
+    "notes/design/colors.md",
+    "notes/aside/2026",
+    "notes/design/guides/refactoring-guide.md",
+    "notes/design/guides",
     "src/lib/ts/state/S_Snapshot.ts",
     "src/lib/ts/managers/Going.ts",
     "src/lib/ts/state/S_Go.ts",
@@ -178,14 +187,6 @@
     "dist/assets/index.js",
     "dist/assets/index.css",
     "dist/assets",
-    "vite.config.js.timestamp-1766102934179-fc2fa3ee3fa44.mjs",
-    "vite.config.js.timestamp-1766102918421-6f831ede6e33.mjs",
-    "src/lib/ts/managers/Styles.ts",
-    "notes/design/stores.md",
-    "notes/design/colors.md",
-    "notes/design/timer-project.md",
-    "notes/design/markdown.md",
-    "notes/design/layout-guide.md",
     "^12211f.md",
     "^21p.md",
     "notes/design/geometry.md",
@@ -205,7 +206,6 @@
     "README.md",
     "notes/Resize_Optimization_AI.md",
     "notes/bubble tears.md",
-    "notes/holons.api.md",
     "dist/vite.svg",
     "dist/settings.svg"
   ]
