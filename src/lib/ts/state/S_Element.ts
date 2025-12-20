@@ -1,9 +1,9 @@
 import { S_Hit_Target, T_Hit_Target, T_Control, controls } from '../common/Global_Imports';
-import { k, s, colors, elements } from '../common/Global_Imports';
+import { e, k, colors, elements } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { styles } from '../managers/Styles';
-import { get } from 'svelte/store';
 import S_Snapshot from './S_Snapshot';
+import { get } from 'svelte/store';
 
 	//////////////////////////////////////////
 	//										//
@@ -35,7 +35,7 @@ export default class S_Element extends S_Hit_Target {
 
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get asTransparent():	boolean { return this.isDisabled || this.subtype == T_Control.details; }
-	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Hit_Target.action; }
+	get show_help_cursor(): boolean { return get(e.w_control_key_down) && this.type == T_Hit_Target.action; }
 	get cursor():			 string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
 	get disabledTextColor(): string { return colors.special_blend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get description():		 string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }	

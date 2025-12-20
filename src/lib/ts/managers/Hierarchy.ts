@@ -755,7 +755,7 @@ export class Hierarchy {
 
 	async ancestry_alter_connectionTo_maybe(ancestry: Ancestry) {
 		if (ancestry.alteration_isAllowed) {
-			const alteration = get(s.w_s_alteration);
+			const alteration = get(x.w_s_alteration);
 			const from_ancestry = alteration?.ancestry;
 			const predicate = alteration?.predicate;
 			if (!!alteration && !!from_ancestry && !!predicate) {
@@ -891,7 +891,7 @@ export class Hierarchy {
 
 	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		s.w_s_title_edit?.set(null);
+		x.w_s_title_edit?.set(null);
 		await parentAncestry.ancestry_persistentCreateUnique_byAddingThing(child)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
@@ -1095,7 +1095,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		s.w_s_title_edit?.set(null);
+		x.w_s_title_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			const newFocusIsVisible = newFocusAncestry?.isVisible ?? false;
@@ -1619,7 +1619,7 @@ export class Hierarchy {
 		return !ancestry ? this.root : ancestry.thing;
 	}
 
-	stop_alteration() { s.w_s_alteration.set(null); }
+	stop_alteration() { x.w_s_alteration.set(null); }
 
 	get depth(): number {
 		let maximum = 1;

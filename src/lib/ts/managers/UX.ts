@@ -1,13 +1,15 @@
+import { S_Items, T_Search, T_Startup, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { g, h, s, u, hits, debug, search, radial } from '../common/Global_Imports';
 import { details, controls, databases } from '../common/Global_Imports';
-import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
 export default class S_UX {
+	w_s_title_edit = writable<S_Title_Edit | null>(null);
+	w_s_alteration = writable<S_Alteration | null>();
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
 	si_expanded = new S_Items<Ancestry>([]);
@@ -96,7 +98,7 @@ export default class S_UX {
 		if (changed) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.push(pair);
-			s.w_s_alteration.set(null);
+			x.w_s_alteration.set(null);
 			s.w_ancestry_focus.set(ancestry);
 			ancestry.expand();
 			this.update_ancestry_forDetails();
@@ -149,7 +151,7 @@ export default class S_UX {
 		if (!radial.isDragging) {
 			let grabbed = this.si_grabs.items ?? [];
 			const rootAncestry = h?.rootAncestry;
-			s.w_s_title_edit?.set(null);
+			this.w_s_title_edit?.set(null);
 			if (!!grabbed) {
 				const index = grabbed.indexOf(ancestry);
 				if (index != -1) {				// only splice grabbed when item is found

@@ -1,7 +1,7 @@
 import { c, g, h, k, s, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
+import { T_Search, T_Action, T_Control, T_Startup } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -13,9 +13,12 @@ export class Events {
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
 
+	w_count_details			= writable<number>(0);
+	w_count_rebuild			= writable<number>(0);
 	w_count_window_resized	= writable<number>(0);
 	w_count_mouse_down		= writable<number>(0);
 	w_count_mouse_up		= writable<number>(0);
+	w_control_key_down		= writable<boolean>(false);
 	w_scaled_movement		= writable<Point | null>(null);
 	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
@@ -31,7 +34,7 @@ export class Events {
 	static readonly _____SUBSCRIPTIONS: unique symbol;
 
 	setup() {
-		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
+		x.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		c.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 	}
 
@@ -92,10 +95,10 @@ export class Events {
 		this.w_count_mouse_up.update(n => n + 1);
 	}
 
-	private handle_key_up(e: Event) {
-		const event = e as KeyboardEvent;
+	private handle_key_up(ev: Event) {
+		const event = ev as KeyboardEvent;
 		if (!!event && event.type == 'keyup') {
-			s.w_control_key_down.set(event.ctrlKey);
+			e.w_control_key_down.set(event.ctrlKey);
 		}
 	}
 
@@ -193,8 +196,8 @@ export class Events {
 		if (ancestry.isBidirectional && ancestry.thing?.isRoot) {
 			this.handle_singleClick_onDragDot(shiftKey, h.rootAncestry);
 		} else if (!radial.isDragging) {
-			s.w_s_title_edit?.set(null);
-			if (!!get(s.w_s_alteration)) {
+			x.w_s_title_edit?.set(null);
+			if (!!get(x.w_s_alteration)) {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				g.grand_build();
 				return;
@@ -216,15 +219,15 @@ export class Events {
 		}
 	}
 
-	async handle_key_down(e: Event) {
-		const event = e as KeyboardEvent;
-		const isEditing = get(s.w_s_title_edit)?.isActive ?? false;
+	async handle_key_down(ev: Event) {
+		const event = ev as KeyboardEvent;
+		const isEditing = get(x.w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const key = event.key.toLowerCase();
 			const ancestry = get(s.w_ancestry_forDetails);
 			const modifiers = ['alt',	'meta',	'shift',	'control'];
 			let graph_needsSweep = false;
-			s.w_control_key_down.set(event.ctrlKey);
+			e.w_control_key_down.set(event.ctrlKey);
 			if (!!ancestry && !modifiers.includes(key)) {
 				const OPTION = event.altKey;
 				const SHIFT = event.shiftKey;
@@ -280,7 +283,7 @@ export class Events {
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
 						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 						case 'arrowdown':		h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-						case 'escape':			if (!!get(s.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
+						case 'escape':			if (!!get(x.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 					}
 				}
 			}
@@ -297,7 +300,7 @@ export class Events {
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = get(s.w_ancestry_forDetails);	
-		if (get(s.w_control_key_down)) {
+		if (get(e.w_control_key_down)) {
 			controls.showHelp_for(t_action, column);
 		} else if (!!ancestry && !this.isAction_disabledAt(t_action, column) && !!h) {
 			const a = this.actions;
@@ -347,7 +350,7 @@ export class Events {
 	isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
 		const ancestry = get(s.w_ancestry_forDetails);
 		if (!!ancestry) {
-			const is_altering = !!get(s.w_s_alteration);
+			const is_altering = !!get(x.w_s_alteration);
 			const no_children = !ancestry.hasChildren;
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;

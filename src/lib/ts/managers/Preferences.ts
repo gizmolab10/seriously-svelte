@@ -140,7 +140,7 @@ export class Preferences {
 
 	restore_preferences() {
 		s.w_font_size		  .set( this.read_key(T_Preference.font_size)	 ?? 14);
-		s.w_auto_adjust_graph .set( this.read_key(T_Preference.auto_adjust)	 ?? null);
+		s.w_t_auto_adjust .set( this.read_key(T_Preference.auto_adjust)	 ?? null);
 		s.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
 		s.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
 		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
@@ -217,7 +217,7 @@ export class Preferences {
 		g.w_depth_limit.subscribe((depth: number) => {
 			this.write_key(T_Preference.levels, depth);
 		});
-		s.w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
+		s.w_t_auto_adjust.subscribe((auto_adjust: T_Auto_Adjust | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);
 		});
 

@@ -14,7 +14,7 @@
 	import Box from '../draw/Box.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
-	const { w_t_startup } = s;
+	const { w_t_startup } = e;
 	const { w_rect_ofGraphView } = g;
 	const { w_t_database } = databases;
 	const { w_separator_color } = colors;

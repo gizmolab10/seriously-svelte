@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, g, h, k, s, u, x, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
+	import { c, e, g, h, k, s, u, x, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
 	import { Size, Point, Thing, T_Signal, T_Startup, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, S_Component} from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
@@ -12,7 +12,7 @@
 	const { w_rect_ofGraphView } = g;
 	const { w_s_search } = search;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = s;
+	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = e;
 	let s_component: S_Component | null = null;
 	let element: HTMLElement | null = null;
 	let things: Array<Thing> = [];

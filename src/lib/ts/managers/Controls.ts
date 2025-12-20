@@ -21,9 +21,9 @@ class Controls {
 	}
 
 	toggle_alteration(ancestry: Ancestry, t_alteration: T_Alteration, predicate: Predicate | null) {
-		const isAltering = !!get(s.w_s_alteration);
+		const isAltering = !!get(x.w_s_alteration);
 		const s_alteration = isAltering ? null : new S_Alteration(ancestry, t_alteration, predicate);
-		s.w_s_alteration.set(s_alteration);
+		x.w_s_alteration.set(s_alteration);
 	}
 	
 	handle_segmented_choices(segmented_name: string, choices: string[]) {

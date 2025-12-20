@@ -16,7 +16,7 @@
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
-	const { w_auto_adjust_graph } = s;
+	const { w_t_auto_adjust } = s;
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
@@ -52,7 +52,7 @@
 	}
 
 	function handle_auto_adjust(types: Array<T_Auto_Adjust | null>) {
-		$w_auto_adjust_graph = types.length > 0 ? types[0] : null;
+		$w_t_auto_adjust = types.length > 0 ? types[0] : null;
 	}
 
 	function handle_pager_type(types: Array<T_Cluster_Pager | null>) {
@@ -119,7 +119,7 @@
 			width={segmented_width}
 			height={segmented_height}
 			origin={Point.y(tops[3])}
-			selected={[$w_auto_adjust_graph]}
+			selected={[$w_t_auto_adjust]}
 			handle_selection={handle_auto_adjust}
 			titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
 	{:else}

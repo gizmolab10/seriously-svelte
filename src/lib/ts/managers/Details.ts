@@ -1,6 +1,6 @@
 import { T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
-import { s, x, hits, show, search } from '../common/Global_Imports';
 import { S_Banner_Hideable } from '../state/S_Banner_Hideable';
+import { x, show, search } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
@@ -20,7 +20,7 @@ class Details {
 	static readonly _____BANNERS: unique symbol;
 
 	redraw() {
-		// s.w_count_details.update(n => n + 1); 	// force re-render of details
+		// e.w_count_details.update(n => n + 1); 	// force re-render of details
 		// hits.recalibrate();
 	}
 

@@ -316,7 +316,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____EDIT: unique symbol;
 
-	get isEditing(): boolean { return get(s.w_s_title_edit)?.ancestry_isEditing(this) ?? false; }
+	get isEditing(): boolean { return get(x.w_s_title_edit)?.ancestry_isEditing(this) ?? false; }
 
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
@@ -326,9 +326,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	startEdit() {
-		const s_text_edit = get(s.w_s_title_edit);
+		const s_text_edit = get(x.w_s_title_edit);
 		if (this.isEditable && (!s_text_edit || !s_text_edit.ancestry_isEditing(this))) {
-			s.w_s_title_edit?.set(new S_Title_Edit(this));
+			x.w_s_title_edit?.set(new S_Title_Edit(this));
 			debug.log_edit(`SETUP ${this.title}`);
 		}
 		this.grabOnly();
@@ -556,7 +556,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____ALTERATION: unique symbol;
 
 	get alteration_isAllowed(): boolean {
-		const s_alteration = get(s.w_s_alteration);
+		const s_alteration = get(x.w_s_alteration);
 		const predicate = s_alteration?.predicate;
 		if (!!s_alteration && !!predicate) {
 			const from_ancestry = s_alteration.ancestry;

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, x, Point, search, features } from '../../ts/common/Global_Imports';
+	import { e, g, k, x, Point, search, features } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from '../details/Banner_Hideable.svelte';
 	import D_Preferences from '../details/D_Preferences.svelte';
@@ -13,7 +13,7 @@
 	const width = k.width.details;
 	const { w_s_search } = search;
 	const { w_index: w_found } = x.si_found;
-	const { w_count_details, w_ancestry_forDetails } = s;
+	const { w_count_details, w_ancestry_forDetails } = e;
 	const { w_description: w_grabs_description } = x.si_grabs;
 	const { w_description: w_tags_description } = x.si_thing_tags;
 	const { w_description: w_traits_description } = x.si_thing_traits;

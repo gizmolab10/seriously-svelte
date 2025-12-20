@@ -1,4 +1,4 @@
-import { h, k, s, u, x, debug, colors, S_Items, databases, Seriously_Range } from '../common/Global_Imports';
+import { e, h, k, s, u, x, debug, colors, S_Items, databases, Seriously_Range } from '../common/Global_Imports';
 import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
 import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -76,8 +76,8 @@ export default class Thing extends Persistable {
 	}
 
 	signal_color_change() {
-		s.w_count_rebuild.update(n => n + 1);
-		colors.w_thing_color.set(`${this.id}${k.separator.generic}${get(s.w_count_rebuild)}`);
+		e.w_count_rebuild.update(n => n + 1);
+		colors.w_thing_color.set(`${this.id}${k.separator.generic}${get(e.w_count_rebuild)}`);
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, hits, colors, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { e, g, k, s, hits, colors, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, T_Layer, Point } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
@@ -19,9 +19,10 @@
 	export let zindex = T_Layer.dot;
 	export let style = k.empty;
 	export let name = k.empty;
+	const { w_control_key_down } = e;
+	const { w_thing_fontFamily } = s;
 	const { w_background_color } = colors;
 	const { w_s_hover, w_autorepeat } = hits;
-	const { w_control_key_down, w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView, w_user_graph_offset } = g;
 	let wrapper_style = k.empty;
 	let button_style = style;

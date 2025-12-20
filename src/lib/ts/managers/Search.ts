@@ -10,7 +10,7 @@ class Search {
 	private root_node: Search_Node	= new Search_Node();
 	w_search_results_found			= writable<number>(0);
 	w_search_results_changed		= writable<number>(0);		// re-render the search results when changed
-	w_s_search					= writable<T_Search>();		// observed by search_results, controls, and panel
+	w_s_search						= writable<T_Search>();		// observed by search_results, controls, and panel
 	w_search_preferences			= writable<T_Search_Preference>();
 
 	constructor() {
