@@ -14,12 +14,28 @@
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 3;
 	const { w_t_trees } = show;
+	let layout_throttle_timer: number | null = null;
+	let pending_depth_limit: number | null = null;
 
 	function handle_depth_limit(value: number) {
 		const asInteger = Math.round(value);
 		if (asInteger !== $w_depth_limit) {
 			$w_depth_limit = asInteger;  // Store the integer, not the raw value
+			pending_depth_limit = asInteger;
+			throttled_layout();
+		}
+	}
+
+	function throttled_layout() {
+		if (!layout_throttle_timer) {
 			g.layout();
+			layout_throttle_timer = setTimeout(() => {
+				layout_throttle_timer = null;
+				if (pending_depth_limit !== null && pending_depth_limit !== $w_depth_limit) {
+					throttled_layout();
+				}
+				pending_depth_limit = null;
+			}, 50);
 		}
 	}
 
