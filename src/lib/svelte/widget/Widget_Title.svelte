@@ -3,13 +3,14 @@
 	import { T_Layer, T_Hit_Target, T_Edit, Seriously_Range, S_Mouse } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
+	import { get } from 'svelte/store';
 	export let s_title!: S_Element;
 	export let fontSize = `${k.font_size.common}px`;
 	const { w_s_hover } = hits;
+	const { w_s_title_edit } = x;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const { w_mouse_location } = e;
-	const { w_ancestry_focus, w_thing_title, w_thing_fontFamily, w_s_title_edit } = s;
 	const { w_thing_color } = colors;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
@@ -17,6 +18,7 @@
 	const input_height = k.height.dot + 2;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
+	const { w_ancestry_focus, w_thing_title, w_thing_fontFamily } = s;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let layout_timer: number | null = null;
@@ -30,8 +32,8 @@
 	let left = 0;
 	let top = 0;
 
-	function hasFocus(): boolean { return document.activeElement === input; }
-	function isEditing(): boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
+	function isEditing(): boolean { return ancestry?.isEditing ?? false; }
+	function hasHTMLFocus(): boolean { return document.activeElement === input; }
 	function isStopping(): boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
 	function title_extra(): number { return (controls.inTreeMode && isEditing()) ? 2.2 : 0; }
@@ -101,7 +103,7 @@
 	// Handle edit state changes from w_s_title_edit store
 	$: {
 		const s_text_edit = $w_s_title_edit;
-		if (hasFocus() && !s_text_edit) {
+		if (hasHTMLFocus() && !s_text_edit) {
 			stopEdit();
 		} else if (!!input && !!s_text_edit) {
 			if (s_text_edit.ancestry.id_thing == ancestry.id_thing) {
@@ -113,8 +115,8 @@
 						stopEdit();
 						break;
 					case T_Edit.editing:
-						if (!hasFocus()) {
-							elements.element_set_focus_to(input);
+						if (!hasHTMLFocus() && input) {
+							input.focus({ preventScroll: true });
 							applyRange_fromThing_toInput();
 						}
 						break;
@@ -139,7 +141,10 @@
 						setTimeout(() => {
 							ancestry.startEdit();
 							thing_setSelectionRange_fromMouseLocation();
-							elements.element_set_focus_to(input);
+							// Focus directly - reactive statement will also try, but this ensures it happens
+							if (input && !hasHTMLFocus()) {
+								input.focus({ preventScroll: true });
+							}
 							applyRange_fromThing_toInput();
 						}, 1);
 					}
@@ -222,13 +227,15 @@
 
 	function handle_focus(event) {
 		u.consume_event(event);
-		if (!isEditing()) {
-			input.blur();
-		}
+		setTimeout(() => {
+			if (!!ancestry && !!input && (!isEditing() || !ancestry.isGrabbed)) {
+				input.blur();
+			}
+		}, 10);
 	}
 
 	function handle_blur(event) {
-		if (!!ancestry && !isEditing() && hasFocus()) {
+		if (!!ancestry && !isEditing() && hasHTMLFocus()) {
 			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();

@@ -8,7 +8,7 @@
     export let bounds: Rect;
     const enabled = true;
     const { w_dragging } = hits;
-    const { w_s_title_edit } = s;
+    const { w_s_title_edit } = x;
     const { w_count_mouse_up } = e;
     const { w_user_graph_offset } = g;
 	const { w_separator_color } = colors;

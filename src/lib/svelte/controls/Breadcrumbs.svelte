@@ -8,7 +8,7 @@
 	export let width = g.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
-	const { w_s_title_edit } = e;
+	const { w_s_title_edit } = x;
 	const { w_s_search } = search;
 	const { w_thing_color } = colors;
 	const { w_t_breadcrumbs } = show;

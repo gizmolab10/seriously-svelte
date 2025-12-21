@@ -10,14 +10,15 @@
 	export let g_widget!: G_Widget;
 	const s_widget = g_widget.s_widget;	// put me first
 	const { w_s_hover } = hits;
+	const { w_s_title_edit } = x;
 	const { w_count_mouse_up } = e;
+	const { w_ancestry_focus } = s;
 	const s_drag = s_widget.s_drag;
 	const s_title = s_widget.s_title;
 	const { w_thing_color } = colors;
 	const ancestry = g_widget.ancestry;
 	const s_reveal = s_widget.s_reveal;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_s_title_edit, w_ancestry_focus } = s;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
     const drag_points_right = g_widget.reveal_isAt_right;
 	let observer: MutationObserver | null = null;
