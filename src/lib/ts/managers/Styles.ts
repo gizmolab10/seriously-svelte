@@ -12,6 +12,23 @@ import { get } from 'svelte/store';
 
 export default class Styles {
 
+	//////////////////////////////////////////////////////////////////////
+	//																	//
+	//		NOTE:														//
+	//																	//
+	//	if the logic below seems fine, despite a bug suggesting the		//
+	//	opposite, one likely cause: reactive logic is being triggered	//
+	//	by the wrong set of variables. eg, ones that might be missing:	//
+	//																	//
+	//		$w_mouse_button_down										//
+	//		$w_ancestry_focus											//
+	//		$w_s_title_edit												//
+	//		$w_expanded													//
+	//		$w_grabbed													//
+	//		$w_s_hover													//
+	//																	//
+	//////////////////////////////////////////////////////////////////////
+
 	get_widgetColors_for(ss: S_Snapshot, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		const isDown = get(e.w_mouse_button_down) && ss.isHovering;
