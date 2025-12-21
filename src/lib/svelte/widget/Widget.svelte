@@ -6,7 +6,7 @@
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	export let g_widget!: G_Widget;
 	const s_widget = g_widget.s_widget;	// put me first
 	const { w_s_hover } = hits;
@@ -46,9 +46,10 @@
 		case T_Signal.reattach:
 				s_component?.debug_log_connection_state('Before reattachment');
 				final_layout();
-				u.onNextTick(() => {			// this is needed to ensure the element is connected
+				(async () => {
+					await tick();			// this is needed to ensure the element is connected
 					s_component?.debug_log_connection_state('After reattachment');
-				});
+				})();
 			break;
 		case T_Signal.reposition:
 			layout_maybe();

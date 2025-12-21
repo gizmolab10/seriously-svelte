@@ -2,7 +2,7 @@
 	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Hit_Target, T_Edit, Seriously_Range, S_Mouse } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	export let s_title!: S_Element;
 	export let fontSize = `${k.font_size.common}px`;
@@ -181,13 +181,12 @@
 				await databases.db_now.thing_persistentUpdate(thing);
 				title_prior = thing?.title;
 			}
-			u.onNextTick(() => {
-				if (!!$w_s_title_edit && $w_s_title_edit.actively_refersTo(ancestry)) {
-					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_title_edit.stop_editing();
-					$w_s_title_edit = null;
-				}
-			});
+			await tick();
+			if (!!$w_s_title_edit && $w_s_title_edit.actively_refersTo(ancestry)) {
+				debug.log_edit(`STOPPING ${ancestry.title}`);
+				$w_s_title_edit.stop_editing();
+				$w_s_title_edit = null;
+			}
 		}
 	}
 

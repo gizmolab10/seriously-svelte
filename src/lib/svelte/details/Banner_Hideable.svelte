@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
+	import { tick } from 'svelte';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails } = s;
@@ -51,7 +52,7 @@
 		}
 	}
 
-	function toggle_hidden(t_detail: string) {
+	async function toggle_hidden(t_detail: string) {
 		let t_details = $w_t_details;
 		if (t_details.includes(t_detail)) {
 			t_details = u.remove_fromArray_byReference(t_detail, t_details);
@@ -60,9 +61,8 @@
 		}
 		$w_t_details = t_details;
 		update_hideable_isVisible();
-		u.onNextTick(() => {
-			hits.recalibrate();
-		});
+		await tick();
+		hits.recalibrate();
 	}
 
 </script>

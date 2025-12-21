@@ -1,6 +1,6 @@
-import { Rect, Point, debug, radial, controls, S_Mouse, k } from '../common/Global_Imports';
+import { e, Point, radial, controls } from '../common/Global_Imports';
+import { S_Mouse, S_Hit_Target } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
-import { S_Hit_Target } from '../common/Global_Imports';
 import Mouse_Timer, { T_Timer } from '../signals/Mouse_Timer';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
@@ -15,8 +15,6 @@ type Target_RBRect = {
 }
 
 export default class Hits {
-	time_ofPrior_drag: number = 0;
-	time_ofPrior_hover: number = 0;
 	longClick_fired: boolean = false;
 	rbush = new RBush<Target_RBRect>();
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
@@ -145,16 +143,17 @@ export default class Hits {
 	static readonly _____MOVEMENT: unique symbol;
 
 	handle_mouse_movement_at(point: Point) {
-		const now = Date.now();
-		if (!radial.isDragging && ((now - this.time_ofPrior_hover) >= 60)) {
-			this.time_ofPrior_hover = now;
-			if (get(this.w_dragging) === T_Drag.none) {
-				this.detect_hovering_at(point)
-			}
+		if (!radial.isDragging) {
+			e.throttle('hover_detection', 60, () => {
+				if (get(this.w_dragging) === T_Drag.none) {
+					this.detect_hovering_at(point);
+				}
+			});
 		}
-		if (controls.inRadialMode && ((now - this.time_ofPrior_drag) >= 100)) {
-			this.time_ofPrior_drag = now;
-			radial.handle_mouse_drag();
+		if (controls.inRadialMode) {
+			e.throttle('radial_drag', 100, () => {
+				radial.handle_mouse_drag();
+			});
 		}
 	}
 
@@ -166,7 +165,6 @@ export default class Hits {
 		this.cancel_longClick();
 		this.w_s_hover.set(null);
 		this.cancel_doubleClick();
-		this.time_ofPrior_hover = 0;
 		this.targets_dict_byID = {};
 		this.longClick_fired = false;
 		this.targets_dict_byType = {};

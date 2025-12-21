@@ -6,7 +6,7 @@
 	import Slider from '../mouse/Slider.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	export let top = 0;
 	const back_up = -5;
 	const separator_left = 35;
@@ -37,7 +37,10 @@
 	const tops = u.cumulativeSum(heights);
 
 	$: if (color_wrapper || $w_t_details) {
-		u.onNextTick(() => update_color_origin());
+		(async () => {
+			await tick();
+			update_color_origin();
+		})();
 	}
 
 	function handle_colors(color: string) {

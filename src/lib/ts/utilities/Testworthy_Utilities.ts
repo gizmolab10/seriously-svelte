@@ -11,7 +11,6 @@ export class Testworthy_Utilities {
 
 	ignore(event: Event)							{}
 	t_or_f(value: boolean): string					{ return value ? '|' : '-'; }
-	onNextTick(closure: () => void)					{ setTimeout(() => { closure(); }, 0); }
 	quadrant_ofAngle(angle: number):	 T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	location_ofMouseEvent(event: MouseEvent): Point { return new Point(event.clientX, event.clientY); }
 	consume_event(event: Event)						{ event.preventDefault(); event.stopPropagation(); }

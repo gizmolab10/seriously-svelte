@@ -8,7 +8,7 @@
 	import Separator from '../draw/Separator.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
 	const { w_t_details } = show;
@@ -29,11 +29,10 @@
 	let trigger = k.empty;
 
 	$: $w_t_details, layout_forColor();
-	function handle_toggle_properties(event: Event) {
+	async function handle_toggle_properties(event: Event) {
 		details.show_properties = !details.show_properties;
-		u.onNextTick(() => {
-			hits.recalibrate();
-		});
+		await tick();
+		hits.recalibrate();
 	}
 
 	$: {

@@ -9,6 +9,7 @@ import { get, writable } from 'svelte/store';
 import Mouse_Timer from './Mouse_Timer';
 
 export class Events {
+	throttle_timers: Dictionary<ReturnType<typeof setTimeout> | null> = {};
 	mouse_timer_dict_byName: Dictionary<Mouse_Timer> = {};
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
@@ -24,12 +25,23 @@ export class Events {
 	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
 
+	static readonly _____UTILITIES: unique symbol;
+
 	mouse_timer_forName(name: string): Mouse_Timer {
 		return elements.assure_forKey_inDict(name, this.mouse_timer_dict_byName, () => new Mouse_Timer(name));
 	}
 
 	name_ofActionAt(t_action: number, column: number): string {
 		return Object.keys(this.actions[T_Action[t_action]])[column];
+	}
+
+	throttle(key: string, defer_for: number = 50, callback: () => void): void {
+		if (!this.throttle_timers[key]) {
+			callback();
+			this.throttle_timers[key] = setTimeout(() => {
+				this.throttle_timers[key] = null;
+			}, defer_for);
+		}
 	}
 
 	static readonly _____SUBSCRIPTIONS: unique symbol;
@@ -76,7 +88,7 @@ export class Events {
 		}
 	}
 
-	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
+	static readonly _____EVENT_HANDLERS: unique symbol;
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
 
