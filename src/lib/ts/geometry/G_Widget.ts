@@ -185,10 +185,9 @@ export default class G_Widget {
 				: width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4) - 5;
 			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 1.25 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = reveal_isAt_right ? 2 : x_ofDrag_for_pointing_left;
-			const y_ofDrag = 2.5 - (inRadialMode ? 0.1 : 0);
 			const x_ofRadial = reveal_isAt_right ? -4 : -dot_size;
 			const x_offset_ofWidget = reveal_isAt_right ? -7 : 6 + dot_size - width_ofWidget;
-			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
+			const origin_ofDrag = new Point(x_ofDrag, 2.8);
 			const x_ofRadial_title = (reveal_isAt_right && !isRadialFocus) ? 19 : (show_reveal ? 22 : 10);
 			if (!isRadialFocus) {	// not overwrite focus's location_ofRadial
 				this.location_ofRadial = this.location_within_necklace.offsetByXY(x_ofRadial + 4, 6 - dot_size);

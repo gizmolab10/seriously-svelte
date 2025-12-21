@@ -285,22 +285,23 @@ export class Events {
 						}
 					}
 					switch (key) {
+						case 'a':				u.consume_event(event); break;
+						case '!':				g.grand_adjust_toFit(); break;
 						case '?':				controls.showHelp_home(); return;
 						case 'm':				controls.toggle_graph_type(); break;
 						case ']':				x.ancestry_next_focusOn(true); break;
 						case '[':				x.ancestry_next_focusOn(false); break;
-						case '!':				g.grand_adjust_toFit(); break;
 						case '>':				g_tree.increase_depth_limit_by(1); break;
 						case '<':				g_tree.increase_depth_limit_by(-1); break;
-						case 'f':				search.w_s_search.set(T_Search.enter); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
+						case 'f':				search.w_s_search.set(T_Search.enter); break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;
 						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;
 						case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
+						case 'escape':			if (!!get(x.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 						case 'arrowdown':		h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-						case 'escape':			if (!!get(x.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 					}
 				}
 			}

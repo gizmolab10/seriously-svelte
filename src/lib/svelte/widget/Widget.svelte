@@ -184,14 +184,16 @@
 				position: absolute;
 				width: {width_ofWidget}px;
 				z-index: {T_Layer.widget};
-				top: {(controls.inRadialMode && ancestry.isFocus) ? -0.5 : -2.5}px;'>
+				top: {(controls.inRadialMode && ancestry.isFocus) ? -0.5 : -3}px;'>
 			<Widget_Title
 				s_title = {s_title}
 				fontSize = {k.font_size.common}px/>
-			{#if !(controls.inRadialMode && ancestry.isFocus)}
-				<Widget_Drag
-					s_drag = {s_drag}
-					points_right = {drag_points_right}/>
+			{#if !ancestry.isFocus || !controls.inRadialMode}
+				{#if !ancestry.isRoot || controls.inRadialMode}
+					<Widget_Drag
+						s_drag = {s_drag}
+						points_right = {drag_points_right}/>
+				{/if}
 				{#if ancestry?.showsReveal_forPointingToChild(reveal_pointsTo_child)}
 					<Widget_Reveal
 						s_reveal = {s_reveal}
