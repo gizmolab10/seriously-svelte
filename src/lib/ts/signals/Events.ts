@@ -19,6 +19,7 @@ export class Events {
 	w_count_mouse_down		= writable<number>(0);
 	w_count_mouse_up		= writable<number>(0);
 	w_control_key_down		= writable<boolean>(false);
+	w_mouse_button_down		= writable<boolean>(false);
 	w_scaled_movement		= writable<Point | null>(null);
 	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
@@ -85,6 +86,7 @@ export class Events {
 		hits.handle_click_at(scaled, S_Mouse.down(event, null));
 		this.w_count_mouse_down.update(n => n + 1);
 		this.w_scaled_movement.set(Point.zero);
+		this.w_mouse_button_down.set(true);
 	}
 
 	private handle_mouse_up = (event: MouseEvent) => {
@@ -93,6 +95,7 @@ export class Events {
 		hits.handle_click_at(scaled, S_Mouse.up(event, null));
 		this.w_scaled_movement.set(null);
 		this.w_count_mouse_up.update(n => n + 1);
+		this.w_mouse_button_down.set(false);
 	}
 
 	private handle_key_up(ev: Event) {

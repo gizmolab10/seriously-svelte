@@ -10,7 +10,6 @@
 	const { w_s_title_edit } = x;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
-	const { w_mouse_location } = e;
 	const { w_thing_color } = colors;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
@@ -18,6 +17,7 @@
 	const input_height = k.height.dot + 2;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
+	const { w_mouse_location, w_mouse_button_down } = e;
 	const { w_ancestry_focus, w_thing_title, w_thing_fontFamily } = s;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
@@ -84,6 +84,7 @@
 	// Update positioning based on state
 	$: {
 		const reactives = `${$w_thing_color}
+			:::${$w_mouse_button_down}
 			:::${$w_ancestry_focus?.id}
 			:::${$w_s_hover?.id ?? 'null'}
 			:::${u.descriptionBy_titles($w_grabbed)}
