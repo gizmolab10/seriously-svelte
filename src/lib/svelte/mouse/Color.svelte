@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, elements, x, Point, Thing, T_Layer, colors, signals, hits } from '../../ts/common/Global_Imports';
+	import { e, k, u, x, hits, Point, Thing, T_Layer, colors, signals, elements } from '../../ts/common/Global_Imports';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -11,25 +11,6 @@
 	const selectorSize = k.height.dot + 1;
 	const pickerSize = 122;
 	let borderColor = colors.separator;
-	let color_element: HTMLDivElement | null = null;
-
-	function handle_picker_click() {
-		hits.disable_hover = true;
-	}
-
-	function handle_click_outside(event: MouseEvent) {
-		if (!!color_element && !color_element.contains(event.target as Node)) {
-			hits.disable_hover = false;
-		}
-	}
-
-	onMount(() => {
-		document.addEventListener('click', handle_click_outside);
-		return () => {
-			document.removeEventListener('click', handle_click_outside);
-			hits.disable_hover = false;
-		};
-	});
 
 	async function handle_color_change(event) {
 		u.consume_event(event);
@@ -44,8 +25,6 @@
 </script>
 
 <div class='color'
-	bind:this={color_element}
-	on:click={handle_picker_click}
 	style='
 		z-index: {zindex};
 		top: {origin.y}px;

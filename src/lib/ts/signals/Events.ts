@@ -96,6 +96,7 @@ export class Events {
 		const location = new Point(event.clientX, event.clientY);
 		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
 		hits.handle_click_at(scaled, S_Mouse.down(event, null));
+		hits.disable_hover = true;
 		this.w_count_mouse_down.update(n => n + 1);
 		this.w_scaled_movement.set(Point.zero);
 		this.w_mouse_button_down.set(true);
@@ -105,6 +106,7 @@ export class Events {
 		const location = new Point(event.clientX, event.clientY);
 		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
 		hits.handle_click_at(scaled, S_Mouse.up(event, null));
+		hits.disable_hover = false;
 		this.w_scaled_movement.set(null);
 		this.w_count_mouse_up.update(n => n + 1);
 		this.w_mouse_button_down.set(false);
