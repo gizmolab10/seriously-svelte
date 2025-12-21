@@ -121,7 +121,7 @@ export default class Hits {
 			});
 		}
 		if (controls.inRadialMode) {
-			e.throttle('radial_drag', 100, () => {
+			e.throttle('radial_drag', 80, () => {
 				radial.handle_mouse_drag();
 			});
 		}

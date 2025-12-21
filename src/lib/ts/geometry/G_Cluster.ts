@@ -158,9 +158,12 @@ export default class G_Cluster {
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.g_focusPaging;
 		if (!!paging) {
+			const max_index = this.maximum_paging_index;
+			const sensitivity_multiplier = 14 / (max_index * max_index);
 			const spread_angle = -this.g_cluster_pager.spread_angle;
-			const delta_fraction = (delta_angle / spread_angle);
-			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
+			const adjusted_delta_angle = this.g_cluster_pager.arc_straddles_nadir ? -delta_angle : delta_angle;
+			const delta_fraction = adjusted_delta_angle * sensitivity_multiplier / spread_angle;
+			const delta_index = delta_fraction * max_index;			// convert rotation delta to index delta
 			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
 			this.layout_thumb_angles();
 			if (adjusted) {

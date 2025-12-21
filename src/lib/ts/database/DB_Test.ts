@@ -22,8 +22,8 @@ export default class DB_Test extends DB_Common {
 		const related = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Authentic');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Brilliant and Encouraging', 'blue');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Companionable', '#d96726');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Brilliant', 'blue');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Companionable and Encouraging', '#d96726');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Diligent', 'mediumvioletred');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Excellence of breathable air', 'purple');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Friendly', 'coral');
