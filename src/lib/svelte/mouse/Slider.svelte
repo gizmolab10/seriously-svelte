@@ -55,10 +55,8 @@
 	$: {
 		const _ = `${$w_s_hover?.id}:::${is_dragging_this_slider}`;
 		const isHovering = s_element.isHovering;
-		if (is_dragging_this_slider) {
-			current_thumb_color = colors.darkerBy(thumb_color, 0.5);
-		} else if (isHovering) {
-			current_thumb_color = $w_background_color;
+		if (isHovering || is_dragging_this_slider) {
+			current_thumb_color = colors.background_special_blend('gray', 0.5) ?? thumb_color;
 		} else {
 			current_thumb_color = thumb_color;
 		}

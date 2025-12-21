@@ -110,8 +110,8 @@
 				{#key $w_t_graph}
 					<Segmented name='graph-type'
 						width={80}
-						origin={Point.x(lefts[1])}
 						selected={[$w_t_graph]}
+						origin={Point.x(lefts[1])}
 						titles={[T_Graph.tree, T_Graph.radial]}
 						handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 				{/key}
