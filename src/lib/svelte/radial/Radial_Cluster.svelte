@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { g, k, s, u, hits, show, colors, radial, g_radial, debug } from '../../ts/common/Global_Imports';
 	import { Point, T_Layer, G_Cluster, T_Cluster_Pager, S_Mouse } from '../../ts/common/Global_Imports';
-	import { g, k, s, u, show, colors, radial, g_radial, debug } from '../../ts/common/Global_Imports';
 	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
@@ -8,6 +8,7 @@
 	export let g_cluster: G_Cluster;
 	export let color = 'red';
 	const show_fat_arc = false;
+	const { w_s_hover } = hits;
 	const { w_thing_fontFamily } = s;
 	const { w_t_cluster_pager } = show;
 	const s_paging = g_cluster.s_paging;
@@ -31,7 +32,7 @@
 	//////////////////////////////////////////////////////
 	
 	$: textBackground = $w_t_cluster_pager ? radial.s_rotation.isHighlighted ? $w_background_color : colors.special_blend(color, $w_background_color, radial.s_resizing.fill_opacity) : 'transparent';
-	$: $w_g_cluster, thumbFill = colors.special_blend(color, $w_background_color, radial.s_rotation.isHighlighted ? k.opacity.cluster.thumb : s_paging.thumb_opacity);
+	$: `${$w_g_cluster}:::${$w_s_hover?.id}`, thumbFill = colors.special_blend(color, $w_background_color, radial.s_rotation.isHighlighted ? k.opacity.cluster.thumb : s_paging.thumb_opacity);
 	$: ({ start_thumb_transform, end_thumb_transform } = g_cluster_pager.layout_endpoints_onArc(curved_text_radius, pager_angle, arcLength));
 	$: $w_t_cluster_pager, pager_offset = ($w_t_cluster_pager == T_Cluster_Pager.sliders) ? -8 : 8;
 	$: arcLength = u.getWidth_ofString_withSize(g_cluster.cluster_title, pager_font_size) * 1.3;

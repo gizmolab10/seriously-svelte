@@ -18,9 +18,8 @@
 		:::${u.descriptionBy_titles($w_grabbed)}`;
 		ancestry = $w_ancestry_forDetails;
 		if (!!ancestry) {
-			const s_widget = ancestry.g_widget.s_widget;
-			background_color = s_widget?.background_color ?? 'transparent';
-			color = s_widget?.color ?? colors.default;
+			color = 'white';
+			background_color = ancestry.thing?.color ?? 'transparent';
 			reattachments += 1;
 		}
 	}

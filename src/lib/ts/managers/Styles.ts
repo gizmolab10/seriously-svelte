@@ -46,9 +46,9 @@ export default class Styles {
 			color = invert ? thing_color : 'white';
 			background = invert ? colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color : thing_color;
 		} else if (isRadialFocus) {
-			border = thing_color !== k.empty ? `solid ${thing_color} 1px` : 'solid transparent 1px';
-			color = (ss.isHovering || isLight) ? thing_color : 'white';
+			color = thing_color;
 			background = background_color;
+			border = thing_color !== k.empty ? `solid ${thing_color} 1px` : 'solid transparent 1px';
 		} else if (ss.isHovering) {
 			background = this.background_for(t_hover_target, background_color);
 			border = this.border_for(t_hover_target, thing_color);

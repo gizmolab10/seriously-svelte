@@ -41,7 +41,14 @@ export default class Radial {
 	get isDragging(): boolean { return this.s_hit_targets.some(s => s?.isDragging ?? false); }
 	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_dict_byName); }
 	get s_hit_targets(): Array<S_Rotation> { return [this.s_resizing, this.s_rotation, ...this.s_pagings]; }
-	s_paging_forName_ofCluster(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => new S_Rotation(T_Hit_Target.paging)); }
+	s_paging_forName_ofCluster(name: string): S_Rotation {
+		return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => {
+			const s_paging = new S_Rotation(T_Hit_Target.paging);
+			s_paging.cluster_name = name;
+			s_paging.id = `${T_Hit_Target.paging}-${name}`;
+			return s_paging;
+		});
+	}
 	
 	g_pages_forThingID(id: string | null | undefined): G_Pages | null {
 		return !id ? null : elements.assure_forKey_inDict(id, this.g_pages_dict_byThingID, () => new G_Pages(id));

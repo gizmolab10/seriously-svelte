@@ -870,8 +870,8 @@ export default class Ancestry extends Identifiable {
 	
 	get isRoot():			  boolean { return this.pathString == k.root; }
 	get hasSiblings():		  boolean { return this.sibling_ancestries.length > 1; }
-	get shows_reveal():		  boolean { return this.showsReveal_forPointingToChild(true); }
 	get isInvalid():		  boolean { return this.containsReciprocals || this.containsMixedPredicates; }
+	get shows_reveal():		  boolean { return this.showsReveal_forPointingToChild(!(this.relationship?.isReversed ?? false)); }
 	get description():		   string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get pathString():		   string { return this.id; }
 	get depth():			   number { return this.relationship_ids.length; }

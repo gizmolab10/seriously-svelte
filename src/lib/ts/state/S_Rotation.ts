@@ -1,4 +1,4 @@
-import { k, s, Point, Angle, colors, radial, Ancestry } from '../common/Global_Imports';
+import { k, s, Point, Angle, colors, radial, Ancestry, g_radial } from '../common/Global_Imports';
 import { T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import S_Component from './S_Component';
 
@@ -8,6 +8,7 @@ export default class S_Rotation extends S_Component {
 	active_angle: number | null = null;		// current angle (at location of mouse MOVE)
 	basis_angle: number | null = null;		// starting angle (where mouse went DOWN)
 	fill_color = 'transparent';
+	cluster_name: string | null = null;		// for paging type: name of the cluster this belongs to
 
 	constructor(type: T_Hit_Target = T_Hit_Target.rotation) {
 		super(null, type);
@@ -29,14 +30,23 @@ export default class S_Rotation extends S_Component {
 	get stroke_opacity(): number { return this.isHovering ? k.opacity.cluster.hover : k.opacity.none; }
 	get fill_opacity():	  number { return this.isHovering ? k.opacity.cluster.armature : k.opacity.cluster.faint; }
 	get cursor():		  string { return this.isDragging ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
-	get thumb_opacity():  number { return this.isDragging ? k.opacity.cluster.active : this.isHovering ? k.opacity.cluster.hover : k.opacity.cluster.thumb; }
+	get thumb_opacity():  number { return this.isDragging ? k.opacity.cluster.active : this.isHovering ? k.opacity.cluster.active : k.opacity.cluster.thumb; }
 	reset()						 { this.basis_angle = this.active_angle = null; this.update_fill_color(); }
 	update_fill_color()			 { this.fill_color = colors.opacitize(this.color, this.fill_opacity) }
 
 	does_contain_point(point: Point | null): boolean {
-		if (!point) return false;
-		const ring_zone = radial.ring_zone_atScaled(point);
-		return this.ring_zone_matches_type(ring_zone);
+		let result = false;
+		if (!!point) {
+			const ring_zone = radial.ring_zone_atScaled(point);
+			// For paging type, verify the mouse is actually over THIS cluster's thumb
+			if (this.type == T_Hit_Target.paging) {
+				const g_cluster = g_radial.g_cluster_atMouseLocation;
+				result = !!g_cluster && g_cluster.s_paging === this;
+			} else if (this.ring_zone_matches_type(ring_zone)) {
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	ring_zone_matches_type(ring_zone: T_Radial_Zone): boolean {

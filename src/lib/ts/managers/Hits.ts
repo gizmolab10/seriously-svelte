@@ -48,27 +48,8 @@ export default class Hits {
 			return false;
 		}
 		const matches = this.targets_atPoint(point);	// # should always be small (verify?)
-		const match
-			=  matches.find(s => s.isADot)
-			?? matches.find(s => s.isRing)
-			?? matches.find(s => s.isAWidget)
-			?? matches.find(s => s.isAControl)
-			?? matches[0];
-		this.w_s_hover.set(!match ? null : match);
-		// Stop autorepeat if hover leaves the autorepeating target
-		const autorepeating_target = get(this.w_autorepeat);
-		if (!!autorepeating_target && (!match || !match.hasSameID_as(autorepeating_target))) {
-			this.stop_autorepeat();
-		}
-		// Cancel long-click if hover leaves the long-click target
-		const longClick_target = get(this.w_longClick);
-		if (!!longClick_target && (!match || !match.hasSameID_as(longClick_target))) {
-			this.cancel_longClick();
-		}
-		// Cancel pending double-click if hover leaves the pending target
-		if (!!this.pending_singleClick_target && (!match || !match.hasSameID_as(this.pending_singleClick_target))) {
-			this.cancel_doubleClick();
-		}
+		const match = this.targetOf_highest_precedence(matches);
+		this.set_asHovering(match);
 		return !!match;
 	}
 
@@ -76,51 +57,35 @@ export default class Hits {
 
 	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
 		const matches = this.targets_atPoint(point);
-		// If meta key is held, force rubberband target (for graph dragging)
 		if (s_mouse.event?.metaKey) {
+			// If meta key is held, force rubberband target (for graph dragging)
 			const rubberband_target = matches.find(s => s.type === T_Hit_Target.rubberband);
 			if (rubberband_target) {
 				return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
 			}
 		}
-		const target
-			=  matches.find(s => s.isADot)
-			?? matches.find(s => s.isAWidget)
-			?? matches.find(s => s.isRing)
-			?? matches.find(s => s.isAControl)
-			?? matches[0];
-
+		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
 		if (!target) return false;
-
 		if (s_mouse.isDown && s_mouse.event) {
-			target.clicks += 1;
-
-			// Long-click detection
+			target.clicks += 1;													// Long-click detection
 			if (target.detects_longClick && target.longClick_callback) {
 				this.start_longClick(target, s_mouse.event);
 			}
-
-			// Double-click detection
-			if (target.detects_doubleClick && target.doubleClick_callback) {
+			if (target.detects_doubleClick && target.doubleClick_callback) {	// Double-click detection
 				if (target.clicks == 2 && this.click_timer.hasTimer_forID(T_Timer.double)) {
-					// Second click within threshold — fire double-click
-					this.click_timer.reset();
+					this.click_timer.reset();									// Second click within threshold — fire double-click
 					target.clicks = 0;
 					target.doubleClick_callback(S_Mouse.double(s_mouse.event, target.html_element));
 					return true;
-				} else if (target.clicks == 1) {
-					// First click — defer single-click, start timer
+				} else if (target.clicks == 1) {								// First click — defer single-click, start timer
 					this.start_doubleClick_timer(target, s_mouse.event);
 					return true;
 				}
 			} else {
-				// No double-click detection — fire immediately
-				target.handle_s_mouse?.(s_mouse);
+				target.handle_s_mouse?.(s_mouse);								// No double-click detection — fire immediately
 			}
-
-			// Autorepeat (existing logic)
 			if (target.detects_autorepeat && target.autorepeat_callback) {
-				this.start_autorepeat(target);
+				this.start_autorepeat(target);									// Autorepeat
 			}
 
 			return true;
@@ -187,22 +152,6 @@ export default class Hits {
 		this.rbush = bush;  // atomic swap
 	}
 
-	static readonly _____HIT_TEST: unique symbol;
-
-	// private targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {
-	// 	return !point ? [] : this.targets_atPoint(point).filter(target => target.type == type);
-	// }
-
-	// private targets_inRect(rect: Rect): Array<S_Hit_Target> {
-	// 	const targets = this.rbush_forHover.search(rect.asBBox).map(rbRect => rbRect.target);
-	// 	return targets.filter(target => (target.containedIn_rect?.(rect) ?? true));	// refine using shape of target
-	// }
-
-	private targets_atPoint(point: Point): Array<S_Hit_Target> {
-		const targets = this.rbush.search(point.asBBox).map(rbRect => rbRect.target);
-		return targets.filter(target => (target.contains_point?.(point) ?? true));	// refine using shape of target
-	}
-
 	static readonly _____ADD_AND_REMOVE: unique symbol;
 
 	add_hit_target(target: S_Hit_Target) {
@@ -238,11 +187,23 @@ export default class Hits {
 			this.remove_from_rbush(target, this.rbush);
 		}
 	}
-
 	static readonly _____INTERNALS: unique symbol;
 
 	private get targets(): Array<S_Hit_Target> {
 		return this.rbush.all().map(rbRect => rbRect.target);
+	}
+
+	private targets_atPoint(point: Point): Array<S_Hit_Target> {
+		const targets = this.rbush.search(point.asBBox).map(rbRect => rbRect.target);
+		return targets.filter(target => (target.contains_point?.(point) ?? true));	// refine using shape of target
+	}
+
+	private targetOf_highest_precedence(matches: Array<S_Hit_Target>): S_Hit_Target | null {
+		return matches.find(s => s.isADot)
+			?? matches.find(s => s.isAWidget)
+			?? matches.find(s => s.isRing)
+			?? matches.find(s => s.isAControl)
+			?? matches[0];
 	}
 
 	private insert_into_rbush(target: S_Hit_Target, into_rbush: RBush<Target_RBRect>) {
@@ -297,6 +258,24 @@ export default class Hits {
 			}
 		}
 		return bush;
+	}
+
+	private set_asHovering(match: S_Hit_Target | null) {
+		this.w_s_hover.set(!match ? null : match);
+		// Stop autorepeat if hover leaves the autorepeating target
+		const autorepeating_target = get(this.w_autorepeat);
+		if (!!autorepeating_target && (!match || !match.hasSameID_as(autorepeating_target))) {
+			this.stop_autorepeat();
+		}
+		// Cancel long-click if hover leaves the long-click target
+		const longClick_target = get(this.w_longClick);
+		if (!!longClick_target && (!match || !match.hasSameID_as(longClick_target))) {
+			this.cancel_longClick();
+		}
+		// Cancel pending double-click if hover leaves the pending target
+		if (!!this.pending_singleClick_target && (!match || !match.hasSameID_as(this.pending_singleClick_target))) {
+			this.cancel_doubleClick();
+		}
 	}
 
 	static readonly _____AUTOREPEAT: unique symbol;

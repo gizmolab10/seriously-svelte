@@ -41,9 +41,10 @@ export default class S_Hit_Target {
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get rect(): Rect | null { return this.element_rect; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get inAWidget(): boolean { return this.isAWidget || this.isADot; }
+	get isATitle(): boolean { return this.type == T_Hit_Target.title; }
 	get isAWidget(): boolean { return this.type == T_Hit_Target.widget; }
 	get isHovering(): boolean { return this.hasSameID_as(get(hits.w_s_hover)); }
+	get inAWidget(): boolean { return this.isAWidget || this.isADot || this.isATitle; }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
