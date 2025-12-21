@@ -15,6 +15,7 @@ type Target_RBRect = {
 }
 
 export default class Hits {
+	disable_hover = false;
 	longClick_fired: boolean = false;
 	rbush = new RBush<Target_RBRect>();
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
@@ -42,6 +43,10 @@ export default class Hits {
 	get rubberband_types(): Array<T_Hit_Target> { return [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal, T_Hit_Target.title]; }
 
 	private detect_hovering_at(point: Point) {
+		// Skip hover detection when disabled
+		if (this.disable_hover) {
+			return false;
+		}
 		const matches = this.targets_atPoint(point);	// # should always be small (verify?)
 		const match
 			=  matches.find(s => s.isADot)
