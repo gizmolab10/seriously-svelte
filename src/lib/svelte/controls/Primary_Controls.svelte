@@ -26,11 +26,11 @@
 	// nicely documented in notes/design/controls.md
 
 	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
-	function handle_recents_mouseClick(column: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) { 
-		x.ancestry_next_focusOn(column == 1); 
+	function handle_recents_mouseClick(index: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) { 
+		x.ancestry_next_focusOn(index == 1); 
 	}
-	function handle_scale_control(column: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) {
-		const t_control = column === 0 ? T_Control.shrink : T_Control.grow;
+	function handle_scale_control(index: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) {
+		const t_control = index === 0 ? T_Control.shrink : T_Control.grow;
 		if (event && element !== undefined) {
 			const s_mouse = isFirstCall 
 				? S_Mouse.down(event, element)

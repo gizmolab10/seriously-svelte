@@ -100,9 +100,7 @@
 			// Capture event for autorepeat callback
 			autorepeat_events[index] = s_mouse.event;
 			autorepeat_isFirstCall[index] = true;
-			// Call closure immediately for initial down with button index
-			closure(button_index, s_mouse.event, button_elements[index], true);
-			// Autorepeat is handled centrally by Hits.ts
+			// Autorepeat is handled centrally by Hits.ts (callback fires immediately)
 		} else if (s_mouse.isUp) {
 			autorepeat_events[index] = null;
 			autorepeat_isFirstCall[index] = true; // Reset for next press

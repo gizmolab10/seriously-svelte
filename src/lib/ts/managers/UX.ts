@@ -79,15 +79,20 @@ export default class S_UX {
 
 	ancestry_next_focusOn(next: boolean) {
 		this.si_recents.find_next_item(next);
-		const pair = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
-		if (!!pair && Array.isArray(pair) && pair.length == 2) {
-			const [ancestry, si_grabs] = pair;
-			if (!!ancestry) {
-				s.w_ancestry_focus.set(ancestry);
-				ancestry.expand();
+		const recent_focus_grabs = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
+		if (!!recent_focus_grabs && Array.isArray(recent_focus_grabs) && recent_focus_grabs.length == 2) {
+			const [focus, grabs] = recent_focus_grabs;
+			if (!!focus) {
+				s.w_ancestry_focus.set(focus);
+				focus.expand();
 			}
-			if (!!si_grabs) {
-				this.si_grabs = si_grabs;
+			if (!!grabs) {
+				for (const grab of grabs.items) {
+					if (!!grab) {
+						grab.ancestry_assureIsVisible();
+					}
+				}
+				this.si_grabs = grabs;
 			}
 		}
 	}

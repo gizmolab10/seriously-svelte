@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/guides/debugging.md",
+                "file": "notes/designs/analysis/breadcrumbs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "debugging"
+              "title": "breadcrumbs"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/guides/debugging.md",
+                "file": "notes/designs/analysis/breadcrumbs.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of debugging"
+              "title": "Outline of breadcrumbs"
             }
           }
         ],
@@ -169,8 +169,9 @@
   },
   "active": "06e98e76ea4518da",
   "lastOpenFiles": [
-    "notes/designs/guides/styles-manager.md",
     "notes/designs/guides/debugging.md",
+    "notes/designs/analysis/breadcrumbs.md",
+    "notes/designs/guides/styles-manager.md",
     "notes/designs/guides/controls.md",
     "notes/designs/analysis/widget_title.md",
     "notes/design/controls.md",
@@ -205,7 +206,6 @@
     "notes/design/mouse.timer.md",
     "notes/design/clicks.md",
     "notes/design/refactor_writables.md",
-    "project-analysis.md",
     "dist/vite.svg",
     "dist/settings.svg"
   ]
