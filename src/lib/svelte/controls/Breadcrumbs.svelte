@@ -14,7 +14,7 @@
 	const { w_t_breadcrumbs } = show;
 	const { w_rect_ofGraphView } = g;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_t_startup, w_ancestry_forDetails } = s;
+	const { w_t_startup, w_focus_ancestry, w_ancestry_forDetails } = s;
 	let s_component: S_Component | null = null;
 	let crumb_ancestries: Array<Ancestry> = [];
 	let element: HTMLElement | null = null;
@@ -34,6 +34,7 @@
 		:::${$w_rect_ofGraphView.description}
 		:::${$w_s_title_edit?.description}
 		:::${$w_ancestry_forDetails?.id}
+		:::${$w_focus_ancestry?.id}
 		:::${x.si_found.w_index}
 		:::${$w_t_breadcrumbs}
 		:::${$w_thing_color}

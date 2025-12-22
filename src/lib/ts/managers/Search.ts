@@ -16,9 +16,11 @@ class Search {
 	constructor() {
 		setTimeout(() => {
 			this.setup();
-			databases.w_t_database.subscribe((database) => {
-				this.setup();
-			});
+			if (!!databases) {
+				databases.w_t_database.subscribe((database) => {
+					this.setup();
+				});
+			}
 		}, 1);
 	}
 
@@ -40,7 +42,7 @@ class Search {
 	}
 
 	private setup() {
-		if (features.allow_search) {
+		if (features && features.allow_search && p) {
 			this.search_text = p.readDB_key(T_Preference.search_text);
 			s.w_t_startup.subscribe((startup: T_Startup) => {
 				if (startup == T_Startup.ready) {

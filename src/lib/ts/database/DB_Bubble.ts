@@ -1,6 +1,7 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { g, h, k, p, s, x, busy, show, debug, features } from '../common/Global_Imports';
-import { T_Persistence, T_Preference } from '../common/Global_Imports';
+import { T_Preference } from '../common/Global_Imports';
+import { T_Persistence } from '../common/Enumerations';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 

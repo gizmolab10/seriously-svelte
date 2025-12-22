@@ -32,9 +32,26 @@ export default class S_UX {
 	//////////////////////////////
 
 	setup_subscriptions() {
+		// Assert that si_recents is seeded before subscriptions are active
+		// restore_focus() should have been called first to populate recents
+		if (typeof console !== 'undefined' && console.assert) {
+			console.assert(
+				this.si_recents.length > 0,
+				'si_recents should be seeded before setup_subscriptions() is called',
+				{ recentsLength: this.si_recents.length }
+			);
+		}
+		
 		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update_grabs_forSearch();
 			this.update_ancestry_forDetails();
+		});
+		// keep w_ancestry_focus derived from recents history index
+		this.si_recents.w_index.subscribe(() => {
+			this.update_focus_from_recents();
+		});
+		this.si_recents.w_items.subscribe(() => {
+			this.update_focus_from_recents();
 		});
 		databases.w_data_updated.subscribe((count: number) => {
 			this.update_grabs_forSearch();
@@ -47,7 +64,21 @@ export default class S_UX {
 		});
 		this.update_grabs_forSearch();
 	}
-		
+
+	private update_focus_from_recents() {
+		// derive focus ancestry from si_recents index; does not mutate history
+		const pair = this.si_recents.item as Identifiable_S_Items_Pair<Ancestry, S_Items<Ancestry>> | null;
+		let ancestry = (!!pair && Array.isArray(pair) && pair.length >= 1) ? pair[0] : null;
+		if (!ancestry) {
+			// fall back to existing focus or root if history is empty
+			ancestry = get(s.w_ancestry_focus) ?? h.rootAncestry;
+		}
+		const current = get(s.w_ancestry_focus);
+		if (!!ancestry && (!current || !current.equals(ancestry))) {
+			s.w_ancestry_focus.set(ancestry);
+		}
+	}
+	
 	static readonly _____ANCESTRY: unique symbol;
 
 	get ancestry_forDetails(): Ancestry | null { return get(s.w_ancestry_forDetails); }
@@ -78,12 +109,17 @@ export default class S_UX {
 	static readonly _____FOCUS: unique symbol;
 
 	ancestry_next_focusOn(next: boolean) {
+		// Early-return if recents is empty
+		if (this.si_recents.length === 0) {
+			return;
+		}
+		
 		this.si_recents.find_next_item(next);
 		const recent_focus_grabs = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
 		if (!!recent_focus_grabs && Array.isArray(recent_focus_grabs) && recent_focus_grabs.length == 2) {
 			const [focus, grabs] = recent_focus_grabs;
 			if (!!focus) {
-				s.w_ancestry_focus.set(focus);
+				// w_ancestry_focus is now updated via subscription from si_recents.w_index
 				focus.expand();
 			}
 			if (!!grabs) {
@@ -103,8 +139,17 @@ export default class S_UX {
 		if (changed) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.push(pair);
+			// Dev-only invariant: verify recents index is in sync after push
+			if (typeof console !== 'undefined' && console.assert) {
+				const recentItem = this.si_recents.item as Identifiable_S_Items_Pair | null;
+				console.assert(
+					recentItem && recentItem[0] === ancestry,
+					'recents index out of sync after becomeFocus()',
+					{ ancestry: ancestry.id, recentItem: recentItem?.[0]?.id }
+				);
+			}
 			x.w_s_alteration.set(null);
-			s.w_ancestry_focus.set(ancestry);
+			// w_ancestry_focus is now updated via subscription from si_recents.w_index
 			ancestry.expand();
 			this.update_ancestry_forDetails();
 			hits.recalibrate();

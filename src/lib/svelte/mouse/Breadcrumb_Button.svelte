@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, h, k, s, u, hits, colors, search, elements } from '../../ts/common/Global_Imports';
-	import { Point, T_Search, T_Banner, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { g, h, k, s, u, hits, colors, search, elements, x, show } from '../../ts/common/Global_Imports';
+	import { Point, T_Search, T_Banner, T_Hit_Target, T_Breadcrumbs } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Button from './Button.svelte';
 	export let center = Point.zero;
@@ -9,6 +9,8 @@
 	const { w_s_hover } = hits;
 	const borderStyle = '1px solid';
 	const { w_thing_fontFamily } = s;
+	const { w_t_breadcrumbs } = show;
+	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_thing_color, w_background_color } = colors;
 	let thing = s_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;
@@ -35,10 +37,17 @@
 			updateColors();
 		}
 	}
+
+	$: {
+		// Check if this ancestry is in the grabbed items array
+		const isGrabbed = $w_grabbed.some(g => g && g.equals(ancestry));
+		const _ = `${$w_t_breadcrumbs}:::${$w_grabbed.length}:::${isGrabbed}`;
+		updateColors();
+	}
 	
 	function updateColors() {
 		if (!!thing &&!!s_element) {
-			colorStyles = `background-color: ${s_breadcrumb.fill}`;
+			colorStyles = s_breadcrumb.background;
 			color = s_breadcrumb.stroke;
 			border = s_element.border;
 			updateStyle();

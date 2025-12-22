@@ -590,14 +590,17 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get heritage(): Array<Ancestry> {
-		let ancestries: Array<Ancestry> = [h.rootAncestry];
-		for (const id of this.relationship_ids) {
-			const ancestry = h.ancestry_remember_createUnique(id);
+		let ancestry: Ancestry | null = this;
+		const ancestries: Array<Ancestry> = [ancestry];
+		let depth = this.depth;
+		while (depth > 0) {
+			ancestry = ancestry?.ancestry_createUnique_byStrippingBack(1) ?? null;
 			if (!!ancestry) {
 				ancestries.push(ancestry);
+				depth--;
 			}
 		}
-		return ancestries;
+		return ancestries.reverse();
 	}
 
 	get ancestry_ofFirst_visibleChild(): Ancestry {

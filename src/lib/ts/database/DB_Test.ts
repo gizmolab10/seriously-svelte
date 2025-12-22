@@ -1,5 +1,5 @@
 import { h, k, T_Thing, T_Trait, Predicate, T_Predicate } from '../common/Global_Imports';
-import { T_Persistence } from '../common/Global_Imports';
+import { T_Persistence } from '../common/Enumerations';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 

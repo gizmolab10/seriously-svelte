@@ -1,5 +1,5 @@
 import { k, p, s, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
-import { T_Persistence } from '../common/Global_Imports';
+import { T_Persistence } from '../common/Enumerations';
 import { T_Database } from '../database/DB_Common';
 import type { Dictionary } from '../types/Types';
 import DB_Common from '../database/DB_Common';

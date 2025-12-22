@@ -48,6 +48,18 @@ import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Drag, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 import { T_Radial_Zone, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager } from './Enumerations';
 
+import './Extensions';
+import { k } from './Constants';
+import { x } from '../managers/UX';
+import { e } from '../signals/Events';
+import { s } from '../managers/Stores';
+import { g } from '../managers/Geometry';
+import { h } from '../managers/Hierarchy';
+import { u } from '../utilities/Utilities';
+import { p } from '../managers/Preferences';
+import { c } from '../managers/Configuration';
+import { features } from '../managers/Features';
+
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
@@ -61,23 +73,11 @@ import { details } from '../managers/Details';
 import { show } from '../managers/Visibility';
 import { controls } from '../managers/Controls';
 import { elements } from '../managers/Elements';
-import { features } from '../managers/Features';
 import { g_tree } from '../geometry/G_TreeGraph';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
 import { components } from '../managers/Components';
 import { g_radial } from '../geometry/G_RadialGraph';
-
-import './Extensions';
-import { k } from './Constants';
-import { x } from '../managers/UX';
-import { e } from '../signals/Events';
-import { s } from '../managers/Stores';
-import { g } from '../managers/Geometry';
-import { h } from '../managers/Hierarchy';
-import { u } from '../utilities/Utilities';
-import { p } from '../managers/Preferences';
-import { c } from '../managers/Configuration';
 
 import { Direction } from '../types/Angle';
 import { debug, Debug } from '../debug/Debug';

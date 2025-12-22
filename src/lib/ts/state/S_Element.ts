@@ -49,6 +49,8 @@ export default class S_Element extends S_Hit_Target {
 			return this.dotColors_forElement.fill;
 		} else if (this.isAControl) {
 			return this.buttonColors_forElement.fill;
+		} else if (this.ancestry.isGrabbed) {
+			return this.thing_color;
 		} else {
 			return this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background;
 		}
@@ -75,12 +77,12 @@ export default class S_Element extends S_Hit_Target {
 	}
 	
 	get border(): string {
-		const color = this.ancestry.thing?.color;
+		const color = this.thing_color;
 		if (!!color) {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
-			if (controls.inRadialMode && this.ancestry.isFocus && !this.ancestry.isGrabbed) {
+			if (this.ancestry.isFocus && !this.ancestry.isGrabbed) {
 				return `solid ${color} 1px`;
 			}
 			if (this.isHovering) {

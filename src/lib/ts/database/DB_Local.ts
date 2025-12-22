@@ -1,4 +1,4 @@
-import { T_Persistence } from '../common/Global_Imports';
+import { T_Persistence } from '../common/Enumerations';
 import { k } from '../common/Global_Imports';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';

@@ -1,6 +1,7 @@
 import { c, h, k, p, u, busy, Tag, Thing, Trait, builds, debug, g } from '../common/Global_Imports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { T_Create, T_Preference, T_Persistable, T_Persistence } from '../common/Global_Imports';
+import { T_Create, T_Preference, T_Persistable } from '../common/Global_Imports';
+import { T_Persistence } from '../common/Enumerations';
 import { onSnapshot, deleteField, getFirestore, serverTimestamp } from 'firebase/firestore';
 import { T_Thing, T_Trait, T_Debug, T_Order, T_Predicate } from '../common/Global_Imports';
 import { databases, Predicate, Relationship, Persistable } from '../common/Global_Imports';

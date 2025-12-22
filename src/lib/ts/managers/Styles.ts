@@ -32,7 +32,6 @@ export default class Styles {
 	get_widgetColors_for(ss: S_Snapshot, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		const isDown = get(e.w_mouse_button_down) && ss.isHovering;
-		const isRadialFocus = ss.isFocus && controls.inRadialMode;
 		const t_hover_target = ss.t_hover_target;
 		let border = 'solid transparent 1px';
 		let background = 'transparent';
@@ -45,7 +44,7 @@ export default class Styles {
 			const invert = ss.isHovering && !isDown;
 			color = invert ? thing_color : 'white';
 			background = invert ? colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color : thing_color;
-		} else if (isRadialFocus) {
+		} else if (ss.isFocus) {
 			color = thing_color;
 			background = background_color;
 			border = thing_color !== k.empty ? `solid ${thing_color} 1px` : 'solid transparent 1px';

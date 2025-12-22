@@ -3,15 +3,20 @@ module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
     transform: {
-        '^.+\\.ts$': ['ts-jest'],
+        '^.+\\.ts$': ['ts-jest', {
+            tsconfig: {
+                module: 'CommonJS'
+            }
+        }],
         '^.+\\.svelte$': ['svelte-jester']
     },
     moduleFileExtensions: ['js', 'ts', 'svelte'],
     testMatch: [
-        "**/tests/slim/**/*Test.ts",
-        "**/tests/slim/**/*.test.ts"
+        "**/tests/**/*Test.ts",
+        "**/tests/**/*.test.ts"
     ],
     transformIgnorePatterns: [
         "node_modules/(?!(svelte)/)"
-    ]
+    ],
+    resolver: undefined
 };

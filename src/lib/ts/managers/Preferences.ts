@@ -112,9 +112,7 @@ export class Preferences {
 		let ancestryToFocus = h?.rootAncestry ?? null;
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			if (!!ancestryToFocus) {
-				s.w_ancestry_focus.set(ancestryToFocus);
-			}
+			// Direct set removed: becomeFocus() below will handle focus setting and add to history
 		} else {
 			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
 			if (!!focusPath) {
@@ -131,7 +129,15 @@ export class Preferences {
 					ancestryToFocus = lastGrabbedAncestry;
 				}
 			}
+			// becomeFocus() will set focus via subscription from si_recents index and add to history
 			ancestryToFocus.becomeFocus();
+		} else {
+			// Ensure si_recents is always seeded, even if ancestryToFocus is null
+			// Use rootAncestry as fallback to seed history
+			const rootAncestry = h?.rootAncestry;
+			if (!!rootAncestry) {
+				rootAncestry.becomeFocus();
+			}
 		}
 		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
