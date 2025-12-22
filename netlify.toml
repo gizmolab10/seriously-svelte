@@ -2,3 +2,5 @@
   for = "/*"
   [headers.values]
     connect-src = "https://api.airtable.com"
+[build.environment]
+  NODE_VERSION = "20.19.0"

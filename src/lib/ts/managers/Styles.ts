@@ -30,6 +30,7 @@ export default class Styles {
 	//////////////////////////////////////////////////////////////////////
 
 	get_widgetColors_for(ss: S_Snapshot, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
+		const faint = colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		const isDown = get(e.w_mouse_button_down) && ss.isHovering;
 		const t_hover_target = ss.t_hover_target;
@@ -41,15 +42,17 @@ export default class Styles {
 			border = `dashed ${thing_color} 1px`;
 			color = isLight ? 'black' : thing_color;
 		} else if (ss.isGrabbed || isDown) {
-			const invert = ss.isHovering && !isDown;
-			color = invert ? thing_color : 'white';
-			background = invert ? colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color : thing_color;
+			color = 'white';
+			background = thing_color;
+			if (ss.isHovering && !isDown) {
+				border = `dashed ${faint} 1px`;
+			}
 		} else if (ss.isFocus) {
 			color = thing_color;
 			background = background_color;
 			border = thing_color !== k.empty ? `solid ${thing_color} 1px` : 'solid transparent 1px';
 		} else if (ss.isHovering) {
-			background = this.background_for(t_hover_target, background_color);
+			background = faint;
 			border = this.border_for(t_hover_target, thing_color);
 			if (controls.inRadialMode) {
 				border = `solid ${thing_color} 1px`;
