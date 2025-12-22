@@ -26,6 +26,15 @@
 	let color = ancestry.thing?.color;
 	let offsetFor_fat_center_dot = 0;
 	let s_component: S_Component;
+	let wrapper_style = k.empty;
+	const stretchBy: number = 1;
+	const nudge = (stretchBy - 1) * 5;
+	const height = k.height.dot;
+	const width = height * stretchBy;
+	const viewBox_left = 0;  // Path coordinates start at 0
+	const viewBox_width = height;  // Path coordinates span 0 to height
+	const tiny_outer_width = k.tiny_outer_dots.size.width * stretchBy;
+	const tiny_outer_height = k.tiny_outer_dots.size.height;
 
 	update_colors();
 
@@ -67,15 +76,18 @@
 		update_colors();
 	}
 
-	$: wrapper_style = `
-		cursor: pointer;
-		position: absolute;
-		z-index: ${zindex};
-		width: ${k.height.dot}px;
-		height: ${k.height.dot}px;
-		top: ${center.y - k.height.dot / 2}px;
-		left: ${center.x - k.height.dot / 2}px;
-	`.removeWhiteSpace();
+	$: {
+		const horizontal_offset = g_widget.reveal_isAt_right ? nudge : -nudge;
+		wrapper_style = `
+			cursor: pointer;
+			position: absolute;
+			z-index: ${zindex};
+			width: ${k.height.dot}px;
+			height: ${k.height.dot}px;
+			top: ${center.y - k.height.dot / 2}px;
+			left: ${center.x - k.height.dot / 2 + horizontal_offset}px;
+		`.removeWhiteSpace();
+	}
 
 	function update_colors() {
 		// element_color is now reactive (uses thing_color automatically for dots)
@@ -109,13 +121,25 @@
 			tabindex="0"
 			style='
 				width: {k.height.dot}px;
-				height: {k.height.dot}px;'>
-			<SVG_D3 name='reveal-dot-svg'
-				svgPath={svgPathFor_revealDot}
-				stroke={svg_outline_color}
-				height={k.height.dot}
-				width={k.height.dot}
-				fill={fill_color}/>
+				height: {k.height.dot}px;
+				overflow: visible;
+				position: relative;'>
+			<div style='
+				position: absolute;
+				left: {(k.height.dot - width) / 2}px;
+				top: 0px;
+				width: {width}px;
+				height: {height}px;'>
+				<SVG_D3 name='reveal-dot-svg'
+					svgPath={svgPathFor_revealDot}
+					stroke={svg_outline_color}
+					height={height}
+					width={width}
+					left={viewBox_left}
+					top={0}
+					viewBox_width={viewBox_width}
+					fill={fill_color}/>
+			</div>
 			{#if !!svgPathFor_fat_center_dot}
 				<div class='fat_center-dot' style='
 					left:{offsetFor_fat_center_dot}px;
@@ -134,23 +158,26 @@
 			{/if}
 			{#if !!svgPathFor_tiny_outer_dots}
 				<div class='tiny-outer-dots' style='
-					height:{k.tiny_outer_dots.size.height}px;
-					width:{k.tiny_outer_dots.size.width}px;
-					left:{k.tiny_outer_dots.offset.x}px;
+					height:{tiny_outer_height}px;
+					width:{tiny_outer_width}px;
+					left:{k.tiny_outer_dots.offset.x - (k.tiny_outer_dots.size.width * (stretchBy - 1) / 2)}px;
 					top:{k.tiny_outer_dots.offset.y}px;
 					position:absolute;
-					z-index:0'>
+					z-index:0;
+					overflow: visible;'>
 					<svg class='tiny-outer-dots-svg'
-						height={k.tiny_outer_dots.size.height}px
-						width={k.tiny_outer_dots.size.width}px
+						height={tiny_outer_height}px
+						width={tiny_outer_width}px
 						viewBox='{viewBox}'
+						preserveAspectRatio='none'
 						style='
 							shape-rendering: geometricPrecision;
 							position: absolute;'>
 						<path
 							d={svgPathFor_tiny_outer_dots}
 							stroke={svg_outline_color}
-							fill={color}/>
+							fill={color}
+							vector-effect='non-scaling-stroke'/>
 					</svg>
 				</div>
 			{/if}

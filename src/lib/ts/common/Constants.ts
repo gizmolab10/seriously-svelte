@@ -112,6 +112,7 @@ export default class Constants {
 	};
 
 	thickness = {
+		stroke:		 0.7,
 		rubberband:	 rubberband_thickness,
 		radial: {
 			ring:	 44,

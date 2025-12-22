@@ -116,6 +116,10 @@
 		debug.log_style('Observer set up on widget div for:', ancestry?.title);
 	}
 
+	function z_index(): number {
+		return (controls.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget;
+	}
+
 	function handle_click_event_fromHover() {
 		ancestry?.grab_forShift(false);
 		update_style();
@@ -146,10 +150,10 @@
 			cursor: pointer;
 			position: absolute;
 			height: ${height}px;
+			z-index: ${z_index()};
 			${s_widget.background};
 			color: ${s_widget.color};
 			border: ${s_widget.border};
-			z-index: ${T_Layer.widget};
 			width: ${width_ofWidget - 5}px;
 			border-radius: ${border_radius}px;
 		`.removeWhiteSpace();
@@ -183,7 +187,7 @@
 				height: {height}px;
 				position: absolute;
 				width: {width_ofWidget}px;
-				z-index: {T_Layer.widget};
+				z-index: {(controls.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget};
 				top: {(controls.inRadialMode && ancestry.isFocus) ? -0.5 : -3}px;'>
 			<Widget_Title
 				s_title = {s_title}

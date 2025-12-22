@@ -926,6 +926,10 @@ export default class Ancestry extends Identifiable {
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
 		const hasChildren = this.relationships_count_forChildren(pointsTo_child) > 0;
+		// In radial mode, only show reveal dots for children cluster widgets
+		if (controls.inRadialMode) {
+			return this.children_cluster && (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
+		}
 		return (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
 	}
 
