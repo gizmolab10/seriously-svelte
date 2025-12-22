@@ -120,4 +120,10 @@ export default class S_Items<T> {
 		}
 	}
 
+	remove_all_beyond_index() {
+		for (let i = this.index + 1; i < this.length; i++) {
+			this.remove(this.items[i]);
+		}
+	}
+
 }
