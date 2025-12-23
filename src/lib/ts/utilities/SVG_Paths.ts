@@ -171,7 +171,7 @@ export default class SVG_Paths {
 		const radius = diameter / 3;
 		const increment = Math.PI * 2 / count;
 		const radial = Point.x(radius).rotate_by(points_right ? 0 : Math.PI);
-		return this.tiny_outer_dots(diameter, dot_size, increment, count, radial);
+		return this.tiny_outer_dots_path(diameter, dot_size, increment, count, radial);
 	}
 
 	tiny_outer_dots_halfCircular(diameter: number, count: Integer, points_right: boolean, dot_size: number, isBig: boolean = false): string {
@@ -181,10 +181,10 @@ export default class SVG_Paths {
 		const radius = diameter / 3;
 		const increment = Math.PI / count;
 		let radial = Point.y((isBig == points_right) ? -radius : radius).rotate_by(increment / 2);
-		return this.tiny_outer_dots(diameter, dot_size, increment, count, radial);
+		return this.tiny_outer_dots_path(diameter, dot_size, increment, count, radial);
 	}
 
-	tiny_outer_dots(diameter: number, dot_size: number, increment: number, count: Integer, radial: Point) {
+	tiny_outer_dots_path(diameter: number, dot_size: number, increment: number, count: Integer, radial: Point) {
 		let i = 0;
 		let path = k.empty;
 		while (i++ < count) {

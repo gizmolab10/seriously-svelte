@@ -30,10 +30,10 @@ export default class Styles {
 	//////////////////////////////////////////////////////////////////////
 
 	get_widgetColors_for(ss: S_Snapshot, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
-		const faint = colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color
+		const faint = colors.background_special_blend(thing_color, k.opacity.faint);
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
-		const isDown = get(e.w_mouse_button_down) && ss.isHovering;
-		const t_hover_target = ss.t_hover_target;
+		const isDown = get(e.w_mouse_button_down);
+		const t_hover_target = get(hits.w_s_hover)?.type ?? null;
 		let border = 'solid transparent 1px';
 		let background = 'transparent';
 		let color = thing_color;
@@ -41,23 +41,23 @@ export default class Styles {
 			background = background_color;
 			border = `dashed ${thing_color} 1px`;
 			color = isLight ? 'black' : thing_color;
-		} else if (ss.isGrabbed || isDown) {
+		} else if (ss.isGrabbed) {
 			color = 'white';
 			background = thing_color;
-			if (ss.isHovering && !isDown) {
-				border = `dashed ${faint} 1px`;
+			if (ss.isHovering) {
+				if (t_hover_target === T_Hit_Target.drag) {
+					border = this.border_for(t_hover_target, thing_color);
+				} else if (!isDown) {
+					border = `dashed ${faint} 1px`;
+				}
 			}
 		} else if (ss.isFocus) {
 			color = thing_color;
 			background = background_color;
-			border = thing_color !== k.empty ? `solid ${thing_color} 1px` : 'solid transparent 1px';
+			border = `solid ${thing_color} 1px`;
 		} else if (ss.isHovering) {
 			background = faint;
 			border = this.border_for(t_hover_target, thing_color);
-			if (controls.inRadialMode) {
-				border = `solid ${thing_color} 1px`;
-				background = background_color;
-			}
 		}
 		return { color, background_color: background, border };
 	}
@@ -134,10 +134,10 @@ export default class Styles {
 		}
 		let border_color: string;
 		switch (t_hover_target) {
-			case T_Hit_Target.title:  border_color = thing_color;																   break;
-			case T_Hit_Target.drag:   border_color = colors.background_special_blend(thing_color, k.opacity.faint) ?? thing_color; break;
-			case T_Hit_Target.reveal: border_color = 'transparent';																   break;
-			default:				  border_color = colors.ofBackgroundFor(thing_color);										   break;
+			case T_Hit_Target.title:  border_color = thing_color;													break;
+			case T_Hit_Target.reveal: border_color = 'transparent';													break;
+			case T_Hit_Target.drag:   border_color = colors.background_special_blend(thing_color, k.opacity.none);	break;
+			default:				  border_color = colors.background_special_blend(thing_color, k.opacity.light); break;
 		}
 		return `solid ${border_color} 1px`;
 	}

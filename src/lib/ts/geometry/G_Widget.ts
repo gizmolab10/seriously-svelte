@@ -198,7 +198,7 @@ export default class G_Widget {
 			this.offset_ofWidget = new Point(x_offset_ofWidget + (ancestry.isFocus ? 5 : 0), 0.5);
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
-				const y_ofReveal = dot_size * 0.7;
+				const y_ofReveal = dot_size - 3.8;
 				const x_offsetFor_revealAt_right = width_ofWidget - dot_size - 10;
 				const x_ofReveal = dot_size + (reveal_isAt_right ? x_offsetFor_revealAt_right : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);

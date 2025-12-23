@@ -27,14 +27,9 @@
 	let offsetFor_fat_center_dot = 0;
 	let s_component: S_Component;
 	let wrapper_style = k.empty;
-	const stretchBy: number = 1;
-	const nudge = (stretchBy - 1) * 5;
-	const height = k.height.dot;
-	const width = height * stretchBy;
-	const viewBox_left = 0;  // Path coordinates start at 0
-	const viewBox_width = height;  // Path coordinates span 0 to height
-	const tiny_outer_width = k.tiny_outer_dots.size.width * stretchBy;
-	const tiny_outer_height = k.tiny_outer_dots.size.height;
+	const viewBox_left = 0;
+	const size = k.height.dot;
+	const viewBox_width = size;
 
 	update_colors();
 
@@ -68,8 +63,8 @@
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
 			:::${u.descriptionBy_titles($w_expanded)}
 			:::${$w_s_hover?.id ?? 'null'}
-			:::${$w_t_countDots}
 			:::${$w_background_color}
+			:::${$w_t_countDots}
 			:::${$w_thing_title}
 			:::${$w_thing_color}`;
 		update_svgPaths();
@@ -77,15 +72,14 @@
 	}
 
 	$: {
-		const horizontal_offset = g_widget.reveal_isAt_right ? nudge : -nudge;
 		wrapper_style = `
 			cursor: pointer;
+			width: ${size}px;
 			position: absolute;
 			z-index: ${zindex};
-			width: ${k.height.dot}px;
-			height: ${k.height.dot}px;
-			top: ${center.y - k.height.dot / 2}px;
-			left: ${center.x - k.height.dot / 2 + horizontal_offset}px;
+			height: ${size}px;
+			top: ${center.y - size / 2}px;
+			left: ${center.x - size / 2}px;
 		`.removeWhiteSpace();
 	}
 
@@ -106,7 +100,7 @@
 			offsetFor_fat_center_dot = has_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 			svgPathFor_tiny_outer_dots = ancestry.svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child);
-			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
+			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(size, 3) : null;
 		}
 	}
 
@@ -120,63 +114,63 @@
 			role="button"
 			tabindex="0"
 			style='
-				width: {k.height.dot}px;
-				height: {k.height.dot}px;
 				overflow: visible;
+				width: {size}px;
+				height: {size}px;
 				position: relative;'>
 			<div style='
-				position: absolute;
-				left: {(k.height.dot - width) / 2}px;
 				top: 0px;
-				width: {width}px;
-				height: {height}px;'>
+				left: 0px;
+				width: {size}px;
+				height: {size}px;
+				position: absolute;'>
 				<SVG_D3 name='reveal-dot-svg'
 					svgPath={svgPathFor_revealDot}
-					stroke={svg_outline_color}
-					height={height}
-					width={width}
-					left={viewBox_left}
-					top={0}
 					viewBox_width={viewBox_width}
-					fill={fill_color}/>
+					stroke={svg_outline_color}
+					left={viewBox_left}
+					fill={fill_color}
+					height={size}
+					width={size}
+					top={0}/>
 			</div>
 			{#if !!svgPathFor_fat_center_dot}
 				<div class='fat_center-dot' style='
 					left:{offsetFor_fat_center_dot}px;
 					top:{offsetFor_fat_center_dot}px;
-					height:{k.height.dot}px;
-					width:{k.height.dot}px;
-					position:absolute;'>
+					position:absolute;
+					height:{size}px;
+					width:{size}px;'>
 					<SVG_D3 name='fat_center-dot-svg'
 						svgPath={svgPathFor_fat_center_dot}
 						stroke={bulkAlias_color}
 						fill={bulkAlias_color}
-						height={k.height.dot}
-						width={k.height.dot}
+						height={size}
+						width={size}
 					/>
 				</div>
 			{/if}
 			{#if !!svgPathFor_tiny_outer_dots}
 				<div class='tiny-outer-dots' style='
-					height:{tiny_outer_height}px;
-					width:{tiny_outer_width}px;
-					left:{k.tiny_outer_dots.offset.x - (k.tiny_outer_dots.size.width * (stretchBy - 1) / 2)}px;
-					top:{k.tiny_outer_dots.offset.y}px;
+					overflow:visible;
 					position:absolute;
-					z-index:0;
-					overflow: visible;'>
+					top:{k.tiny_outer_dots.offset.y}px;
+					left:{k.tiny_outer_dots.offset.x}px;
+					width:{k.tiny_outer_dots.diameter}px;
+					height:{k.tiny_outer_dots.diameter}px;
+					z-index:0;'>
 					<svg class='tiny-outer-dots-svg'
-						height={tiny_outer_height}px
-						width={tiny_outer_width}px
 						viewBox='{viewBox}'
 						preserveAspectRatio='none'
+						width={k.tiny_outer_dots.diameter}px
+						height={k.tiny_outer_dots.diameter}px
 						style='
-							shape-rendering: geometricPrecision;
-							position: absolute;'>
+							position: absolute;
+							shape-rendering: geometricPrecision;'>
 						<path
-							d={svgPathFor_tiny_outer_dots}
-							stroke={svg_outline_color}
 							fill={color}
+							stroke={svg_outline_color}
+							d={svgPathFor_tiny_outer_dots}
 							vector-effect='non-scaling-stroke'/>
 					</svg>
 				</div>

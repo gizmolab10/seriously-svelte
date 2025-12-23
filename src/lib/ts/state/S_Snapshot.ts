@@ -1,4 +1,4 @@
-import { k, S_Element, T_Hit_Target } from '../common/Global_Imports';
+import { k, S_Element } from '../common/Global_Imports';
 
 	//////////////////////////////////////
 	//									//
@@ -10,7 +10,6 @@ import { k, S_Element, T_Hit_Target } from '../common/Global_Imports';
 	//////////////////////////////////////
 
 export default class S_Snapshot {
-	t_hover_target: T_Hit_Target | null;
 	isInverted: 	boolean;
 	isDisabled: 	boolean;
 	isSelected: 	boolean;
@@ -34,7 +33,6 @@ export default class S_Snapshot {
 		this.isGrabbed  	= s_element.ancestry.isGrabbed;
 		this.isEditing  	= s_element.ancestry.isEditing;
 		this.thing_color	= s_element.ancestry.thing?.color ?? k.empty;
-		this.t_hover_target = s_element.isHovering ? s_element.type : null;
 	}
 
 }

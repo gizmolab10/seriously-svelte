@@ -71,8 +71,8 @@ export default class Constants {
 	tiny_outer_dots = {
 		diameter:	tiny_outer_dots_diameter,
 		expansion:	tiny_outer_dots_expansion,
-		size:		Size.square(tiny_outer_dots_diameter).extendedByY(3),
-		offset:		Point.square(-tiny_outer_dots_expansion).offsetByXY(4, 3.5),
+		size:		Size.square(tiny_outer_dots_diameter),
+		offset:		Point.square(-tiny_outer_dots_expansion).offsetByXY(4.2, 5),
 		viewBox:	`0.5 2.35 ${tiny_outer_dots_diameter} ${tiny_outer_dots_diameter}`,	
 	};
 
@@ -129,7 +129,7 @@ export default class Constants {
 	opacity = {
 		none:		  0,
 		faint:		  0.1,
-		light:		  0.3,
+		light:		  0.28,
 		medium:		  0.4,
 		dark:		  0.7,
 		cluster: {
