@@ -3,8 +3,8 @@
 	import { S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-    export let zindex = T_Layer.dot;
 	export let pointsTo_child = true;
+    export let zindex = T_Layer.dot;
 	export let s_reveal!: S_Element;
 	const { w_s_hover } = hits;
 	const { w_thing_title } = x;
@@ -15,11 +15,11 @@
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_thing_color, w_background_color } = colors;
 	const { w_t_countDots, w_show_countsAs_dots } = show;
-	let reveal_count = ancestry.count_ofChilcren(pointsTo_child);
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
+	let reveal_count = ancestry.children.length;
 	let show_child_counts = reveal_count > 1;
 	let element: HTMLElement | null = null;
 	let counts_color = s_reveal.stroke;
@@ -32,6 +32,8 @@
 	const viewBox_left = 0;
 	const size = k.height.dot;
 	const viewBox_width = size;
+
+	console.log(`reveal_count: ${reveal_count} ${pointsTo_child} ${ancestry.title}`);
 
 	update_colors();
 

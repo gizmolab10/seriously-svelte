@@ -1,5 +1,6 @@
 export class Builds {
 	notes: Record<number, Array<string>> = {
+		182 : ['December 24, 2025', 'preference option to show children counts as numbers'],
 		181 : ['December 22, 2025', 'restore grabs when navigating history'],
 		180 : ['December 20, 2025', 'new breadcrumbs history type'],
 		179 : ['December 18, 2025', 'new Styles manager centralizes color computation'],
