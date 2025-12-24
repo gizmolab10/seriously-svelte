@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, x, g_tree, signals, S_Component } from '../../ts/common/Global_Imports';
+	import { g, x, g_graph_tree, signals, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -18,7 +18,7 @@
 </script>
 
 {#key reattachments}
-	{#if g_tree.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
+	{#if g_graph_tree.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
 		<div class = 'tree-graph'
 			style = '
 				position: absolute;

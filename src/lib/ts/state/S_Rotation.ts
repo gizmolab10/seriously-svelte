@@ -1,4 +1,4 @@
-import { k, x, Point, Angle, colors, radial, Ancestry, g_radial } from '../common/Global_Imports';
+import { k, x, Point, Angle, colors, radial, Ancestry, g_graph_radial } from '../common/Global_Imports';
 import { T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import S_Component from './S_Component';
 
@@ -40,7 +40,7 @@ export default class S_Rotation extends S_Component {
 			const ring_zone = radial.ring_zone_atScaled(point);
 			// For paging type, verify the mouse is actually over THIS cluster's thumb
 			if (this.type == T_Hit_Target.paging) {
-				const g_cluster = g_radial.g_cluster_atMouseLocation;
+				const g_cluster = g_graph_radial.g_cluster_atMouseLocation;
 				result = !!g_cluster && g_cluster.s_paging === this;
 			} else if (this.ring_zone_matches_type(ring_zone)) {
 				result = true;

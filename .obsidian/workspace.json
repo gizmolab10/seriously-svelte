@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/analysis/breadcrumbs.md",
+                "file": "notes/designs/analysis/focus.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "breadcrumbs"
+              "title": "focus"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/analysis/breadcrumbs.md",
+                "file": "notes/designs/analysis/focus.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of breadcrumbs"
+              "title": "Outline of focus"
             }
           }
         ],
@@ -169,6 +169,8 @@
   },
   "active": "06e98e76ea4518da",
   "lastOpenFiles": [
+    "notes/designs/analysis/breadcrumbs.md",
+    "notes/designs/analysis/focus.md",
     "vitest.config.ts",
     "src/lib/ts/tests/setup.ts",
     "src/lib/ts/tests/UX_integration.test.ts",
@@ -179,7 +181,6 @@
     "notes/archives/2024/June/help.webseriously",
     "node_modules/vitest/node_modules/vite/node_modules",
     "node_modules/vitest/node_modules/postcss/node_modules",
-    "node_modules/tough-cookie/node_modules",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "node_modules/svelte/node_modules/mdn-data/css/readme.md",
@@ -206,7 +207,6 @@
     "node_modules/tinybench/README.md",
     "node_modules/svelte/node_modules/css-tree/README.md",
     "node_modules/svelte/node_modules/mdn-data/CHANGELOG.md",
-    "node_modules/svelte/node_modules/mdn-data/README.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

@@ -41,7 +41,7 @@ export default class Thing extends Persistable {
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 	get isAcrossBulk():						 boolean { return this.idBase != h.db.idBase; }
 	get hasParents():						 boolean { return this.hasParents_ofKind(T_Predicate.contains); }
-	get isFocus():							 boolean { return (get(x.w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
+	get isFocus():							 boolean { return (get(x.w_ancestry_focus)?.thing?.id ?? k.empty) == this.id; }
 	
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
@@ -105,7 +105,7 @@ export default class Thing extends Persistable {
 			}
 		}
 		const focus = get(x.w_ancestry_focus);
-		if (focus.thing?.hid == this.hid) {
+		if (focus?.thing?.hid == this.hid) {
 			h.rootAncestry.becomeFocus();
 		}
 	}

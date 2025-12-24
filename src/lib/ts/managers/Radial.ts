@@ -1,4 +1,4 @@
-import { g, k, p, s, x, show, hits, Point, Angle, debug, signals, elements, g_radial } from '../common/Global_Imports';
+import { g, k, p, s, x, show, hits, Point, Angle, debug, signals, elements, g_graph_radial } from '../common/Global_Imports';
 import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
 import { G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -115,7 +115,7 @@ export default class Radial {
 		let ring_zone = T_Radial_Zone.miss;
 		if (!!mouse_vector) {
 			const show_cluster_sliders = get(show.w_t_cluster_pager) == T_Cluster_Pager.sliders;
-			const g_cluster = g_radial.g_cluster_atMouseLocation;
+			const g_cluster = g_graph_radial.g_cluster_atMouseLocation;
 			const inner = get(radial.w_resize_radius);
 			const distance = mouse_vector.magnitude;
 			const thick = k.thickness.radial.ring;
@@ -205,8 +205,8 @@ export default class Radial {
 				this.w_g_paging.subscribe((g_paging: G_Paging) => {
 					p.writeDB_key(T_Preference.paging, this.g_pages_dict_byThingID);
 					if (!!g_paging) {
-						g_radial.layout_forChildren_cluster(g_paging.children_cluster);
-						g_radial.layout_forPaging();
+						g_graph_radial.layout_forChildren_cluster(g_paging.children_cluster);
+						g_graph_radial.layout_forPaging();
 					}
 				})
 			}

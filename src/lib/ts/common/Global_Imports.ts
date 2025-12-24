@@ -73,11 +73,11 @@ import { details } from '../managers/Details';
 import { show } from '../managers/Visibility';
 import { controls } from '../managers/Controls';
 import { elements } from '../managers/Elements';
-import { g_tree } from '../geometry/G_TreeGraph';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
 import { components } from '../managers/Components';
-import { g_radial } from '../geometry/G_RadialGraph';
+import { g_graph_tree } from '../geometry/G_TreeGraph';
+import { g_graph_radial } from '../geometry/G_RadialGraph';
 
 import { Direction } from '../types/Angle';
 import { debug, Debug } from '../debug/Debug';
@@ -97,12 +97,12 @@ export {
 	G_Cluster, G_RadialGraph, G_Cluster_Pager,
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 
-	g_tree, g_radial,
 	colors, radial, signals, 
 	interact, transparentize,
 	e, c, g, h, k, p, s, u, x,
 	debug, svgPaths, databases,
 	hits, elements, components,
+	g_graph_tree, g_graph_radial,
 	busy, show, files, builds, print,
 	search, details, controls, features,
 

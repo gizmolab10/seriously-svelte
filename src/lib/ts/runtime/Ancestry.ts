@@ -69,7 +69,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____FOCUS: unique symbol;
 
-	get isFocus(): boolean { return this.matchesStore(x.w_ancestry_focus); }
+	get isFocus(): boolean { return get(x.w_ancestry_focus)?.equals(this) ?? false; }
 	becomeFocus(): boolean { return x.becomeFocus(this); }
 
 	get depth_below_focus(): number {
@@ -248,12 +248,12 @@ export default class Ancestry extends Identifiable {
 		let isVisible = false;
 		if (controls.inRadialMode) {
 			const parent = this.parentAncestry;
-			const childIsFocus = get(x.w_ancestry_focus).parentAncestry == this;
+			const childIsFocus = get(x.w_ancestry_focus)?.parentAncestry == this;
 			const thisIsVisible = this.g_paging?.index_isVisible(this.siblingIndex) ?? true;
 			const parentIsFocus = !!parent && parent.isFocus && thisIsVisible;
 			isVisible = this.isFocus || childIsFocus || parentIsFocus;
 		} else {
-			const focus = get(x.w_ancestry_focus);
+			const focus = get(x.w_ancestry_focus) ?? null;
 			const visible = this.isVisible_accordingTo_depth_below_focus;
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpanded_fromRootTo(focus);

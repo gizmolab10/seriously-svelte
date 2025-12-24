@@ -142,7 +142,7 @@ export class Utilities extends Testworthy_Utilities {
 	print_graph() {
 		const rect = g.rect_ofAllWidgets;
 		const className = controls.inTreeMode ? 'tree-graph' : 'radial-graph';
-		print.print_element_byClassName_withRect(className, rect, get(x.w_ancestry_focus).title);
+		print.print_element_byClassName_withRect(className, rect, get(x.w_ancestry_focus)?.title ?? '');
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {

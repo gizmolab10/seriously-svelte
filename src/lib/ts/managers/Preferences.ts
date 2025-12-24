@@ -139,7 +139,7 @@ export class Preferences {
 				rootAncestry.becomeFocus();
 			}
 		}
-		x.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		x.w_ancestry_focus.subscribe((ancestry: Ancestry | undefined) => {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
 		});
 	}

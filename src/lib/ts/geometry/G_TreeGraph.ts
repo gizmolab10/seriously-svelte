@@ -6,7 +6,7 @@ export default class G_TreeGraph {
 	focus!: Ancestry;
 
 	constructor() {
-		x.w_ancestry_focus.subscribe((focus: Ancestry) => {
+		x.w_ancestry_focus.subscribe((focus: Ancestry | undefined) => {
 			if (!!focus) {
 				this.focus = focus;
 			}
@@ -104,4 +104,4 @@ export default class G_TreeGraph {
 
 }
 
-export const g_tree = new G_TreeGraph();
+export const g_graph_tree = new G_TreeGraph();

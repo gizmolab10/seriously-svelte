@@ -702,7 +702,7 @@ export class Hierarchy {
 					});
 				}
 			}
-			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(x.w_ancestry_focus).isGrabbed}"`);
+			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(x.w_ancestry_focus)?.isGrabbed ?? false}"`);
 			g.grand_build();
 		}
 	}

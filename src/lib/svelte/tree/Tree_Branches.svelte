@@ -1,5 +1,5 @@
 <script lang=ts>
-	import { show, debug, g_tree, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { show, debug, g_graph_tree, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -37,7 +37,7 @@
 			{#each ancestry.branchAncestries as branchAncestry}
 				<Tree_Line g_line = {branchAncestry.g_widget.g_line}/>
 				<Widget g_widget = {branchAncestry.g_widget}/>
-				{#if branchAncestry.shows_branches && !g_tree.branch_isAlready_attached(branchAncestry)}
+				{#if branchAncestry.shows_branches && !g_graph_tree.branch_isAlready_attached(branchAncestry)}
 					<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 				{/if}
 			{/each}

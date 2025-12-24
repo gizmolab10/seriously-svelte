@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Signal, T_Radial_Zone, T_Hit_Target, S_Component } from '../../ts/common/Global_Imports';
-	import { g, k, s, u, x, radial, signals, elements } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, x, radial, signals, elements, g_graph_radial } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -68,7 +68,7 @@
 		<Widget g_widget={$w_ancestry_focus.g_widget}/>
 		<div class = 'necklace-of-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
-			{#each g_radial.g_necklace_widgets as g_necklace_widget}
+			{#each g_graph_radial.g_necklace_widgets as g_necklace_widget}
 				<Widget g_widget = {g_necklace_widget}/>
 			{/each}
 		</div>

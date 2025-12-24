@@ -1,6 +1,6 @@
 import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { T_Graph, T_Detail, T_Kinship, T_Breadcrumbs } from '../common/Global_Imports';
-import { g, k, p, x, g_tree, features } from '../common/Global_Imports';
+import { g, k, p, x, g_graph_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 
@@ -47,7 +47,7 @@ export class Visibility {
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parents : T_Kinship.children;
-					g_tree.set_tree_types([mode]);
+					g_graph_tree.set_tree_types([mode]);
 					break;
 			}
 		}

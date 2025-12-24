@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { e, g, k, s, x, hits, busy, debug, colors, radial, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Hit_Target, S_Component, S_Mouse } from '../../ts/common/Global_Imports';
-	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
+	import { Thing, Point, Angle, g_graph_radial, databases } from '../../ts/common/Global_Imports';
 	import Radial_Cluster from './Radial_Cluster.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
@@ -171,7 +171,7 @@
 		style = '
 			z-index:{T_Layer.paging};
 			background-color: transparent;'>
-		{#each g_radial.g_clusters as g_cluster}
+		{#each g_graph_radial.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Radial_Cluster
 					color = {color}

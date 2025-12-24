@@ -1,4 +1,4 @@
-import { c, g, h, k, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
+import { c, g, h, k, u, x, hits, g_graph_tree, debug, search, radial } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
@@ -291,8 +291,8 @@ export class Events {
 						case 'm':				controls.toggle_graph_type(); break;
 						case ']':				x.ancestry_next_focusOn(true); break;
 						case '[':				x.ancestry_next_focusOn(false); break;
-						case '>':				g_tree.increase_depth_limit_by(1); break;
-						case '<':				g_tree.increase_depth_limit_by(-1); break;
+						case '>':				g_graph_tree.increase_depth_limit_by(1); break;
+						case '<':				g_graph_tree.increase_depth_limit_by(-1); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 						case 'f':				search.w_s_search.set(T_Search.enter); break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;

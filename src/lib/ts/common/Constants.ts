@@ -129,7 +129,7 @@ export default class Constants {
 	opacity = {
 		none:		  0,
 		faint:		  0.1,
-		light:		  0.28,
+		light:		  0.2,
 		medium:		  0.4,
 		dark:		  0.7,
 		cluster: {

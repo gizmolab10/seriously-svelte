@@ -1,4 +1,4 @@
-import { c, e, k, p, u, hits, show, debug, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
+import { c, e, k, p, u, hits, show, debug, g_graph_tree, g_graph_radial, signals, controls, features } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Widget, T_Graph, T_Preference } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
@@ -38,9 +38,9 @@ export default class Geometry {
 
 	layout() {
 		if (controls.inRadialMode) {
-			g_radial.layout();
+			g_graph_radial.layout();
 		} else {
-			g_tree.layout();
+			g_graph_tree.layout();
 		}
 		// NB: set html element fails (in S_Component)
 		// if id does not match, or exist yet
@@ -66,9 +66,9 @@ export default class Geometry {
 
 	get all_g_widgets(): G_Widget[] {
 		if (controls.inRadialMode) {
-			return g_radial.visible_g_widgets;
+			return g_graph_radial.visible_g_widgets;
 		} else {
-			return g_tree.visible_g_widgets;
+			return g_graph_tree.visible_g_widgets;
 		}
 	}
 

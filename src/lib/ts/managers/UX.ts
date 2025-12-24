@@ -3,7 +3,7 @@ import { g, h, s, u, hits, debug, search, radial } from '../common/Global_Import
 import { details, controls, databases } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import { get, writable } from 'svelte/store';
+import { get, writable, derived, type Readable } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
@@ -11,18 +11,32 @@ export default class S_UX {
 	w_s_title_edit		  = writable<S_Title_Edit | null>(null);
 	w_s_alteration		  = writable<S_Alteration | null>();
 	w_thing_title		  = writable<string | null>();
-	w_ancestry_focus	  = writable<Ancestry>();
 	w_ancestry_forDetails = writable<Ancestry>();
 	w_relationship_order  = writable<number>(0);
 	w_thing_fontFamily	  = writable<string>();
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
+	w_ancestry_focus!: Readable<Ancestry | undefined>;
 	si_expanded = new S_Items<Ancestry>([]);
 	si_grabs = new S_Items<Ancestry>([]);
 	si_found = new S_Items<Thing>([]);
 
 	parents_focus!: Ancestry;
 	prior_focus!: Ancestry;
+
+	constructor() {
+		this.w_ancestry_focus = derived(			// derived store AFTER si_recents is available
+			[this.si_recents.w_items, this.si_recents.w_index],
+			([items, index]) => {
+				if (items.length === 0) {
+					return h?.rootAncestry;			// fallback during initialization
+				}
+				const pair = items[index] as Identifiable_S_Items_Pair | undefined;
+				const focus = pair?.[0] as Ancestry | undefined;
+				return focus ?? h?.rootAncestry;
+			}
+		);
+	}
 
 	//////////////////////////////
 	//							//
@@ -47,16 +61,13 @@ export default class S_UX {
 			);
 		}
 		
-		this.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.update_grabs_forSearch();
-			this.update_ancestry_forDetails();
-		});
-		// keep w_ancestry_focus derived from recents history index
-		this.si_recents.w_index.subscribe(() => {
-			this.update_focus_from_recents();
-		});
-		this.si_recents.w_items.subscribe(() => {
-			this.update_focus_from_recents();
+		// w_ancestry_focus is now derived from si_recents.w_items and si_recents.w_index
+		// No need for manual subscriptions to update it - it updates automatically
+		this.w_ancestry_focus.subscribe((ancestry: Ancestry | undefined) => {
+			if (ancestry) {
+				this.update_grabs_forSearch();
+				this.update_ancestry_forDetails();
+			}
 		});
 		databases.w_data_updated.subscribe((count: number) => {
 			this.update_grabs_forSearch();
@@ -68,15 +79,6 @@ export default class S_UX {
 			this.update_grabs_forSearch();
 		});
 		this.update_grabs_forSearch();
-	}
-
-	private update_focus_from_recents() {
-		// derive focus ancestry from si_recents index; does not mutate history
-		let [focus, _] = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
-		const current = get(this.w_ancestry_focus) ?? h.rootAncestry;
-		if (!focus?.equals(current)) {
-			this.w_ancestry_focus.set(focus);
-		}
 	}
 	
 	static readonly _____ANCESTRY: unique symbol;
@@ -97,7 +99,7 @@ export default class S_UX {
 		const presented = this.ancestry_forDetails;
 		let ancestry = search.selected_ancestry;
 		if (!ancestry) {
-			const focus = get(this.w_ancestry_focus);
+			const focus = get(this.w_ancestry_focus) ?? h.rootAncestry;
 			const grab = this.si_grabs.item as Ancestry;
 			ancestry = grab ?? focus ?? h.rootAncestry;
 		}
@@ -127,11 +129,12 @@ export default class S_UX {
 
 	becomeFocus(ancestry: Ancestry): boolean {
 		const priorFocus = get(this.w_ancestry_focus);
-		const changed = !priorFocus || !ancestry.equals(priorFocus!);
+		const changed = !priorFocus || !ancestry.equals(priorFocus);
 		if (changed) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.remove_all_beyond_index();
 			this.si_recents.push(pair);
+			// w_ancestry_focus is now automatically updated via derived store
 			// this.double_check(ancestry);
 			x.w_s_alteration.set(null);
 			ancestry.expand();
@@ -154,7 +157,7 @@ export default class S_UX {
 	}
 
 	update_forFocus() {
-		let focus = get(this.w_ancestry_focus);
+		let focus = get(this.w_ancestry_focus) ?? h.rootAncestry;
 		if (get(g.w_branches_areChildren)) {
 			this.parents_focus = focus;
 			focus = this.prior_focus;
