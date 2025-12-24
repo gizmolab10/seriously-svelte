@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { T_Drag, T_Layer, T_Signal, T_Hit_Target, T_Orientation } from '../../ts/common/Global_Imports';
 	import { e, k, s, u, x, hits, show, debug, colors, radial } from '../../ts/common/Global_Imports';
-	import { T_Drag, T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { signals, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
@@ -25,9 +25,11 @@
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
-	let s_component: S_Component;
     let thing = ancestry.thing;
-	let color = thing?.color;
+	let thing_color = thing?.color;
+	let arrow_stroke_color = thing_color;
+	let arrow_fill_color = thing_color;
+	let s_component: S_Component;
 	let isHovering = false;
 
 	update_svgPaths();
@@ -93,10 +95,12 @@
 
 	function update_colors() {
 		if (!elements.isDragging && !!s_drag && !!thing) {
+			arrow_fill_color = s_drag.isHovering ? $w_background_color : s_drag.hoverColor;
+			arrow_stroke_color = s_drag.isHovering ? $w_background_color : thing_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
 			svg_outline_color = s_drag.svg_outline_color;
-			color = thing.color;
 			parents_color = s_drag.stroke;
+			thing_color = thing.color;
 		}
 	}
 
@@ -158,9 +162,17 @@
 					<SVG_D3 name={'svg-related-' + name}
 						width={size}
 						height={size}
-						stroke={color}
+						stroke={thing_color}
 						fill={$w_background_color}
 						svgPath={svgPathFor_related}/>
+				{/if}
+				{#if ancestry.isFocus}
+					<SVG_D3 name={'svg-focus-' + name}
+						width={size}
+						height={size}
+						stroke={thing_color}
+						fill={arrow_fill_color}
+						svgPath={svgPaths.arrow(size, 4, T_Orientation.left)}/>
 				{/if}
 			</div>
 		</button>

@@ -1,4 +1,4 @@
-import { k, u, Rect, Size, Point, Angle, T_Oblong, Direction } from '../common/Global_Imports';
+import { k, u, Rect, Size, Point, Angle, T_Oblong, T_Orientation, Direction } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
 
 export default class SVG_Paths {
@@ -29,6 +29,28 @@ export default class SVG_Paths {
 		const start = margin + 2;
 		const end = diameter - margin - 2;
 		return `M ${start} ${radius} L ${end} ${radius} M ${radius} ${start} L ${radius} ${end}`;
+	}
+
+	arrow(diameter: number, margin: number, orientation: T_Orientation): string {
+		const start = margin;
+		const center = diameter / 2;
+		const end = diameter - margin;
+		const bodyThickness = 1.5;
+		const arrowheadBase = (diameter - margin * 2);
+		const arrowheadLength = (diameter - margin * 2) * 2 / 3;
+		const bodyStart = start + arrowheadLength;
+		const bodyEnd = end;
+		
+		switch (orientation) {
+			case T_Orientation.right:
+				return `M ${end} ${center} L ${end - arrowheadLength} ${center - arrowheadBase / 2} L ${end - arrowheadLength} ${center - bodyThickness / 2} L ${start} ${center - bodyThickness / 2} L ${start} ${center + bodyThickness / 2} L ${end - arrowheadLength} ${center + bodyThickness / 2} L ${end - arrowheadLength} ${center + arrowheadBase / 2} Z`;
+			case T_Orientation.left:
+				return `M ${start} ${center} L ${bodyStart} ${center - arrowheadBase / 2} L ${bodyStart} ${center - bodyThickness / 2} L ${bodyEnd} ${center - bodyThickness / 2} L ${bodyEnd} ${center + bodyThickness / 2} L ${bodyStart} ${center + bodyThickness / 2} L ${bodyStart} ${center + arrowheadBase / 2} Z`;
+			case T_Orientation.up:
+				return `M ${center} ${start} L ${center - arrowheadBase / 2} ${start + arrowheadLength} L ${center - bodyThickness / 2} ${start + arrowheadLength} L ${center - bodyThickness / 2} ${end} L ${center + bodyThickness / 2} ${end} L ${center + bodyThickness / 2} ${start + arrowheadLength} L ${center + arrowheadBase / 2} ${start + arrowheadLength} Z`;
+			case T_Orientation.down:
+				return `M ${center} ${end} L ${center - arrowheadBase / 2} ${end - arrowheadLength} L ${center - bodyThickness / 2} ${end - arrowheadLength} L ${center - bodyThickness / 2} ${start} L ${center + bodyThickness / 2} ${start} L ${center + bodyThickness / 2} ${end - arrowheadLength} L ${center + arrowheadBase / 2} ${end - arrowheadLength} Z`;
+		}
 	}
 
     circle_atOffset(width: number, diameter: number, offset: Point = Point.zero): string {
