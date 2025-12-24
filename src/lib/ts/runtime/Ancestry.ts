@@ -147,7 +147,7 @@ export default class Ancestry extends Identifiable {
 		return u.strip_invalid(relationshipHIDs);
 	}
 
-	relationships_count_forChildren(forChildren: boolean):		  number { return this.relationships_forChildren(forChildren).length; }
+	count_ofChilcren(forChildren: boolean):						  number { return this.relationships_forChildren(forChildren).length; }
 	relationshipAt(back: number = 1):				 Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	relationships_forChildren(forChildren: boolean): Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
 
@@ -155,7 +155,7 @@ export default class Ancestry extends Identifiable {
 
 	svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child: boolean): string | null {
 		const in_radial_mode = controls.inRadialMode;
-		const tiny_outer_dots_count = this.relationships_count_forChildren(pointsTo_child);
+		const tiny_outer_dots_count = this.count_ofChilcren(pointsTo_child);
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = pointsTo_child ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_tiny_outer_dots = in_radial_mode ? isVisible_inRadial : (isVisible_forChild || this.hidden_by_depth_limit);
@@ -928,7 +928,7 @@ export default class Ancestry extends Identifiable {
 		const isRadialFocus = controls.inRadialMode && this.isFocus;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
-		const hasChildren = this.relationships_count_forChildren(pointsTo_child) > 0;
+		const hasChildren = this.count_ofChilcren(pointsTo_child) > 0;
 		// In radial mode, only show reveal dots for children cluster widgets
 		if (controls.inRadialMode) {
 			return this.children_cluster && (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);

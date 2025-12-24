@@ -8,19 +8,21 @@
 	export let s_reveal!: S_Element;
 	const { w_s_hover } = hits;
 	const { w_thing_title } = x;
-	const { w_t_countDots } = show;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_thing_color, w_background_color } = colors;
+	const { w_t_countDots, w_show_countsAs_dots } = show;
+	let reveal_count = ancestry.count_ofChilcren(pointsTo_child);
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
+	let show_child_counts = reveal_count > 1;
 	let element: HTMLElement | null = null;
-	let bulkAlias_color = s_reveal.stroke;
+	let counts_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
@@ -88,7 +90,7 @@
 		// hoverColor is also reactive (computed from element_color)
 		fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 		svg_outline_color = s_reveal.svg_outline_color;
-		bulkAlias_color = s_reveal.stroke;
+		counts_color = s_reveal.stroke;
 		color = ancestry.thing?.color;
 		debug.log_colors(`REVEAL ${ancestry.title}${s_reveal.isInverted ? ' INVERTED' : ''}`)
 	}
@@ -96,11 +98,12 @@
 	function update_svgPaths() {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			const has_fat_center_dot = thing.isBulkAlias || ancestry.hidden_by_depth_limit;
-			offsetFor_fat_center_dot = has_fat_center_dot ? 0 : -1;
+			const dotsAre_hiding = ancestry.hidden_by_depth_limit && !ancestry.points_right;
+			const show_fat_center_dot = thing.isBulkAlias || dotsAre_hiding;
+			offsetFor_fat_center_dot = show_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
-			svgPathFor_tiny_outer_dots = ancestry.svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child);
-			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(size, 3) : null;
+			svgPathFor_tiny_outer_dots = show_child_counts ? ancestry.svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child) : null;
+			svgPathFor_fat_center_dot = show_fat_center_dot ? svgPaths.circle_atOffset(size, 3) : null;
 		}
 	}
 
@@ -143,22 +146,35 @@
 					width:{size}px;'>
 					<SVG_D3 name='fat_center-dot-svg'
 						svgPath={svgPathFor_fat_center_dot}
-						stroke={bulkAlias_color}
-						fill={bulkAlias_color}
+						stroke={counts_color}
+						fill={counts_color}
 						height={size}
 						width={size}
 					/>
 				</div>
 			{/if}
-			{#if !!svgPathFor_tiny_outer_dots}
-				<div class='tiny-outer-dots' style='
-					overflow:visible;
-					position:absolute;
-					top:{k.tiny_outer_dots.offset.y}px;
-					left:{k.tiny_outer_dots.offset.x}px;
-					width:{k.tiny_outer_dots.diameter}px;
-					height:{k.tiny_outer_dots.diameter}px;
-					z-index:0;'>
+			<div class='tiny-outer-dots' style='
+				overflow:visible;
+				position:absolute;
+				top:{k.tiny_outer_dots.offset.y}px;
+				left:{k.tiny_outer_dots.offset.x}px;
+				width:{k.tiny_outer_dots.diameter}px;
+				height:{k.tiny_outer_dots.diameter}px;
+				z-index:{T_Layer.frontmost};'>
+				{#if !$w_show_countsAs_dots}
+					{#if show_child_counts && ancestry.points_right}
+						<div class='numerical-count'
+							style='
+								top:3.6px;
+								left:6.5px;
+								font-size:8px;
+								position: absolute;
+								color:{counts_color};
+								shape-rendering: geometricPrecision;'>
+							{reveal_count}
+						</div>
+					{/if}
+				{:else if !!svgPathFor_tiny_outer_dots}
 					<svg class='tiny-outer-dots-svg'
 						viewBox='{viewBox}'
 						preserveAspectRatio='none'
@@ -173,8 +189,8 @@
 							d={svgPathFor_tiny_outer_dots}
 							vector-effect='non-scaling-stroke'/>
 					</svg>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
