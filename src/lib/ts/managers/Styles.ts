@@ -30,10 +30,12 @@ export default class Styles {
 	//////////////////////////////////////////////////////////////////////
 
 	get_widgetColors_for(ss: S_Snapshot, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
+		const medium = colors.background_special_blend(thing_color, k.opacity.medium);
 		const faint = colors.background_special_blend(thing_color, k.opacity.faint);
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		const isDown = get(e.w_mouse_button_down);
-		const t_hover_target = get(hits.w_s_hover)?.type ?? null;
+		const hover = get(hits.w_s_hover);
+		const t_hover_target = hover?.type ?? null;
 		let border = 'solid transparent 1px';
 		let background = 'transparent';
 		let color = thing_color;
@@ -44,12 +46,8 @@ export default class Styles {
 		} else if (ss.isGrabbed) {
 			color = 'white';
 			background = thing_color;
-			if (ss.isHovering) {
-				if (t_hover_target === T_Hit_Target.drag) {
-					border = this.border_for(t_hover_target, thing_color);
-				} else if (!isDown) {
-					border = `dashed ${faint} 1px`;
-				}
+			if (ss.isHovering && !isDown) {
+				border = `dashed ${faint} 1px`;
 			}
 		} else if (ss.isFocus) {
 			color = thing_color;
@@ -58,6 +56,8 @@ export default class Styles {
 		} else if (ss.isHovering) {
 			background = faint;
 			border = this.border_for(t_hover_target, thing_color);
+		} else if (t_hover_target === T_Hit_Target.drag && hover?.ancestry.id == ss.ancestry.id) {
+			border = `solid ${medium} 1px`;
 		}
 		return { color, background_color: background, border };
 	}
