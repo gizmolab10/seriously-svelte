@@ -1,6 +1,5 @@
 import { T_Startup } from '../common/Enumerations';
 import { Hierarchy } from '../managers/Hierarchy';
-import Ancestry from '../runtime/Ancestry';
 import { writable } from 'svelte/store';
 
 export class Stores {

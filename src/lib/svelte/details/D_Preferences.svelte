@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { g, k, s, u, x, show, Rect, Point, colors, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Kinship, T_Auto_Adjust_Graph, T_Cluster_Pager } from '../../ts/common/Global_Imports';
+	import { T_Auto_Adjust_Graph, T_Cluster_Pager } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Kinship, T_Counts_Shown } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -20,21 +21,25 @@
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager } = show;
+	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager, w_show_tiny_dots } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
 
-	const heights = [
+	$: heights = [
 		10,
-		back_up,			// 5. show tiny dots for
+		back_up,			// 1. counts shown
 		separator_height,
-		back_up,			// 7. force graph
+		...($w_show_tiny_dots ? [
+			back_up,		// 3. show tiny dots for
+			separator_height,
+		] : []),
+		back_up,			// force graph
 		separator_height,
-		back_up,			// 9. background color
+		back_up,			// background color
 		5];
 
-	const tops = u.cumulativeSum(heights);
+	$: tops = u.cumulativeSum(heights);
 
 	$: if (color_wrapper || $w_t_details) {
 		(async () => {
@@ -65,6 +70,18 @@
 		$w_t_countDots = types as Array<T_Kinship>;
 	}
 
+	function handle_counts_shown(types: string[]) {
+		if (types.length > 0) {
+			const selected = types[0];
+			if (selected === T_Counts_Shown.dots) {
+				$w_show_tiny_dots = true
+			} else if (selected === T_Counts_Shown.numbers) {
+				$w_show_tiny_dots = false;
+			}
+		}
+		// If empty, leave unchanged
+	}
+
 	function update_color_origin() {
 		if (color_wrapper) {
 			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedEquallyBy(1 / $w_scale_factor);
@@ -81,78 +98,106 @@
 		width: 100%;
 		top:{top}px;
 		position:{position};
-		padding-bottom:{tops[6]}px;
+		padding-bottom:{tops[tops.length - 1]}px;
 		font-size:{k.font_size.info}px;'>
-	<Separator name='tiny-dots'
+	<Separator name='counts-shown-separator'
 		length={width}
 		isHorizontal={true}
 		position={position}
 		has_gull_wings={true}
 		margin={k.details_margin}
 		origin={Point.y(tops[0])}
-		title='show tiny dots for'
+		title='show list lengths as'
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
-	<Segmented name='counts'
+	<Segmented name='counts-shown-options'
 		left={106}
-		allow_none={true}
-		allow_multiple={true}
+		allow_none={false}
+		allow_multiple={false}
 		width={segmented_width}
 		height={segmented_height}
 		origin={Point.y(tops[1])}
-		handle_selection={handle_count_dots}
-		selected={$w_t_countDots}
-		titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
-	<Separator name='first-preference'
-		length={width}
-		isHorizontal={true}
-		position={position}
-		has_gull_wings={true}
-		margin={k.details_margin}
-		origin={Point.y(tops[2])}
-		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.details}
-		title={controls.inTreeMode ? 'force graph to:' : 'paging style:'}/>
-	{#if controls.inTreeMode}
-		<Segmented name='auto-adjust'
+		handle_selection={handle_counts_shown}
+		titles={[T_Counts_Shown.dots, T_Counts_Shown.numbers]}
+		selected={$w_show_tiny_dots ? [T_Counts_Shown.dots] : [T_Counts_Shown.numbers]}/>
+	{#if $w_show_tiny_dots}
+		<Separator name='tiny-dots-separator'
+			length={width}
+			isHorizontal={true}
+			position={position}
+			has_gull_wings={true}
+			margin={k.details_margin}
+			origin={Point.y(tops[2])}
+			title='show tiny dots for'
+			title_left={k.separator_title_left}
+			thickness={k.thickness.separator.details}/>
+		<Segmented name='tiny-dots-options'
 			left={106}
 			allow_none={true}
-			allow_multiple={false}
+			allow_multiple={true}
 			width={segmented_width}
 			height={segmented_height}
-			origin={Point.y(tops[3])}
-			selected={[$w_t_auto_adjust_graph]}
-			handle_selection={handle_auto_adjust}
-			titles={[T_Auto_Adjust_Graph.selection, T_Auto_Adjust_Graph.fit]}/>
-	{:else}
-		<Segmented name='paging-style'
-			left={106}
-			allow_none={false}
-			allow_multiple={false}
-			width={segmented_width}
-			height={segmented_height}
-			origin={Point.y(tops[3])}
-			selected={[$w_t_cluster_pager]}
-			handle_selection={handle_pager_type}
-			titles={[T_Cluster_Pager.sliders, T_Cluster_Pager.steppers]}/>
+		origin={Point.y(tops[3])}
+		selected={$w_t_countDots}
+			handle_selection={handle_count_dots}
+			titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
 	{/if}
-	<Separator name='background-color'
-		length={width}
-		position={position}
-		isHorizontal={true}
-		title='accent color'
-		has_gull_wings={true}
-		has_thin_divider={true}
-		margin={k.details_margin}
-		origin={Point.y(tops[4])}
-		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.details}/>
+	{#key $w_show_tiny_dots}
+		<Separator name='centering-options-separator'
+			length={width}
+			isHorizontal={true}
+			position={position}
+			has_gull_wings={true}
+			margin={k.details_margin}
+			origin={Point.y(tops[$w_show_tiny_dots ? 4 : 2])}
+			title_left={k.separator_title_left}
+			thickness={k.thickness.separator.details}
+			title={controls.inTreeMode ? 'force graph to:' : 'paging style:'}/>
+	{/key}
+	{#key $w_show_tiny_dots}
+		{#if controls.inTreeMode}
+			<Segmented name='graph-fit-options'
+				left={106}
+				allow_none={true}
+				allow_multiple={false}
+				width={segmented_width}
+				height={segmented_height}
+				origin={Point.y(tops[$w_show_tiny_dots ? 5 : 3])}
+				selected={[$w_t_auto_adjust_graph]}
+				handle_selection={handle_auto_adjust}
+				titles={[T_Auto_Adjust_Graph.selection, T_Auto_Adjust_Graph.fit]}/>
+		{:else}
+			<Segmented name='paging-style-options'
+				left={106}
+				allow_none={false}
+				allow_multiple={false}
+				width={segmented_width}
+				height={segmented_height}
+				origin={Point.y(tops[$w_show_tiny_dots ? 5 : 3])}
+				selected={[$w_t_cluster_pager]}
+				handle_selection={handle_pager_type}
+				titles={[T_Cluster_Pager.sliders, T_Cluster_Pager.steppers]}/>
+		{/if}
+	{/key}
+	{#key $w_show_tiny_dots}
+		<Separator name='background-color'
+			length={width}
+			position={position}
+			isHorizontal={true}
+			title='accent color'
+			has_gull_wings={true}
+			has_thin_divider={true}
+			margin={k.details_margin}
+			origin={Point.y(tops[$w_show_tiny_dots ? 6 : 4])}
+			title_left={k.separator_title_left}
+			thickness={k.thickness.separator.details}/>
+	{/key}
 	<div class= 'background-color-dot'
 		bind:this={color_wrapper}
 		style='
 			width: 17px;
 			height: 17px;
-			top: {tops[5]}px;
+			top: {tops[$w_show_tiny_dots ? 7 : 5]}px;
 			border-radius: 50%;
 			left: {color_left}px;
 			position: {position};

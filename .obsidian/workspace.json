@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "63349e8dfea63b4c",
+        "id": "fe086d5a705c77d0",
         "type": "tabs",
         "children": [
           {
-            "id": "06e98e76ea4518da",
+            "id": "d74ea04151ac9c89",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/designs/guides/stores.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "stores"
+              "title": "New tab"
             }
           }
         ]
@@ -140,13 +136,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/guides/stores.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of stores"
+              "title": "Outline"
             }
           }
         ],
@@ -167,13 +162,20 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "d74ea04151ac9c89",
   "lastOpenFiles": [
-    "notes/designs/analysis/STORES_PURPOSE.md",
-    "notes/designs/guides/stores.md",
-    "notes/designs/analysis/derivable_stores.md",
+    "notes/designs/architecture/writables.md",
     "notes/designs/analysis/focus.md",
+    "notes/designs/architecture/controls.md",
+    "notes/designs/analysis/layout-guide.md",
+    "notes/designs/architecture",
     "notes/designs/analysis/breadcrumbs.md",
+    "notes/designs/guides/preferences.md",
+    "notes/designs/analysis/refactor-clicks.md",
+    "notes/designs/guides/debugging.md",
+    "src/lib/ts/managers/Stores.ts",
+    "notes/designs/analysis/STORES_PURPOSE.md",
+    "notes/designs/analysis/derivable_stores.md",
     "vitest.config.ts",
     "src/lib/ts/tests/setup.ts",
     "src/lib/ts/tests/UX_integration.test.ts",
@@ -182,8 +184,6 @@
     "src/lib/ts/tests/UX_becomeFocus.test.ts",
     "src/lib/ts/tests/UX_ancestry_next_focusOn.test.ts",
     "notes/archives/2024/June/help.webseriously",
-    "node_modules/vitest/node_modules/vite/node_modules",
-    "node_modules/vitest/node_modules/postcss/node_modules",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "node_modules/svelte/node_modules/mdn-data/css/readme.md",
@@ -202,11 +202,6 @@
     "node_modules/vitest/node_modules/esbuild/LICENSE.md",
     "node_modules/why-is-node-running/README.md",
     "node_modules/vitest/LICENSE.md",
-    "node_modules/vitest/README.md",
-    "node_modules/tldts/README.md",
-    "node_modules/tldts-core/README.md",
-    "node_modules/tinyrainbow/README.md",
-    "node_modules/tinyexec/README.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

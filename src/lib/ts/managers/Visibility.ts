@@ -1,5 +1,5 @@
 import { T_Graph, T_Detail, T_Kinship, T_Startup, T_Breadcrumbs } from '../common/Global_Imports';
-import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph, T_Counts_Shown } from '../common/Global_Imports';
 import { g, k, p, s, g_graph_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
@@ -19,6 +19,7 @@ export class Visibility {
 	w_show_search_controls	= writable<boolean>(false);
 	w_show_related			= writable<boolean>(false);
 	w_show_details			= writable<boolean>(true);
+	w_show_tiny_dots		= writable<boolean>(true);
 	w_show_other_databases	= writable<boolean>(true);
 	debug_cursor			= false;
 
@@ -74,6 +75,7 @@ export class Visibility {
 		this.w_show_details			.set(p.read_key(T_Preference.show_details)	  ?? false);
 		this.w_show_related			.set(p.read_key(T_Preference.show_related)	  ?? false);
 		this.w_show_other_databases	.set(p.read_key(T_Preference.other_databases) ?? false);
+		this.w_show_tiny_dots		.set(p.read_key(T_Preference.tiny_dots)		  ?? true);
 		this.w_t_trees		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
 		this.w_t_details	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
 		this.w_t_graph	.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);

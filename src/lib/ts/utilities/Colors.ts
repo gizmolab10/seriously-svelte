@@ -29,9 +29,7 @@ export class Colors {
 		this.w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
 			p.write_key(T_Preference.background, color);
-			const c = this.ofBannerFor(color);
-			console.log('banner', c);
-			this.banner = c;
+			this.banner = this.ofBannerFor(color);
 		})
 	}
 

@@ -1,4 +1,4 @@
-import { Ancestry, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager, T_Breadcrumbs } from '../common/Global_Imports';
+import { Ancestry, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
 import { c, g, h, k, u, x, show, debug, radial, databases } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -150,6 +150,7 @@ export class Preferences {
 		x.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
 		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
 		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.ancestry);
+		show.w_show_tiny_dots .set( this.read_key(T_Preference.tiny_dots)	 ?? true);
 		this.reactivity_subscribe()
 	}
 	
@@ -222,6 +223,9 @@ export class Preferences {
 		});
 		show.w_t_breadcrumbs.subscribe((breadcrumbs: T_Breadcrumbs) => {
 			this.write_key(T_Preference.breadcrumbs, breadcrumbs);
+		});
+		show.w_show_tiny_dots.subscribe((tiny_dots: boolean) => {
+			this.write_key(T_Preference.tiny_dots, tiny_dots);
 		});
 		
 		// OTHER

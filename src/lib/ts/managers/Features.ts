@@ -1,4 +1,4 @@
-import { k, show, T_Theme, T_Cluster_Pager } from '../common/Global_Imports';
+import { k, show, T_Theme, T_Cluster_Pager, T_Counts_Shown } from '../common/Global_Imports';
 
 export class Features {
 
@@ -32,8 +32,9 @@ export class Features {
 		for (const themeOption of themeOptions) {
 			switch (themeOption) {
 				case 'bubble':
-					show.w_t_cluster_pager.set(T_Cluster_Pager.sliders);
 					this.theme				 = T_Theme.bubble;
+					show.w_t_cluster_pager.set(T_Cluster_Pager.sliders);
+					show.w_show_tiny_dots.set(false);
 					this.allow_graph_editing = false;
 					this.allow_title_editing = false;
 					this.allow_h_scrolling	 = false;

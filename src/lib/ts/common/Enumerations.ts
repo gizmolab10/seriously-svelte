@@ -106,6 +106,11 @@ export enum T_Auto_Adjust_Graph {
 	ignore	  = 'ignore',
 }
 
+export enum T_Counts_Shown {
+	numbers = 'numbers',
+	dots    = 'dots',
+}
+
 export enum T_Search_Preference {
 	title = 'title',
 	trait = 'trait',
@@ -307,6 +312,7 @@ export enum T_Preference {
 	paging_style	  = 'paging_style',
 	show_details	  = 'show_details',			// left side
 	show_related	  = 'show_related',
+	tiny_dots		  = 'tiny_dots',
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
 	auto_adjust		  = 'auto_adjust',
