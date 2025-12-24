@@ -62,7 +62,7 @@ export default class S_UX {
 				
 				// Second priority: current grab
 				if (grabsItems.length > 0) {
-					const grab = grabsItems[grabsIndex] as Ancestry | undefined;
+					const grab = grabsItems[grabsIndex] as Ancestry | null;
 					if (grab) {
 						return grab;
 					}

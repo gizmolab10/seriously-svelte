@@ -1,10 +1,9 @@
 import { parseToRgba, transparentize } from 'color2k';
 import { T_Preference } from '../common/Enumerations';
 import { get, writable } from 'svelte/store';
-import { k } from '../common/Constants';
 import { p } from '../managers/Preferences';
 
-// single source of truth for colors?????
+// single source of truth for all colors
 
 export class Colors {
 	default = 'black';
@@ -21,16 +20,18 @@ export class Colors {
 	w_separator_color  = writable<string>(this.separator);
 
 	restore_preferences() {
-		this.w_background_color	.set( p.read_key(T_Preference.background) ?? colors.background);
-		this.w_separator_color	.set( p.read_key(T_Preference.separator) ?? colors.separator);
-		this.w_separator_color.subscribe((color: string) => {
+		this.w_background_color.set( p.read_key(T_Preference.background) ?? this.background);
+		this.w_separator_color .set( p.read_key(T_Preference.separator) ?? this.separator);
+		this.w_separator_color .subscribe((color: string) => {
 			p.write_key(T_Preference.separator, color);
-			this.w_background_color.set(colors.ofBackgroundFor(color));
+			this.w_background_color.set(this.ofBackgroundFor(color));
 		})
 		this.w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
 			p.write_key(T_Preference.background, color);
-			colors.banner = colors.ofBannerFor(color);
+			const c = this.ofBannerFor(color);
+			console.log('banner', c);
+			this.banner = c;
 		})
 	}
 
@@ -87,6 +88,18 @@ export class Colors {
 
 	static readonly _____SATURATION: unique symbol;
 
+	/**
+	 * Multiplies the saturation of a color by the given ratio.
+	 * 
+	 * Converts the color to HSBA (Hue, Saturation, Brightness, Alpha) color space,
+	 * multiplies the saturation component by the ratio (capped at 255), then converts
+	 * back to hex format. Preserves hue and brightness while intensifying or reducing
+	 * color saturation.
+	 * 
+	 * @param color - The input color in any CSS-compatible format (hex, rgb, named color, etc.)
+	 * @param ratio - The multiplier for saturation (e.g., 2.0 doubles saturation, 0.5 halves it)
+	 * @returns The color with adjusted saturation in hex format, or the original color if conversion fails
+	 */
 	private multiply_saturationOf_by(color: string, ratio: number): string {
 		let hsba = this.color_toHSBA(color);
 		if (!!hsba) {

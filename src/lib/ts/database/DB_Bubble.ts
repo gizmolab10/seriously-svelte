@@ -204,7 +204,7 @@ export default class DB_Bubble extends DB_Common {
 		if (!this.will_send_events) {
 			this.will_send_events = true;
 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
-			x.w_ancestry_focus.subscribe((ancestry: Ancestry | undefined) => {
+			x.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
 				const focus_id = ancestry?.thing?.id ?? k.empty;
 				if (!!focus_id && focus_id != this.prior_id[T_MID.focus] && busy.isFocusEventEnabled) {
 					if (this.allow_response_to[T_MID.focus]) {
@@ -233,7 +233,7 @@ export default class DB_Bubble extends DB_Common {
 				}
 				this.allow_response_to[T_MID.mode] = true;
 			});
-			x.w_ancestry_forDetails.subscribe((ancestry: Ancestry | undefined) => {
+			x.w_ancestry_forDetails.subscribe((ancestry: Ancestry | null) => {
 				const details_id = ancestry?.thing?.id ?? k.empty;
 				if (!!details_id && details_id != this.prior_id[T_MID.details]) {
 					if (this.allow_response_to[T_MID.details]) {
