@@ -34,7 +34,7 @@ export class Features {
 				case 'bubble':
 					this.theme				 = T_Theme.bubble;
 					show.w_t_cluster_pager.set(T_Cluster_Pager.sliders);
-					show.w_show_tiny_dots.set(false);
+					show.w_show_countsAs_dots.set(false);
 					this.allow_graph_editing = false;
 					this.allow_title_editing = false;
 					this.allow_h_scrolling	 = false;

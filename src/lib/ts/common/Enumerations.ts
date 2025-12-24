@@ -307,12 +307,12 @@ export enum T_Preference {
 	focus_forParents  = 'focus_forParents',
 	other_databases	  = 'other_databases',
 	cluster_sliders	  = 'cluster_sliders',
+	countsAs_dots	  = 'countsAs_dots',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// shown in details view, vertical stack
 	paging_style	  = 'paging_style',
 	show_details	  = 'show_details',			// left side
 	show_related	  = 'show_related',
-	tiny_dots		  = 'tiny_dots',
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
 	auto_adjust		  = 'auto_adjust',

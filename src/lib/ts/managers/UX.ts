@@ -17,8 +17,8 @@ export default class S_UX {
 	w_thing_fontFamily	 = writable<string>();
 	
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
-	w_ancestry_forDetails!: Readable<Ancestry | undefined>;
-	w_ancestry_focus!: Readable<Ancestry | undefined>;
+	w_ancestry_forDetails!: Readable<Ancestry | null>;
+	w_ancestry_focus!: Readable<Ancestry | null>;
 	si_expanded = new S_Items<Ancestry>([]);
 	si_grabs = new S_Items<Ancestry>([]);
 	si_found = new S_Items<Thing>([]);
@@ -34,7 +34,7 @@ export default class S_UX {
 					return h?.rootAncestry;			// fallback during initialization
 				}
 				const pair = items[index] as Identifiable_S_Items_Pair | undefined;
-				const focus = pair?.[0] as Ancestry | undefined;
+				const focus = pair?.[0] as Ancestry | null;
 				return focus ?? h?.rootAncestry;
 			}
 		);
@@ -104,7 +104,7 @@ export default class S_UX {
 		
 		// w_ancestry_focus and w_ancestry_forDetails are now derived stores
 		// They update automatically when their dependencies change
-		this.w_ancestry_focus.subscribe((ancestry: Ancestry | undefined) => {
+		this.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
 			if (ancestry) {
 				this.update_grabs_forSearch();
 			}
