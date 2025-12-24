@@ -1,4 +1,4 @@
-import { c, g, k, p, s, x, show, Rect, debug, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
+import { c, g, k, p, x, show, Rect, debug, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
@@ -6,7 +6,7 @@ export default class G_TreeGraph {
 	focus!: Ancestry;
 
 	constructor() {
-		s.w_ancestry_focus.subscribe((focus: Ancestry) => {
+		x.w_ancestry_focus.subscribe((focus: Ancestry) => {
 			if (!!focus) {
 				this.focus = focus;
 			}

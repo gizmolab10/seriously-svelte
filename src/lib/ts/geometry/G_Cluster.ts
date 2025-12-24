@@ -1,5 +1,5 @@
 import { G_Widget, G_Cluster_Pager, S_Rotation, T_Predicate, T_Cluster_Pager } from '../common/Global_Imports';
-import { g, k, s, u, show, debug, colors, radial, signals } from '../common/Global_Imports';
+import { g, k, u, x, show, debug, colors, radial, signals } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Paging } from './G_Paging';
 import { get } from 'svelte/store';
@@ -58,7 +58,7 @@ export default class G_Cluster {
 			this.widgets_shown = this.ancestries_shown.length;
 			this.isPaging = this.widgets_shown < this.total_widgets;
 			this.center = get(g.w_rect_ofGraphView).size.asPoint.dividedInHalf;
-			this.color = colors.opacitize(get(s.w_ancestry_focus).thing?.color ?? this.color, 0.2);
+			this.color = colors.opacitize(get(x.w_ancestry_focus).thing?.color ?? this.color, 0.2);
 			this.g_cluster_pager.angle_ofCluster = this.angle_ofCluster;
 			this.g_cluster_pager.layout();
 			this.layout_cluster_widgets();
@@ -86,7 +86,7 @@ export default class G_Cluster {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get name(): string { return `${get(s.w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
+	get name(): string { return `${get(x.w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 
 	get isMouse_insideThumb(): boolean {
 		const offset = Point.square(-radial.ring_radius);
@@ -125,12 +125,12 @@ export default class G_Cluster {
 	get maximum_paging_index():	  number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus():	  number { return Math.round(this.g_focusPaging?.index ?? 0); }
 	get s_paging():			  S_Rotation { return radial.s_paging_forName_ofCluster(this.name); }
-	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(s.w_ancestry_focus)); }
+	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(x.w_ancestry_focus)); }
 	get show_forks():			 boolean { return get(show.w_t_cluster_pager) == T_Cluster_Pager.sliders; }
 	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.children_cluster); }
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, children_cluster: boolean): G_Paging | null {
-		const g_pages = radial.g_pages_forThingID(get(s.w_ancestry_focus)?.thing?.id);
+		const g_pages = radial.g_pages_forThingID(get(x.w_ancestry_focus)?.thing?.id);
 		return g_pages?.g_paging_forPredicate_toChildren(predicate, children_cluster) ?? null;
 	}
 

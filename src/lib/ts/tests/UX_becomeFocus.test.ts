@@ -7,9 +7,9 @@
  * Run with: yarn test UX_becomeFocus
  */
 
-import { get } from 'svelte/store';
 import { x, s, h } from '../common/Global_Imports';
 import Ancestry from '../runtime/Ancestry';
+import { get } from 'svelte/store';
 
 describe('becomeFocus() sync with recents index', () => {
 	beforeEach(() => {
@@ -33,7 +33,7 @@ describe('becomeFocus() sync with recents index', () => {
 		expect(recentItem![0]).toBe(ancestry);
 
 		// Verify w_ancestry_focus is synced (subscription should have fired)
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(focus).toBe(ancestry);
 	});
 
@@ -77,11 +77,11 @@ describe('becomeFocus() sync with recents index', () => {
 		
 		// First call
 		root.becomeFocus();
-		expect(get(s.w_ancestry_focus)).toBe(root);
+		expect(get(x.w_ancestry_focus)).toBe(root);
 
 		// Second call immediately after
 		root.becomeFocus();
-		expect(get(s.w_ancestry_focus)).toBe(root);
+		expect(get(x.w_ancestry_focus)).toBe(root);
 		expect(x.si_recents.length).toBeGreaterThan(0);
 	});
 
@@ -92,11 +92,11 @@ describe('becomeFocus() sync with recents index', () => {
 		}
 
 		const ancestry = h.rootAncestry;
-		const initialFocus = get(s.w_ancestry_focus);
+		const initialFocus = get(x.w_ancestry_focus);
 
 		// Simulate breadcrumb button click
 		if (ancestry.becomeFocus()) {
-			const newFocus = get(s.w_ancestry_focus);
+			const newFocus = get(x.w_ancestry_focus);
 			expect(newFocus).toBe(ancestry);
 			expect(newFocus).not.toBe(initialFocus);
 		}

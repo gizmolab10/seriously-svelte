@@ -8,7 +8,7 @@
 	const { w_s_hover } = hits;
 	const { w_s_title_edit } = x;
 	const { w_count_mouse_up } = e;
-	const { w_ancestry_focus } = s;
+	const { w_ancestry_focus } = x;
 	const { w_thing_color } = colors;
 	const ring_width = k.thickness.radial.ring;
 	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;

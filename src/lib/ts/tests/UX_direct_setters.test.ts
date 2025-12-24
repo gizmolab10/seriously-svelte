@@ -7,9 +7,9 @@
  * Run with: yarn test UX_direct_setters
  */
 
-import { get } from 'svelte/store';
-import { x, s, h, p, c } from '../common/Global_Imports';
+import { c, h, p, x } from '../common/Global_Imports';
 import Ancestry from '../runtime/Ancestry';
+import { get } from 'svelte/store';
 
 describe('Direct setters removal verification', () => {
 	beforeEach(() => {
@@ -55,7 +55,7 @@ describe('Direct setters removal verification', () => {
 		p.restore_focus();
 
 		// Verify focus is set via becomeFocus (which adds to history)
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(focus).not.toBeNull();
 		expect(x.si_recents.length).toBeGreaterThan(0);
 

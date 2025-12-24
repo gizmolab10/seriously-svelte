@@ -7,9 +7,8 @@
  * Run with: yarn test UX_initialization
  */
 
+import { h, p, x } from '../common/Global_Imports';
 import { get } from 'svelte/store';
-import { x, s, h, p, c } from '../common/Global_Imports';
-import { T_Startup } from '../common/Global_Imports';
 
 describe('Initialization sequence verification', () => {
 	beforeEach(() => {
@@ -49,7 +48,7 @@ describe('Initialization sequence verification', () => {
 		}).not.toThrow();
 
 		// Verify fallback works (should use root or existing focus)
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		// Focus should be set to something (root or null, but not crash)
 	});
 
@@ -93,14 +92,14 @@ describe('Initialization sequence verification', () => {
 
 		// Set a focus first
 		h.rootAncestry.becomeFocus();
-		const initialFocus = get(s.w_ancestry_focus);
+		const initialFocus = get(x.w_ancestry_focus);
 
 		// Clear recents to test fallback
 		x.si_recents.items = [];
 		x.si_recents.w_index.set(0);
 
 		// Subscription handler should use fallback (existing focus or root)
-		const focusAfterEmpty = get(s.w_ancestry_focus);
+		const focusAfterEmpty = get(x.w_ancestry_focus);
 		// Should still have a focus (either initial or root)
 		expect(focusAfterEmpty).not.toBeNull();
 	});
@@ -116,7 +115,7 @@ describe('Initialization sequence verification', () => {
 		x.setup_subscriptions();
 
 		// Verify focus is set
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(focus).not.toBeNull();
 
 		// Verify it matches recents
@@ -188,7 +187,7 @@ describe('Initialization sequence verification', () => {
 		x.setup_subscriptions();
 
 		// Verify subscription works correctly
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(focus).not.toBeNull();
 	});
 });

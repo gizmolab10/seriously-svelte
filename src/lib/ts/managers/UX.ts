@@ -8,8 +8,13 @@ import { get, writable } from 'svelte/store';
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
 export default class S_UX {
-	w_s_title_edit = writable<S_Title_Edit | null>(null);
-	w_s_alteration = writable<S_Alteration | null>();
+	w_s_title_edit		  = writable<S_Title_Edit | null>(null);
+	w_s_alteration		  = writable<S_Alteration | null>();
+	w_thing_title		  = writable<string | null>();
+	w_ancestry_focus	  = writable<Ancestry>();
+	w_ancestry_forDetails = writable<Ancestry>();
+	w_relationship_order  = writable<number>(0);
+	w_thing_fontFamily	  = writable<string>();
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
 	si_expanded = new S_Items<Ancestry>([]);
@@ -42,7 +47,7 @@ export default class S_UX {
 			);
 		}
 		
-		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		this.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update_grabs_forSearch();
 			this.update_ancestry_forDetails();
 		});
@@ -68,15 +73,15 @@ export default class S_UX {
 	private update_focus_from_recents() {
 		// derive focus ancestry from si_recents index; does not mutate history
 		let [focus, _] = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
-		const current = get(s.w_ancestry_focus) ?? h.rootAncestry;
+		const current = get(this.w_ancestry_focus) ?? h.rootAncestry;
 		if (!focus?.equals(current)) {
-			s.w_ancestry_focus.set(focus);
+			this.w_ancestry_focus.set(focus);
 		}
 	}
 	
 	static readonly _____ANCESTRY: unique symbol;
 
-	get ancestry_forDetails(): Ancestry | null { return get(s.w_ancestry_forDetails); }
+	get ancestry_forDetails(): Ancestry | null { return get(this.w_ancestry_forDetails); }
 	
 	grab_next_ancestry(next: boolean) {	// for next/previous in details selection banner
 		if (get(search.w_s_search) > T_Search.off) {
@@ -92,12 +97,12 @@ export default class S_UX {
 		const presented = this.ancestry_forDetails;
 		let ancestry = search.selected_ancestry;
 		if (!ancestry) {
-			const focus = get(s.w_ancestry_focus);
+			const focus = get(this.w_ancestry_focus);
 			const grab = this.si_grabs.item as Ancestry;
 			ancestry = grab ?? focus ?? h.rootAncestry;
 		}
 		if (!presented || !presented.equals(ancestry)) {
-			s.w_ancestry_forDetails.set(ancestry);
+			this.w_ancestry_forDetails.set(ancestry);
 		}
 	}
 		
@@ -121,7 +126,7 @@ export default class S_UX {
 	}
 
 	becomeFocus(ancestry: Ancestry): boolean {
-		const priorFocus = get(s.w_ancestry_focus);
+		const priorFocus = get(this.w_ancestry_focus);
 		const changed = !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
@@ -149,7 +154,7 @@ export default class S_UX {
 	}
 
 	update_forFocus() {
-		let focus = get(s.w_ancestry_focus);
+		let focus = get(this.w_ancestry_focus);
 		if (get(g.w_branches_areChildren)) {
 			this.parents_focus = focus;
 			focus = this.prior_focus;

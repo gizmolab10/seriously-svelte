@@ -7,7 +7,6 @@
 	export let s_title!: S_Element;
 	export let fontSize = `${k.font_size.common}px`;
 	const { w_s_hover } = hits;
-	const { w_s_title_edit } = x;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const { w_thing_color } = colors;
@@ -18,7 +17,7 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_mouse_location, w_mouse_button_down } = e;
-	const { w_ancestry_focus, w_thing_title, w_thing_fontFamily } = s;
+	const { w_s_title_edit, w_ancestry_focus, w_thing_title, w_thing_fontFamily } = x;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let layout_timer: number | null = null;

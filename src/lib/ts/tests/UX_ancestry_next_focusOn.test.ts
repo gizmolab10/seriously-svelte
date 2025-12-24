@@ -7,9 +7,9 @@
  * Run with: yarn test UX_ancestry_next_focusOn
  */
 
-import { get } from 'svelte/store';
-import { x, s, h } from '../common/Global_Imports';
+import { x, h } from '../common/Global_Imports';
 import Ancestry from '../runtime/Ancestry';
+import { get } from 'svelte/store';
 
 describe('ancestry_next_focusOn() sync with recents index', () => {
 	beforeEach(() => {
@@ -28,7 +28,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 		}
 
 		const initialIndex = x.si_recents.index;
-		const initialFocus = get(s.w_ancestry_focus);
+		const initialFocus = get(x.w_ancestry_focus);
 
 		// Navigate forward
 		x.ancestry_next_focusOn(true);
@@ -37,7 +37,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 		expect(x.si_recents.index).not.toBe(initialIndex);
 		
 		// Verify focus updated via subscription
-		const newFocus = get(s.w_ancestry_focus);
+		const newFocus = get(x.w_ancestry_focus);
 		const recentItem = x.si_recents.item as [Ancestry, any] | null;
 		expect(recentItem).not.toBeNull();
 		expect(newFocus).toBe(recentItem![0]);
@@ -52,7 +52,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 		// First navigate forward
 		x.ancestry_next_focusOn(true);
 		const forwardIndex = x.si_recents.index;
-		const forwardFocus = get(s.w_ancestry_focus);
+		const forwardFocus = get(x.w_ancestry_focus);
 
 		// Then navigate backward
 		x.ancestry_next_focusOn(false);
@@ -61,7 +61,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 		expect(x.si_recents.index).not.toBe(forwardIndex);
 		
 		// Verify focus updated via subscription
-		const backFocus = get(s.w_ancestry_focus);
+		const backFocus = get(x.w_ancestry_focus);
 		expect(backFocus).not.toBe(forwardFocus);
 	});
 
@@ -75,7 +75,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 		}).not.toThrow();
 
 		// Should not update focus if recents is empty
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		// Focus may be null or previous value, but shouldn't crash
 	});
 
@@ -144,13 +144,13 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 			return;
 		}
 
-		const initialFocus = get(s.w_ancestry_focus);
+		const initialFocus = get(x.w_ancestry_focus);
 		
 		// Navigate forward
 		x.ancestry_next_focusOn(true);
 		
 		// Verify focus updated synchronously via subscription
-		const newFocus = get(s.w_ancestry_focus);
+		const newFocus = get(x.w_ancestry_focus);
 		expect(newFocus).not.toBeNull();
 		
 		// Verify it matches the recents item

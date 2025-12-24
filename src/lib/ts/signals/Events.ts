@@ -1,7 +1,7 @@
-import { c, g, h, k, s, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
+import { c, g, h, k, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
-import { T_Search, T_Action, T_Control, T_Startup } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -241,7 +241,7 @@ export class Events {
 		const isEditing = get(x.w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const key = event.key.toLowerCase();
-			const ancestry = get(s.w_ancestry_forDetails);
+			const ancestry = get(x.w_ancestry_forDetails);
 			const modifiers = ['alt',	'meta',	'shift',	'control'];
 			let graph_needsSweep = false;
 			e.w_control_key_down.set(event.ctrlKey);
@@ -317,7 +317,7 @@ export class Events {
 	}
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = get(s.w_ancestry_forDetails);	
+		const ancestry = get(x.w_ancestry_forDetails);	
 		if (get(e.w_control_key_down)) {
 			controls.showHelp_for(t_action, column);
 		} else if (!!ancestry && !this.isAction_disabledAt(t_action, column) && !!h) {
@@ -339,7 +339,7 @@ export class Events {
 					case a.show.graph:				g.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			g.ancestry_place_atCenter(get(s.w_ancestry_focus)); break;
+					case a.center.focus:			g.ancestry_place_atCenter(get(x.w_ancestry_focus)); break;
 					case a.center.selection:		g.ancestry_place_atCenter(ancestry); break;
 					case a.center.graph:			g.set_user_graph_offsetTo(Point.zero); break;
 				}								break;
@@ -366,7 +366,7 @@ export class Events {
 	}
 
 	isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
-		const ancestry = get(s.w_ancestry_forDetails);
+		const ancestry = get(x.w_ancestry_forDetails);
 		if (!!ancestry) {
 			const is_altering = !!get(x.w_s_alteration);
 			const no_children = !ancestry.hasChildren;
@@ -391,7 +391,7 @@ export class Events {
 					case a.show.graph:				return false;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			return g.ancestry_isCentered(get(s.w_ancestry_focus));
+					case a.center.focus:			return g.ancestry_isCentered(get(x.w_ancestry_focus));
 					case a.center.selection:		return g.ancestry_isCentered(ancestry);
 					case a.center.graph:			return get(g.w_user_graph_offset).magnitude < 1;
 				}								break;

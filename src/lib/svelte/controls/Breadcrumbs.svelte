@@ -8,13 +8,13 @@
 	export let width = g.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
-	const { w_s_title_edit } = x;
+	const { w_t_startup } = s;
 	const { w_s_search } = search;
 	const { w_thing_color } = colors;
 	const { w_t_breadcrumbs } = show;
 	const { w_rect_ofGraphView } = g;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_t_startup, w_focus_ancestry, w_ancestry_forDetails } = s;
+	const { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } = x;
 	let s_component: S_Component | null = null;
 	let crumb_ancestries: Array<Ancestry> = [];
 	let element: HTMLElement | null = null;
@@ -34,7 +34,7 @@
 		:::${$w_rect_ofGraphView.description}
 		:::${$w_s_title_edit?.description}
 		:::${$w_ancestry_forDetails?.id}
-		:::${$w_focus_ancestry?.id}
+		:::${$w_ancestry_focus?.id}
 		:::${x.si_found.w_index}
 		:::${$w_t_breadcrumbs}
 		:::${$w_thing_color}

@@ -1,5 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { g, h, k, p, s, x, busy, show, debug, features } from '../common/Global_Imports';
+import { g, h, k, p, x, busy, show, debug, features } from '../common/Global_Imports';
 import { T_Preference } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Enumerations';
 import { DB_Name, T_Database } from './DB_Common';
@@ -204,7 +204,7 @@ export default class DB_Bubble extends DB_Common {
 		if (!this.will_send_events) {
 			this.will_send_events = true;
 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
-			s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			x.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 				const focus_id = ancestry?.thing?.id ?? k.empty;
 				if (!!focus_id && focus_id != this.prior_id[T_MID.focus] && busy.isFocusEventEnabled) {
 					if (this.allow_response_to[T_MID.focus]) {
@@ -233,7 +233,7 @@ export default class DB_Bubble extends DB_Common {
 				}
 				this.allow_response_to[T_MID.mode] = true;
 			});
-			s.w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+			x.w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
 				const details_id = ancestry?.thing?.id ?? k.empty;
 				if (!!details_id && details_id != this.prior_id[T_MID.details]) {
 					if (this.allow_response_to[T_MID.details]) {

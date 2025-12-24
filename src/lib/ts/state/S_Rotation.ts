@@ -1,4 +1,4 @@
-import { k, s, Point, Angle, colors, radial, Ancestry, g_radial } from '../common/Global_Imports';
+import { k, x, Point, Angle, colors, radial, Ancestry, g_radial } from '../common/Global_Imports';
 import { T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import S_Component from './S_Component';
 
@@ -16,7 +16,7 @@ export default class S_Rotation extends S_Component {
 		setTimeout(() => {
 			this.reset();
 		}, 1);
-		s.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
+		x.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
 			this.identifiable = ancestry;
 			this.update_fill_color();
 		});

@@ -680,7 +680,7 @@ export class Hierarchy {
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
-		if (get(s.w_ancestry_focus)) {
+		if (get(x.w_ancestry_focus)) {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
 				const parentAncestry = ancestry.parentAncestry;
@@ -702,7 +702,7 @@ export class Hierarchy {
 					});
 				}
 			}
-			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(s.w_ancestry_focus).isGrabbed}"`);
+			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(x.w_ancestry_focus).isGrabbed}"`);
 			g.grand_build();
 		}
 	}
@@ -986,7 +986,7 @@ export class Hierarchy {
 				}
 			}
 		} else if (features.allow_graph_editing) {
-			const grab = get(s.w_ancestry_forDetails);
+			const grab = get(x.w_ancestry_forDetails);
 			if (!!grab) {
 				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 			}
@@ -994,7 +994,7 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = get(s.w_ancestry_forDetails);
+		const ancestry = get(x.w_ancestry_forDetails);
 		if (!!ancestry) {
 			this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
@@ -1464,7 +1464,7 @@ export class Hierarchy {
 	}
 
 	private get ancestry_forFile(): Ancestry {
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		let grabbed = x.ancestry_forDetails;
 		if (!!grabbed) {
 			return grabbed;
@@ -1615,7 +1615,7 @@ export class Hierarchy {
 	}
 
 	get focus(): Thing | null {
-		const ancestry = get(s.w_ancestry_focus);
+		const ancestry = get(x.w_ancestry_focus);
 		return !ancestry ? this.root : ancestry.thing;
 	}
 

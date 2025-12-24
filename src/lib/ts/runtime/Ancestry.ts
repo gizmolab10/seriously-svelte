@@ -1,4 +1,4 @@
-import { g, h, k, s, u, x, show, debug, search, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
+import { g, h, k, u, x, show, debug, search, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Hit_Target } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
@@ -69,11 +69,11 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____FOCUS: unique symbol;
 
-	get isFocus(): boolean { return this.matchesStore(s.w_ancestry_focus); }
+	get isFocus(): boolean { return this.matchesStore(x.w_ancestry_focus); }
 	becomeFocus(): boolean { return x.becomeFocus(this); }
 
 	get depth_below_focus(): number {
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		if (!!focus) {
 			return Math.abs(this.depth - focus.depth);
 		}
@@ -248,12 +248,12 @@ export default class Ancestry extends Identifiable {
 		let isVisible = false;
 		if (controls.inRadialMode) {
 			const parent = this.parentAncestry;
-			const childIsFocus = get(s.w_ancestry_focus).parentAncestry == this;
+			const childIsFocus = get(x.w_ancestry_focus).parentAncestry == this;
 			const thisIsVisible = this.g_paging?.index_isVisible(this.siblingIndex) ?? true;
 			const parentIsFocus = !!parent && parent.isFocus && thisIsVisible;
 			isVisible = this.isFocus || childIsFocus || parentIsFocus;
 		} else {
-			const focus = get(s.w_ancestry_focus);
+			const focus = get(x.w_ancestry_focus);
 			const visible = this.isVisible_accordingTo_depth_below_focus;
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpanded_fromRootTo(focus);
@@ -383,7 +383,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_forKinship(T_Kinship.parents);
+		const sibling_ancestries = get(x.w_ancestry_focus)?.ancestries_createUnique_forKinship(T_Kinship.parents);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -408,7 +408,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_forKinship(T_Kinship.related) ?? [];
+		const sibling_ancestries = get(x.w_ancestry_focus)?.ancestries_createUnique_forKinship(T_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {

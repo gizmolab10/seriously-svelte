@@ -10,10 +10,10 @@
  * Run with: yarn test UX_integration
  */
 
-import { get } from 'svelte/store';
-import { x, s, h, show } from '../common/Global_Imports';
 import { T_Breadcrumbs } from '../common/Global_Imports';
+import { h, x, show } from '../common/Global_Imports';
 import Ancestry from '../runtime/Ancestry';
+import { get } from 'svelte/store';
 
 describe('Breadcrumbs system integration tests', () => {
 	beforeEach(() => {
@@ -31,13 +31,13 @@ describe('Breadcrumbs system integration tests', () => {
 		}
 
 		const ancestry = h.rootAncestry;
-		const initialFocus = get(s.w_ancestry_focus);
+		const initialFocus = get(x.w_ancestry_focus);
 		
 		// Simulate breadcrumb button click
 		ancestry.becomeFocus();
 		
 		// Verify focus updated
-		const newFocus = get(s.w_ancestry_focus);
+		const newFocus = get(x.w_ancestry_focus);
 		expect(newFocus).toBe(ancestry);
 		
 		// Verify it was added to history
@@ -54,14 +54,14 @@ describe('Breadcrumbs system integration tests', () => {
 		}
 
 		const initialIndex = x.si_recents.index;
-		const initialFocus = get(s.w_ancestry_focus);
+		const initialFocus = get(x.w_ancestry_focus);
 		
 		// Navigate forward
 		x.ancestry_next_focusOn(true);
 		
 		// Verify index and focus are in sync
 		const newIndex = x.si_recents.index;
-		const newFocus = get(s.w_ancestry_focus);
+		const newFocus = get(x.w_ancestry_focus);
 		const recentItem = x.si_recents.item as [Ancestry, any] | null;
 		
 		expect(newIndex).not.toBe(initialIndex);
@@ -84,7 +84,7 @@ describe('Breadcrumbs system integration tests', () => {
 		root.becomeFocus();
 		
 		// Verify focus is still correct
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(focus).toBe(root);
 		
 		// Verify recents index is in sync
@@ -103,7 +103,7 @@ describe('Breadcrumbs system integration tests', () => {
 		}).not.toThrow();
 		
 		// update_focus_from_recents should use fallback
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		// Focus may be null or previous value, but shouldn't crash
 		expect(focus === null || focus instanceof Ancestry).toBe(true);
 	});
@@ -120,7 +120,7 @@ describe('Breadcrumbs system integration tests', () => {
 		
 		// Verify initial sync
 		let recentItem = x.si_recents.item as [Ancestry, any] | null;
-		let focus = get(s.w_ancestry_focus);
+		let focus = get(x.w_ancestry_focus);
 		expect(recentItem).not.toBeNull();
 		expect(focus).toBe(recentItem![0]);
 		
@@ -128,7 +128,7 @@ describe('Breadcrumbs system integration tests', () => {
 		if (x.si_recents.length > 1) {
 			x.ancestry_next_focusOn(true);
 			recentItem = x.si_recents.item as [Ancestry, any] | null;
-			focus = get(s.w_ancestry_focus);
+			focus = get(x.w_ancestry_focus);
 			expect(recentItem).not.toBeNull();
 			expect(focus).toBe(recentItem![0]);
 		}
@@ -168,7 +168,7 @@ describe('Breadcrumbs system integration tests', () => {
 		
 		// Verify focus is still in sync with index
 		const recentItem = x.si_recents.item as [Ancestry, any] | null;
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(recentItem).not.toBeNull();
 		expect(focus).toBe(recentItem![0]);
 	});
@@ -189,7 +189,7 @@ describe('Breadcrumbs system integration tests', () => {
 			
 			// Verify subscription updated focus
 			const recentItem = x.si_recents.item as [Ancestry, any] | null;
-			const focus = get(s.w_ancestry_focus);
+			const focus = get(x.w_ancestry_focus);
 			expect(recentItem).not.toBeNull();
 			expect(focus).toBe(recentItem![0]);
 		}
@@ -212,7 +212,7 @@ describe('Breadcrumbs system integration tests', () => {
 		show.w_t_breadcrumbs.set(T_Breadcrumbs.ancestry);
 		
 		// Focus should still be in sync
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		expect(focus).not.toBeNull();
 	});
 
@@ -224,7 +224,7 @@ describe('Breadcrumbs system integration tests', () => {
 
 		// Track subscription calls
 		let subscriptionFired = false;
-		const unsubscribe = s.w_ancestry_focus.subscribe(() => {
+		const unsubscribe = x.w_ancestry_focus.subscribe(() => {
 			subscriptionFired = true;
 		});
 		
@@ -246,14 +246,14 @@ describe('Breadcrumbs system integration tests', () => {
 
 		// Navigate forward in history
 		x.ancestry_next_focusOn(true);
-		const navigatedFocus = get(s.w_ancestry_focus);
+		const navigatedFocus = get(x.w_ancestry_focus);
 		
 		// Then click a breadcrumb (adds new entry)
 		const root = h.rootAncestry;
 		root.becomeFocus();
 		
 		// Verify focus updated and new entry added
-		const newFocus = get(s.w_ancestry_focus);
+		const newFocus = get(x.w_ancestry_focus);
 		expect(newFocus).toBe(root);
 		expect(x.si_recents.length).toBeGreaterThan(1);
 		
@@ -279,7 +279,7 @@ describe('Breadcrumbs system integration tests', () => {
 		root.becomeFocus();
 		
 		// Verify final state is consistent
-		const focus = get(s.w_ancestry_focus);
+		const focus = get(x.w_ancestry_focus);
 		const recentItem = x.si_recents.item as [Ancestry, any] | null;
 		expect(recentItem).not.toBeNull();
 		expect(focus).toBe(recentItem![0]);

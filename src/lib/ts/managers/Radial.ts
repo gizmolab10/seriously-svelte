@@ -1,5 +1,5 @@
+import { g, k, p, s, x, show, hits, Point, Angle, debug, signals, elements, g_radial } from '../common/Global_Imports';
 import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
-import { g, k, p, s, show, hits, Point, Angle, debug, signals, elements, g_radial } from '../common/Global_Imports';
 import { G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from '../geometry/G_Paging';
@@ -30,7 +30,7 @@ export default class Radial {
 	constructor() {
 		s.w_t_startup.subscribe((startup: T_Startup) => {
 			if (startup == T_Startup.ready) {
-				s.w_ancestry_focus.subscribe((ancestry) => {
+				x.w_ancestry_focus.subscribe((ancestry) => {
 					this.reset();
 				});
 			}

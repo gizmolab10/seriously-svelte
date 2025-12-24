@@ -6,13 +6,14 @@
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
-	const size_big = k.height.button + 4;
+	const { w_t_startup } = s;
 	const { w_t_graph } = show;
-	const { w_items: w_expanded } = x.si_expanded;
+	const size_big = k.height.button + 4;
 	const { w_s_hover, w_dragging } = hits;
+	const { w_items: w_expanded } = x.si_expanded;
 	const { w_rotate_angle, w_resize_radius } = hits;
+	const { w_s_title_edit, w_ancestry_focus, w_thing_fontFamily } = x;
 	const { w_depth_limit, w_user_graph_offset, w_rect_ofGraphView } = g;
-	const { w_t_startup, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
 	let actual_content_rect = g.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
 	let reattachments = 0;

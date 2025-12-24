@@ -16,7 +16,7 @@
 	const { w_s_hover, w_dragging } = hits;
 	const { w_t_countDots } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_ancestry_focus, w_ancestry_forDetails } = s;
+	const { w_ancestry_focus, w_ancestry_forDetails } = x;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let element: HTMLElement | null = null;

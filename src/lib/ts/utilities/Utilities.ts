@@ -6,15 +6,14 @@ import Identifiable from '../runtime/Identifiable';
 import { databases } from '../database/Databases';
 import { controls } from '../managers/Controls';
 import G_TreeLine from '../geometry/G_TreeLine';
-import { colors } from './Colors';
-import Ancestry from '../runtime/Ancestry';
 import G_Widget from '../geometry/G_Widget';
+import Ancestry from '../runtime/Ancestry';
 import { Integer } from '../types/Types';
-import { k } from '../common/Constants';
 import { g } from '../managers/Geometry';
-import { s } from '../managers/Stores';
+import { k } from '../common/Constants';
 import { x } from '../managers/UX';
 import { get } from 'svelte/store';
+import { colors } from './Colors';
 import { print } from './Print';
 
 export class Utilities extends Testworthy_Utilities {
@@ -127,7 +126,7 @@ export class Utilities extends Testworthy_Utilities {
 
 	getWidth_ofString_withSize(str: string, fontSize: string): number {
 		const element: HTMLElement = document.createElement('div');
-		element.style.fontFamily = get(s.w_thing_fontFamily);
+		element.style.fontFamily = get(x.w_thing_fontFamily);
 		element.style.left = '-9999px'; // offscreen
 		element.style.padding = '0px 0px 0px 0px';
 		element.style.position = 'absolute';
@@ -143,7 +142,7 @@ export class Utilities extends Testworthy_Utilities {
 	print_graph() {
 		const rect = g.rect_ofAllWidgets;
 		const className = controls.inTreeMode ? 'tree-graph' : 'radial-graph';
-		print.print_element_byClassName_withRect(className, rect, get(s.w_ancestry_focus).title);
+		print.print_element_byClassName_withRect(className, rect, get(x.w_ancestry_focus).title);
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {

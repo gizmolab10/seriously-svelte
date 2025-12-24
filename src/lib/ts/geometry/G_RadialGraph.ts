@@ -1,4 +1,4 @@
-import { g, h, k, s, u, Point, radial, Ancestry, Predicate } from '../common/Global_Imports';
+import { g, h, k, u, x, Point, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, T_Kinship } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from './G_Paging';
@@ -30,7 +30,7 @@ export default class G_RadialGraph {
 	}
 
 	layout_focus() {
-		const ancestry = get(s.w_ancestry_focus);
+		const ancestry = get(x.w_ancestry_focus);
 		const g_focus = ancestry?.g_widget;
 		if (!!g_focus && !!ancestry?.thing) {
 			const width_ofTitle = ancestry.thing.width_ofTitle;
@@ -47,7 +47,7 @@ export default class G_RadialGraph {
 	}
 
 	layout_forChildren_cluster(children_cluster: boolean) {
-		const focus_ancestry = get(s.w_ancestry_focus);
+		const focus_ancestry = get(x.w_ancestry_focus);
 		if (!!focus_ancestry) {
 			if (children_cluster) {
 				let childAncestries = focus_ancestry.ancestries_createUnique_forKinship(T_Kinship.children);
@@ -110,7 +110,7 @@ export default class G_RadialGraph {
 
 	get visible_g_widgets(): G_Widget[] {
 		let array: G_Widget[] = this.g_necklace_widgets;
-		const g_focus = get(s.w_ancestry_focus)?.g_widget;
+		const g_focus = get(x.w_ancestry_focus)?.g_widget;
 		if (!!g_focus) {
 			array.push(g_focus);
 		}
@@ -132,7 +132,7 @@ export default class G_RadialGraph {
 	static readonly _____PAGING: unique symbol;
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, children_cluster: boolean): G_Paging | null {
-		const g_thing_pages = radial.g_pages_forThingID(get(s.w_ancestry_focus)?.thing?.id);
+		const g_thing_pages = radial.g_pages_forThingID(get(x.w_ancestry_focus)?.thing?.id);
 		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, children_cluster) ?? null;
 	}
 

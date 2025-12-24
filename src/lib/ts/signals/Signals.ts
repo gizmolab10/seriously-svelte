@@ -5,8 +5,8 @@ import S_Component from '../state/S_Component';
 import Ancestry from '../runtime/Ancestry';
 import { Signal } from 'typed-signals';
 import { debug } from '../debug/Debug';
-import { s } from '../managers/Stores';
 import { get } from 'svelte/store';
+import { x } from '../managers/UX';
 
 export class Signals {
 	highestPriorities: Dictionary<number> = {};
@@ -38,12 +38,12 @@ export class Signals {
 	// in increasing priority from 0 to highest
 	
 	signal_rebuildGraph_from(value: any = null, component: S_Component | null = null) { this.signal(T_Signal.rebuild, value, component); }
-	signal_rebuildGraph_fromFocus(component: S_Component | null = null) { this.signal_rebuildGraph_from(get(s.w_ancestry_focus), component); }
+	signal_rebuildGraph_fromFocus(component: S_Component | null = null) { this.signal_rebuildGraph_from(get(x.w_ancestry_focus), component); }
 	signal_blink_forAlteration(value: any = null, component: S_Component | null = null) { this.signal(T_Signal.alteration, value, component); }
 	signal_reattach_widgets_from(value: any = null, component: S_Component | null = null) { this.signal(T_Signal.reattach, value, component); }
 	signal_reposition_widgets_from(value: any = null, component: S_Component | null = null) { this.signal(T_Signal.reposition, value, component); }
-	signal_reattach_widgets_fromFocus(component: S_Component | null = null) { this.signal_reattach_widgets_from(get(s.w_ancestry_focus), component); }
-	signal_reposition_widgets_fromFocus(component: S_Component | null = null) { this.signal_reposition_widgets_from(get(s.w_ancestry_focus), component); }
+	signal_reattach_widgets_fromFocus(component: S_Component | null = null) { this.signal_reattach_widgets_from(get(x.w_ancestry_focus), component); }
+	signal_reposition_widgets_fromFocus(component: S_Component | null = null) { this.signal_reposition_widgets_from(get(x.w_ancestry_focus), component); }
 
 	signal(t_signal: T_Signal, value: any = null, s_component: S_Component | null = null) {
 		if (this.anySignal_isInFlight) {									// avoid sending multiple simultaneous signals

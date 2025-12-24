@@ -1,5 +1,5 @@
 import { Ancestry, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager, T_Breadcrumbs } from '../common/Global_Imports';
-import { c, g, h, k, s, u, x, show, debug, radial, databases } from '../common/Global_Imports';
+import { c, g, h, k, u, x, show, debug, radial, databases } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -139,15 +139,15 @@ export class Preferences {
 				rootAncestry.becomeFocus();
 			}
 		}
-		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		x.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
 		});
 	}
 
 	restore_preferences() {
 		show.w_t_auto_adjust_graph  .set( this.read_key(T_Preference.auto_adjust)	 ?? null);
-		s.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
-		s.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
+		x.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
+		x.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
 		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
 		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.ancestry);
 		this.reactivity_subscribe()
