@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, hits, show, colors, radial, debug, g_graph_radial } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, x, hits, show, colors, radial, debug, g_graph_radial } from '../../ts/common/Global_Imports';
 	import { Point, T_Layer, G_Cluster, T_Cluster_Pager, S_Mouse } from '../../ts/common/Global_Imports';
 	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
@@ -9,7 +9,7 @@
 	export let color = 'red';
 	const show_fat_arc = false;
 	const { w_s_hover } = hits;
-	const { w_thing_fontFamily } = s;
+	const { w_thing_fontFamily } = x;
 	const { w_t_cluster_pager } = show;
 	const s_paging = g_cluster.s_paging;
 	const inset = k.radial_widget_inset;

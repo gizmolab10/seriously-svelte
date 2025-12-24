@@ -1,12 +1,12 @@
 <script lang='ts'>
-	import { g, k, s, u, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, x, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
 	import { tick } from 'svelte';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
-	const { w_ancestry_forDetails } = s;
+	const { w_ancestry_forDetails } = x;
 	const { w_t_details } = show;
 	const s_banner_hideable = details.s_banner_hideables_dict_byType[t_detail];
-	const { w_description: w_description, w_extra_titles: w_extra_titles } = s_banner_hideable?.si_items;
+	const { w_description, w_extra_titles } = s_banner_hideable?.si_items;
 	let title = details.banner_title_forDetail(t_detail);
 	let titles = [title, ...$w_extra_titles];
 	let hideable_isVisible = true;

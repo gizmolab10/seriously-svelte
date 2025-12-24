@@ -64,7 +64,7 @@ class Search {
 	set selected_row(row: number) {
 		x.si_found.index = row;
 		this.w_s_search.set(T_Search.selected);
-		x.update_ancestry_forDetails();
+		// w_ancestry_forDetails is now automatically updated via derived store
 	}
 
 	get selected_ancestry(): Ancestry | null {

@@ -6,7 +6,7 @@
 	export let width = 80;
 	export let top = 0;
 	const { w_show_details } = show;
-	const { w_thing_fontFamily } = s;
+	const { w_thing_fontFamily } = x;
 	const { w_rect_ofGraphView } = g;
 	const s_search = elements.s_element_for(null, T_Hit_Target.search, k.empty);
 	const { w_s_search, w_search_preferences, w_search_results_found } = search;

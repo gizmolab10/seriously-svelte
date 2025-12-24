@@ -7,10 +7,10 @@
 	export let pointsTo_child = true;
 	export let s_reveal!: S_Element;
 	const { w_s_hover } = hits;
-	const { w_thing_title } = s;
+	const { w_thing_title } = x;
+	const { w_t_countDots } = show;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_t_countDots } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
 	const { w_items: w_expanded } = x.si_expanded;

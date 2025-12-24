@@ -1,8 +1,9 @@
+import { T_Graph, T_Detail, T_Kinship, T_Startup, T_Breadcrumbs } from '../common/Global_Imports';
 import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { T_Graph, T_Detail, T_Kinship, T_Breadcrumbs } from '../common/Global_Imports';
-import { g, k, p, x, g_graph_tree, features } from '../common/Global_Imports';
+import { g, k, p, s, g_graph_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
+import { x } from '../managers/UX';
 
 export class Visibility {
 	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
@@ -22,8 +23,12 @@ export class Visibility {
 	debug_cursor			= false;
 
 	constructor() {
-		this.w_t_details.subscribe((t_details: Array<T_Detail>) => {
-			x.update_grabs_forSearch();
+		s.w_t_startup.subscribe((t_startup: T_Startup) => {
+			if (t_startup == T_Startup.ready) {
+				this.w_t_details.subscribe((t_details: Array<T_Detail>) => {
+					x.update_grabs_forSearch();
+				});
+			}
 		});
 	}
 

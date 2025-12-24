@@ -134,7 +134,7 @@
             } else {
                 x.si_grabs.reset();
             }
-            x.update_ancestry_forDetails();
+            // w_ancestry_forDetails is now automatically updated via derived store
         }
     }
 

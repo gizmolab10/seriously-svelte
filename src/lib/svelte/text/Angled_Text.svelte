@@ -8,7 +8,8 @@
 	export let text = k.space;
 	export let color = 'red';
 	export let angle = 0;
-	const { w_thing_fontFamily, w_background_color } = s;
+	const { w_background_color } = s;
+	const { w_thing_fontFamily } = x;
 	
 	$: angleDeg = angle * 180 / Math.PI;	// Calculate degrees from radians for CSS rotation
 

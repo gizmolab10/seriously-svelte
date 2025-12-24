@@ -19,7 +19,7 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
-	const { w_s_alteration, w_ancestry_forDetails } = s;
+	const { w_s_alteration, w_ancestry_forDetails } = x;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = details.s_banner_hideables_dict_byType[T_Detail.actions];
 	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Hit_Target.cancel, k.empty);

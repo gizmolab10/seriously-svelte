@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Orientation, G_Cluster_Pager } from '../../ts/common/Global_Imports';
-	import { k, s, u, Angle, Point } from '../../ts/common/Global_Imports';
+	import { k, s, u, x, colors, Angle, Point } from '../../ts/common/Global_Imports';
 	export let font_size = `${k.font_size.cluster_slider}px`;
 	export let background_color = $w_background_color;
 	export let font_family = $w_thing_fontFamily;
@@ -11,7 +11,8 @@
 	export let color = 'red';
 	export let radius = 0;
 	export let angle = 0;
-	const { w_thing_fontFamily, w_background_color } = s;
+	const { w_thing_fontFamily } = x;
+	const { w_background_color } = colors;
 	const text_path_id = `arc-path-${Math.random().toString(36).substr(2, 9)}`;	
 
 	$: arcLength = u.getWidth_ofString_withSize(text, font_size) * 1.3;

@@ -12,8 +12,9 @@
 	import D_Tags from '../details/D_Tags.svelte';
 	const width = k.width.details;
 	const { w_s_search } = search;
+	const { w_count_details } = e;
+	const { w_ancestry_forDetails } = x;	
 	const { w_index: w_found } = x.si_found;
-	const { w_count_details, w_ancestry_forDetails } = e;
 	const { w_description: w_grabs_description } = x.si_grabs;
 	const { w_description: w_tags_description } = x.si_thing_tags;
 	const { w_description: w_traits_description } = x.si_thing_traits;

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, elements, x, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
+	import { k, u, x, debug, colors, T_Layer, elements, databases } from '../../ts/common/Global_Imports';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let handleClick_onLabel: (event: Event) => {} | null = null;
@@ -12,7 +12,7 @@
 	export let height = 200;
 	export let left = 2;
 	export let top = 0;
-	const { w_thing_fontFamily, w_s_title_edit } = s;
+	const { w_thing_fontFamily, w_s_title_edit } = x;
 	let textarea = null;
 	let bound_text = original_text;
 	let cursorStyle = 'cursor: text';

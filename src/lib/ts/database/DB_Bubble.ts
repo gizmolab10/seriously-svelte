@@ -233,7 +233,7 @@ export default class DB_Bubble extends DB_Common {
 				}
 				this.allow_response_to[T_MID.mode] = true;
 			});
-			x.w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+			x.w_ancestry_forDetails.subscribe((ancestry: Ancestry | undefined) => {
 				const details_id = ancestry?.thing?.id ?? k.empty;
 				if (!!details_id && details_id != this.prior_id[T_MID.details]) {
 					if (this.allow_response_to[T_MID.details]) {

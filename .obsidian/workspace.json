@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/analysis/focus.md",
+                "file": "notes/designs/guides/stores.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "focus"
+              "title": "stores"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 346.5
   },
   "right": {
     "id": "3a2b7a363fc7d49c",
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/analysis/focus.md",
+                "file": "notes/designs/guides/stores.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of focus"
+              "title": "Outline of stores"
             }
           }
         ],
@@ -167,10 +167,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "06e98e76ea4518da",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
-    "notes/designs/analysis/breadcrumbs.md",
+    "notes/designs/analysis/STORES_PURPOSE.md",
+    "notes/designs/guides/stores.md",
+    "notes/designs/analysis/derivable_stores.md",
     "notes/designs/analysis/focus.md",
+    "notes/designs/analysis/breadcrumbs.md",
     "vitest.config.ts",
     "src/lib/ts/tests/setup.ts",
     "src/lib/ts/tests/UX_integration.test.ts",
@@ -204,9 +207,6 @@
     "node_modules/tldts-core/README.md",
     "node_modules/tinyrainbow/README.md",
     "node_modules/tinyexec/README.md",
-    "node_modules/tinybench/README.md",
-    "node_modules/svelte/node_modules/css-tree/README.md",
-    "node_modules/svelte/node_modules/mdn-data/CHANGELOG.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

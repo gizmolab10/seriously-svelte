@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, h, k, s, u, hits, colors, search, elements, x, show } from '../../ts/common/Global_Imports';
+	import { g, h, k, s, u, x, hits, colors, search, elements, x, show } from '../../ts/common/Global_Imports';
 	import { Point, T_Search, T_Banner, T_Hit_Target, T_Breadcrumbs } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Button from './Button.svelte';
@@ -8,7 +8,7 @@
 	export let left = 0;
 	const { w_s_hover } = hits;
 	const borderStyle = '1px solid';
-	const { w_thing_fontFamily } = s;
+	const { w_thing_fontFamily } = x;
 	const { w_t_breadcrumbs } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_thing_color, w_background_color } = colors;
