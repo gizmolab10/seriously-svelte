@@ -45,11 +45,14 @@
 	$: tops = u.cumulativeSum(heights);
 	$: selected_counts = show_dots ? [T_Counts_Shown.dots] : [T_Counts_Shown.numbers];
 
-	$: if (color_wrapper || $w_t_details || $w_show_countsAs_dots) {
-		(async () => {
-			await tick();
-			update_color_origin();
-		})();
+	$: {
+		const _ = !!$w_show_countsAs_dots;
+		if (!!color_wrapper) {
+			(async () => {
+				await tick();
+				update_color_origin();
+			})();
+		}
 	}
 
 	function handle_colors(color: string) {

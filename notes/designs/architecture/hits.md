@@ -225,6 +225,7 @@ Components pass `mouse_detection={T_Mouse_Detection.autorepeat}` instead of `det
 - `pending_singleClick_target`: Target with deferred single-click (for double-click detection)
 - `pending_singleClick_event`: MouseEvent for deferred single-click
 - `longClick_fired`: Flag to suppress mouse-up after long-click fires
+- `doubleClick_fired`: Flag to suppress mouse-up after double-click timer expires and deferred single-click fires
 
 ### Event Flow
 
@@ -243,7 +244,7 @@ Components pass `mouse_detection={T_Mouse_Detection.autorepeat}` instead of `det
 - Cancel long-click timer
 - Stop autorepeat
 - Reset `target.clicks`
-- If long-click already fired → suppress regular click
+- If long-click already fired or double-click timer already fired → suppress regular click
 - Otherwise → fire `handle_s_mouse`
 
 **When long-click timer fires:**
@@ -253,6 +254,7 @@ Components pass `mouse_detection={T_Mouse_Detection.autorepeat}` instead of `det
 **When double-click timer expires:**
 - User didn't click again → fire deferred single-click callback
 - Reset `target.clicks`
+- Set `doubleClick_fired` flag to suppress subsequent mouse-up click
 
 #### Cleanup on Hover-Leave
 

@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Hit_Target, T_Edit, Seriously_Range, S_Mouse } from '../../ts/common/Global_Imports';
-	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals } from '../../ts/common/Global_Imports';
+	import { controls, elements, databases, Seriously_Range } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Hit_Target, T_Edit, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	export let s_title!: S_Element;
@@ -47,10 +48,12 @@
 		if (!!element) {
 			s_widget.set_html_element(element);
 		}
-		// Set up click handler for centralized hit system
 		// Both s_title and s_widget need the handler since either might be selected
 		s_title.handle_s_mouse = handle_s_mouse;
 		s_widget.handle_s_mouse = handle_s_mouse;
+		// Set up double-click detection on s_title to forward to s_widget's callback
+		s_title.mouse_detection = T_Mouse_Detection.double;
+		setup_doubleClick_forwarding();
 		setTimeout(() => {
 			updateInputWidth();
 			if (isEditing()) {
@@ -60,6 +63,23 @@
 		}, 100);
 		return () => s_component.disconnect();
 	});
+
+	function setup_doubleClick_forwarding() {
+		s_title.doubleClick_callback = (s_mouse: S_Mouse) => {
+			debug.log_edit(`TITLE DOUBLE CLICK CALLBACK FIRED, forwarding to widget`);
+			// Forward to s_widget's callback if it exists
+			if (s_widget.doubleClick_callback) {
+				s_widget.doubleClick_callback(s_mouse);
+			} else {
+				debug.log_edit(`WARNING: s_widget.doubleClick_callback not set yet`);
+			}
+		};
+	}
+
+	// Ensure double-click callback forwards to s_widget's callback when it's set
+	$: if (s_widget.doubleClick_callback) {
+		setup_doubleClick_forwarding();
+	}
 
 	onDestroy(() => {
 		hits.delete_hit_target(s_widget);

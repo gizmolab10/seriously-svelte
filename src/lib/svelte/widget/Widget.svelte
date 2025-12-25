@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { e, g, k, s, u, x, hits, debug, colors, controls, signals, elements, components } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Rect, Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Widget_Title from './Widget_Title.svelte';
@@ -60,6 +60,12 @@
 		if (!!element) {
 			s_widget.set_html_element(element);
 		}
+		// Set up double-click detection on s_widget
+		s_widget.mouse_detection = T_Mouse_Detection.double;
+		s_widget.doubleClick_callback = (s_mouse: S_Mouse) => {
+			debug.log_edit(`WIDGET DOUBLE CLICK CALLBACK FIRED`);
+			foo();
+		};
 		return () => {
 			debug.log_style('Widget unmounting for:', ancestry?.title);
 			if (observer) observer.disconnect();
@@ -70,6 +76,10 @@
 	onDestroy(() => {
 		hits.delete_hit_target(s_widget);
 	});
+
+	function foo() {
+		debug.log_edit(`DOUBLE CLICK DETECTED`);
+	}
 
 	$: {
 		const _ = `${$w_thing_color}
