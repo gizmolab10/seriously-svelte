@@ -95,7 +95,7 @@
 
 	function update_colors() {
 		if (!elements.isDragging && !!s_drag && !!thing) {
-			arrow_fill_color = s_drag.isHovering ? $w_background_color : s_drag.hoverColor;
+			arrow_fill_color = s_drag.isHovering ? $w_background_color : thing_color;
 			arrow_stroke_color = s_drag.isHovering ? $w_background_color : thing_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
 			svg_outline_color = s_drag.svg_outline_color;
@@ -166,12 +166,12 @@
 						fill={$w_background_color}
 						svgPath={svgPathFor_related}/>
 				{/if}
-				{#if ancestry.isFocus}
+				{#if ancestry.isFocus && !$w_show_countsAs_dots}
 					<SVG_D3 name={'svg-focus-' + name}
 						width={size}
 						height={size}
-						stroke={thing_color}
 						fill={arrow_fill_color}
+						stroke={arrow_stroke_color}
 						svgPath={svgPaths.arrow(size, 4, T_Orientation.left)}/>
 				{/if}
 			</div>

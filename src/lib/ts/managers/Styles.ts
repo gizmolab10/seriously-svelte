@@ -49,7 +49,7 @@ export default class Styles {
 			if (ss.isHovering && !isDown) {
 				border = `dashed ${faint} 1px`;
 			}
-		} else if (ss.isFocus) {
+		} else if (ss.isFocus && !ss.isHovering) {
 			color = thing_color;
 			background = background_color;
 			border = `solid ${thing_color} 1px`;

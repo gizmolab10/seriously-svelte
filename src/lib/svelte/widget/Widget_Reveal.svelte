@@ -33,8 +33,6 @@
 	const size = k.height.dot;
 	const viewBox_width = size;
 
-	console.log(`reveal_count: ${reveal_count} ${pointsTo_child} ${ancestry.title}`);
-
 	update_colors();
 
 	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hit_Target.reveal, (received_ancestry) => {
