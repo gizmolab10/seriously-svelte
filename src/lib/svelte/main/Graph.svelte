@@ -105,13 +105,13 @@
 				<div class='debug-graph-content'
 					style='
 						position: absolute;
-						border: 4px dashed lightblue;
+						border: 1px dashed green;
 						z-index: ${T_Layer.frontmost};
 						background-color: transparent;
-						top: {actual_content_rect.origin.y}px;
-						left: {actual_content_rect.origin.x}px;
-						width: {actual_content_rect.size.width}px;
-						height: {actual_content_rect.size.height}px;
+						top: {actual_content_rect.origin.y - 1}px;
+						left: {actual_content_rect.origin.x + 14}px;
+						width: {actual_content_rect.size.width - 10}px;
+						height: {actual_content_rect.size.height - 2}px;
 					'>
 				</div>
 			{/if}

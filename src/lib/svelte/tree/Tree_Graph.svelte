@@ -23,11 +23,11 @@
 			style = '
 				position: absolute;
 				z-index: {T_Layer.graph};
-				left: {$w_user_graph_offset.x}px;
-				top: {$w_user_graph_offset.y - 5}px;
+				transform: scale({$w_scale_factor});
+				top: {$w_user_graph_offset.y - 2}px;
+				left: {$w_user_graph_offset.x + 16}px;
 				width: {$w_rect_ofGraphView.size.width}px;
-				height: {$w_rect_ofGraphView.size.height}px;
-				transform: scale({$w_scale_factor});'>
+				height: {$w_rect_ofGraphView.size.height}px;'>
 			<Widget g_widget = {$w_ancestry_focus.g_widget}/>
 			{#if $w_ancestry_focus.shows_branches}
 				<Tree_Branches ancestry = {$w_ancestry_focus} depth = {$w_depth_limit}/>
