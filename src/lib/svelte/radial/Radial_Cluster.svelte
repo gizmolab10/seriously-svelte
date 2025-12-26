@@ -72,8 +72,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		if (s_mouse.isDown && s_mouse.event) {
-			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
-			const angle_ofPage = angle_ofMouseDown.angle_normalized();
+			const angle_ofPage = g.mouse_angle_fromGraphCenter.angle_normalized();
 			debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
 			s_paging.active_angle = angle_ofPage;
 			s_paging.basis_angle = angle_ofPage;
@@ -117,8 +116,8 @@
 			{#if $w_t_cluster_pager == T_Cluster_Pager.sliders}
 				<path class='path-arc-slider'
 					fill='transparent'
-					d={g_cluster_pager.svgPathFor_arcSlider}
 					stroke-width={k.thickness.radial.fork}
+					d={g_cluster_pager.svgPathFor_arcSlider}
 					stroke={colors.special_blend(color, $w_background_color, k.opacity.cluster.armature)}
 					pointer-events="stroke"/>
 				{#if g_cluster.widgets_shown > 1}
