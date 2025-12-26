@@ -33,9 +33,9 @@ export default class SVG_Paths {
 
 	arrow(diameter: number, margin: number, orientation: T_Orientation): string {
 		const start = margin;
+		const bodyThickness = 1.5;
 		const center = diameter / 2;
 		const end = diameter - margin;
-		const bodyThickness = 1.5;
 		const arrowheadBase = (diameter - margin * 2);
 		const arrowheadLength = (diameter - margin * 2) * 2 / 3;
 		const bodyStart = start + arrowheadLength;
@@ -240,20 +240,13 @@ export default class SVG_Paths {
 		return paths.join(k.space);
 	}
 
-	path_for(name: string, size: number = 16): string | null {
-		switch (name) {
-			case 'up':	  return this.fat_polygon(size, -Math.PI / 2);
-			case 'down':  return this.fat_polygon(size, Math.PI / 2);
-			case '>':
-			case 'right': return this.fat_polygon(size, Math.PI);
-			case '<':
-			case 'left':  return this.fat_polygon(size, 0);
-		}
-		return null;
+	fat_polygon_path_for(name: string, size: number = 16): string | null {
+		let angle = Angle.angle_from_name(name);
+		return angle != null ? this.fat_polygon(size, angle) : null;
 	}
 
 	// TODO: this only works for the default number of vertices (3)
-	fat_polygon(size: number, angle: number, vertices: number = 3, onCenter: boolean = false): string {
+	fat_polygon(size: number, angle: number, onCenter: boolean = false, vertices: number = 3): string {
 		const segmentAngle = Math.PI / vertices;
 		const offset = onCenter ? Point.zero : Point.square(size / 2);
 		const inner = Point.x(size / 3);

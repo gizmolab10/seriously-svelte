@@ -57,5 +57,5 @@
 		stroke={color}
 		fill={fill_color}
 		pointer-events="all"
-		d={svgPaths.fat_polygon(size, 0, 3, true)}/>
+		d={svgPaths.fat_polygon(size, 0, true)}/>
 </g>

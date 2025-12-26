@@ -124,10 +124,10 @@
 						name={`${name}-${button_name_for(column)}`}
 						origin={Point.x(g_repeater.button_left_for(column))}
 						handle_s_mouse={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
-						{#if has_svg && !!svgPaths.path_for(title)}
+						{#if has_svg && !!svgPaths.fat_polygon_path_for(title)}
 							<svg
 								class='svg-button-path-for-{title}'>
-								<path d={svgPaths.path_for(title, svg_size)} fill='white'/>
+								<path d={svgPaths.fat_polygon_path_for(title, svg_size)} fill='white'/>
 							</svg>
 						{:else}
 							{title}

@@ -163,24 +163,22 @@
 				width:{k.tiny_outer_dots.diameter}px;
 				height:{k.tiny_outer_dots.diameter}px;
 				z-index:{T_Layer.frontmost};'>
-				{#if !$w_show_countsAs_dots}
-					{#if show_reveal_count && ancestry.points_right}
-						<div class='numerical-count'
-							style='
-								left:-1px;
-								width:100%;
-								height:100%;
-								position: absolute;
-								text-align: center;
-								color:{counts_color};
-								vertical-align: middle;
-								top:{reveal_count_top}px;
-								font-size:{count_fontSize}px;
-								shape-rendering: geometricPrecision;'>
-							{reveal_count}
-						</div>
-					{/if}
-				{:else if !!svgPathFor_tiny_outer_dots}
+				{#if !$w_show_countsAs_dots && show_reveal_count && ancestry.points_right}
+					<div class='numerical-count'
+						style='
+							left:-1px;
+							width:100%;
+							height:100%;
+							position: absolute;
+							text-align: center;
+							color:{counts_color};
+							vertical-align: middle;
+							top:{reveal_count_top}px;
+							font-size:{count_fontSize}px;
+							shape-rendering: geometricPrecision;'>
+						{reveal_count}
+					</div>
+				{:else if $w_show_countsAs_dots && !!svgPathFor_tiny_outer_dots}
 					<svg class='tiny-outer-dots-svg'
 						viewBox='{viewBox}'
 						preserveAspectRatio='none'

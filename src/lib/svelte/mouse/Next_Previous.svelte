@@ -55,15 +55,15 @@
 
 	function get_path_for(title: string, index: number): string {
 		if (!custom_svgPaths) {
-			return svgPaths.path_for(String(title), size);
+			return svgPaths.fat_polygon_path_for(String(title), size);
 		} else {
 			if (index === 0 && custom_svgPaths.up) {
 				return custom_svgPaths.up + ' ' +
-				svgPaths.path_for('up', size);
+				svgPaths.fat_polygon_path_for('up', size);
 			}
 			if (index === 1 && custom_svgPaths.down) {
 				return custom_svgPaths.down + ' ' +
-				svgPaths.path_for('down', size);
+				svgPaths.fat_polygon_path_for('down', size);
 			}
 		}
 		return k.empty;

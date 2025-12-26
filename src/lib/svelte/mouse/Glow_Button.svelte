@@ -15,7 +15,7 @@
     const gradient_name = 'glowing';
 	const { w_background_color } = colors;
     const { w_s_hover, w_autorepeat } = hits;
-    const icon_path = svgPaths.path_for(title);
+    const icon_path = svgPaths.fat_polygon_path_for(title);
     const glow_rect = Rect.createWHRect(width, height);
     const click_title = !!icon_path ? title : banner_id;
     const s_element = elements.s_element_for(new Identifiable(`glow-${banner_id}-${title}`), T_Hit_Target.glow, click_title);

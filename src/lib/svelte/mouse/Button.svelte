@@ -9,7 +9,6 @@
 	export let font_size = k.font_size.common;
 	export let border_color = colors.border;
 	export let origin: Point | null = null;
-	export let align_left = true;
 	export let padding = '0px 6px 1px 6px';
 	export let height = k.height.button;
 	export let width = k.height.button;
@@ -17,6 +16,7 @@
 	export let color = colors.default;
 	export let position = 'absolute';
 	export let zindex = T_Layer.dot;
+	export let align_left = true;
 	export let style = k.empty;
 	export let name = k.empty;
 	const { w_control_key_down } = e;
