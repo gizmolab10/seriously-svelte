@@ -2,7 +2,7 @@
 	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals } from '../../ts/common/Global_Imports';
 	import { controls, elements, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Hit_Target, T_Edit, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Hit_Target, T_Edit, T_Mouse_Detection, T_Timer } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	export let s_title!: S_Element;
@@ -66,12 +66,9 @@
 
 	function setup_doubleClick_forwarding() {
 		s_title.doubleClick_callback = (s_mouse: S_Mouse) => {
-			debug.log_edit(`TITLE DOUBLE CLICK CALLBACK FIRED, forwarding to widget`);
 			// Forward to s_widget's callback if it exists
 			if (s_widget.doubleClick_callback) {
 				s_widget.doubleClick_callback(s_mouse);
-			} else {
-				debug.log_edit(`WARNING: s_widget.doubleClick_callback not set yet`);
 			}
 		};
 	}
@@ -158,15 +155,20 @@
 					if (!ancestry.isGrabbed) {
 						ancestry.grab_forShift(false);
 					} else if (ancestry.isEditable && !!input) {
-						setTimeout(() => {
-							ancestry.startEdit();
-							thing_setSelectionRange_fromMouseLocation();
-							// Focus directly - reactive statement will also try, but this ensures it happens
-							if (input && !hasHTMLFocus()) {
-								input.focus({ preventScroll: true });
-							}
-							applyRange_fromThing_toInput();
-						}, 1);
+						// Only start editing if this is not a deferred single-click from double-click timer
+						// When the timer fires, doubleClick_fired is set to true, so check that
+						const isDeferredClick = hits.doubleClick_fired;
+						if (!isDeferredClick) {
+							setTimeout(() => {
+								ancestry.startEdit();
+								thing_setSelectionRange_fromMouseLocation();
+								// Focus directly - reactive statement will also try, but this ensures it happens
+								if (input && !hasHTMLFocus()) {
+									input.focus({ preventScroll: true });
+								}
+								applyRange_fromThing_toInput();
+							}, 1);
+						}
 					}
 				}
 			}

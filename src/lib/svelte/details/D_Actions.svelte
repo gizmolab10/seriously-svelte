@@ -208,7 +208,7 @@
 					button_height={k.height.button}
 					button_titles={button_titles[0]}
 					mouse_detection={T_Mouse_Detection.autorepeat}/>
-				<Separator name='after-first-section'
+				<Separator name='after-upper-titles-column'
 					isHorizontal={false}
 					has_thin_divider={true}
 					length={top_tableHeight}
@@ -228,7 +228,7 @@
 					button_height={k.height.button}
 					button_titles={button_titles[1]}
 					mouse_detection={T_Mouse_Detection.autorepeat}/>
-				<Separator name='after-second-section'
+				<Separator name='after-lower-titles-column'
 					isHorizontal={false}
 					has_thin_divider={true}
 					margin={k.details_margin}

@@ -17,6 +17,11 @@
 	let bound_text = original_text;
 	let cursorStyle = 'cursor: text';
 
+	// Update bound_text when original_text changes, but only if textarea is not focused
+	$: if (original_text !== undefined && (!textarea || document.activeElement !== textarea)) {
+		bound_text = original_text;
+	}
+
 	function handle_key_down(event: KeyboardEvent) { handle_key(true, event); }
 	function handle_key_up(event: KeyboardEvent) { handle_key(false, event); }
 	

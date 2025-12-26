@@ -68,35 +68,42 @@ export default class Hits {
 			} else if (!!target) {
 				if (s_mouse.isDown && s_mouse.event) {
 					target.clicks += 1;
-					if (target.detects_autorepeat && target.autorepeat_callback) {
-						this.start_autorepeat(target);									// Autorepeat
-					} else if (target.detects_longClick && target.longClick_callback) {		// Long-click detection
+					if (target.respondsTo_autorepeat) {
+						target.handle_s_mouse?.(s_mouse);
+						this.start_autorepeat(target);
+					} else if (target.respondsTo_longClick) {							// Long-click detection
 						this.start_longClick(target, s_mouse.event);
-					} else if (!target.detects_doubleClick || !target.doubleClick_callback) {	// Double-click detection
-						target.handle_s_mouse?.(s_mouse);								// No double-click detection — fire immediately
-					} else if (target.clicks == 2) {
-						this.click_timer.reset();										// Second click within threshold — fire double-click
-						target.clicks = 0;
-						target.doubleClick_callback(S_Mouse.double(s_mouse.event, target.html_element));
-						return true;
-					} else if (target.clicks == 1) {									// First click — defer single-click, start timer
-						this.start_doubleClick_timer(target, s_mouse.event);
-						return true;
+					} else if (target.respondsTo_doubleClick) {
+						if (target.clicks == 2 && this.click_timer.hasTimer_forID(T_Timer.double) && this.pending_singleClick_target === target) {
+							target.clicks = 0;
+							this.click_timer.reset();									// Second click within threshold — fire double-click
+							this.doubleClick_fired = true;
+							this.pending_singleClick_event = null;
+							this.pending_singleClick_target = null;
+							target.doubleClick_callback!(S_Mouse.double(s_mouse.event, target.html_element));
+						} else if (target.clicks == 1) {								// First click — defer single-click, start timer
+							this.start_doubleClick_timer(target, s_mouse.event);
+						}
+					} else {
+						target.handle_s_mouse?.(s_mouse);
 					}
 				} else if (s_mouse.isUp) {
 					this.cancel_longClick();
 					this.stop_autorepeat();
-					// Suppress mouse-up if long-click already fired
-					if (this.longClick_fired || this.doubleClick_fired) {
+					if (this.longClick_fired || this.doubleClick_fired) {				// Suppress mouse-up if long- or double-click already fired
 						this.doubleClick_fired = false;
 						this.longClick_fired = false;
 						target.clicks = 0;
 					} else {
-						// Don't reset clicks if we're waiting for a double-click on this target
-						if (!target.detects_doubleClick || this.pending_singleClick_target != target || !this.click_timer.hasTimer_forID(T_Timer.double)) {
+						// If waiting for double-click, don't fire handle_s_mouse on mouse up
+						// It will fire when the timer expires (if no second click happens)
+						const waitingForDoubleClick = target.respondsTo_doubleClick && 
+							this.click_timer.hasTimer_forID(T_Timer.double) && 
+							this.pending_singleClick_target === target;
+						if (!waitingForDoubleClick) {
 							target.clicks = 0;
+							return target.handle_s_mouse?.(s_mouse) ?? false;
 						}
-						return target.handle_s_mouse?.(s_mouse) ?? false;
 					}
 				}
 			}
@@ -324,6 +331,8 @@ export default class Hits {
 		this.pending_singleClick_event = event;
 		this.click_timer.timeout_start(T_Timer.double, () => {
 			if (this.pending_singleClick_target && this.pending_singleClick_event) {
+				// Fire deferred single-click: only fire down event
+				// The actual mouse up already happened and was suppressed
 				this.pending_singleClick_target.handle_s_mouse?.(S_Mouse.down(this.pending_singleClick_event, this.pending_singleClick_target.html_element));
 				this.pending_singleClick_target.clicks = 0;
 				this.doubleClick_fired = true;

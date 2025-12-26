@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, g, k, s, u, x, hits, debug, colors, controls, signals, elements, components } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Hit_Target, T_Mouse_Detection, T_Timer } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { Rect, Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -63,7 +63,6 @@
 		// Set up double-click detection on s_widget
 		s_widget.mouse_detection = T_Mouse_Detection.double;
 		s_widget.doubleClick_callback = (s_mouse: S_Mouse) => {
-			debug.log_edit(`WIDGET DOUBLE CLICK CALLBACK FIRED`);
 			foo();
 		};
 		return () => {
@@ -103,7 +102,12 @@
 	$: if (mouse_up_count != $w_count_mouse_up) {
 		mouse_up_count = $w_count_mouse_up;
 		if ($w_s_hover?.id === s_widget.id) {
-			handle_click_event_fromHover();
+			// Don't grab if we're waiting for a double-click - let the deferred single-click handle it
+			const waitingForDoubleClick = hits.pending_singleClick_target === s_widget && 
+				hits.click_timer.hasTimer_forID(T_Timer.double);
+			if (!waitingForDoubleClick) {
+				handle_click_event_fromHover();
+			}
 		}
 	}
 

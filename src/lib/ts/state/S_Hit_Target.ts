@@ -50,7 +50,10 @@ export default class S_Hit_Target {
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
 	get detects_longClick(): boolean { return (this.mouse_detection & T_Mouse_Detection.long) !== 0; }
 	get detects_autorepeat(): boolean { return this.mouse_detection === T_Mouse_Detection.autorepeat; }
+	get respondsTo_longClick(): boolean { return this.detects_longClick && !!this.longClick_callback; }
 	get detects_doubleClick(): boolean { return (this.mouse_detection & T_Mouse_Detection.double) !== 0; }
+	get respondsTo_autorepeat(): boolean { return this.detects_autorepeat && !!this.autorepeat_callback; }
+	get respondsTo_doubleClick(): boolean { return this.detects_doubleClick && !!this.doubleClick_callback; }
 	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button, T_Hit_Target.glow].includes(this.type); }
 	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 

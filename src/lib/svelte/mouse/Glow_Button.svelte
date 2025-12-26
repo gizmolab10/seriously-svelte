@@ -76,12 +76,14 @@
         height: {height}px;
         position: relative;'>
     {#if !isHovering}
-        <SVG_Gradient
-            isInverted={true}
-            name={gradient_name}
-            color={banner_color}
-            size={glow_rect.size}
-            path={svgPaths.rectangle(glow_rect)}/>
+        <div class='glow-button-background' class:autorepeating={isAutorepeating}>
+            <SVG_Gradient
+                isInverted={true}
+                name={gradient_name}
+                color={banner_color}
+                size={glow_rect.size}
+                path={svgPaths.rectangle(glow_rect)}/>
+        </div>
     {/if}
     <div class='glow-button-title'
         style='
@@ -112,7 +114,14 @@
 </div>
 
 <style>
-    .glow-button.autorepeating {
+    .glow-button-background {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+    .glow-button-background.autorepeating {
         transform: scale(0.95);
         transition: transform 0.1s ease;
     }
