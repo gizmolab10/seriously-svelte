@@ -6,6 +6,9 @@
 	export let pointsTo_child = true;
     export let zindex = T_Layer.dot;
 	export let s_reveal!: S_Element;
+	const viewBox_left = 0;
+	const size = k.height.dot;
+	const viewBox_width = size;
 	const { w_s_hover } = hits;
 	const { w_thing_title } = x;
 	const ancestry = s_reveal.ancestry;
@@ -13,25 +16,24 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
 	const { w_items: w_expanded } = x.si_expanded;
+	const reveal_count = ancestry.children.length;
+	const show_reveal_count = reveal_count > 1;
+	const count_fontSize = reveal_count < 10 ? 8 : 7;
+	const reveal_count_top = reveal_count < 10 ? 3.2 : 4;
 	const { w_thing_color, w_background_color } = colors;
 	const { w_t_countDots, w_show_countsAs_dots } = show;
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
-	let reveal_count = ancestry.children.length;
-	let show_child_counts = reveal_count > 1;
 	let element: HTMLElement | null = null;
-	let counts_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
+	let counts_color = s_reveal.stroke;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
 	let offsetFor_fat_center_dot = 0;
 	let s_component: S_Component;
 	let wrapper_style = k.empty;
-	const viewBox_left = 0;
-	const size = k.height.dot;
-	const viewBox_width = size;
 
 	update_colors();
 
@@ -102,7 +104,7 @@
 			const show_fat_center_dot = thing.isBulkAlias || dotsAre_hiding;
 			offsetFor_fat_center_dot = show_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
-			svgPathFor_tiny_outer_dots = show_child_counts ? ancestry.svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child) : null;
+			svgPathFor_tiny_outer_dots = show_reveal_count ? ancestry.svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child) : null;
 			svgPathFor_fat_center_dot = show_fat_center_dot ? svgPaths.circle_atOffset(size, 3) : null;
 		}
 	}
@@ -162,14 +164,18 @@
 				height:{k.tiny_outer_dots.diameter}px;
 				z-index:{T_Layer.frontmost};'>
 				{#if !$w_show_countsAs_dots}
-					{#if show_child_counts && ancestry.points_right}
+					{#if show_reveal_count && ancestry.points_right}
 						<div class='numerical-count'
 							style='
-								top:3.6px;
-								left:6.5px;
-								font-size:8px;
+								left:-1px;
+								width:100%;
+								height:100%;
 								position: absolute;
+								text-align: center;
 								color:{counts_color};
+								vertical-align: middle;
+								top:{reveal_count_top}px;
+								font-size:{count_fontSize}px;
 								shape-rendering: geometricPrecision;'>
 							{reveal_count}
 						</div>
