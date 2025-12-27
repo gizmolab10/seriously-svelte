@@ -51,7 +51,6 @@
 		// Both s_title and s_widget need the handler since either might be selected
 		s_title.handle_s_mouse = handle_s_mouse;
 		s_widget.handle_s_mouse = handle_s_mouse;
-		// Set up double-click detection on s_title to forward to s_widget's callback
 		s_title.mouse_detection = T_Mouse_Detection.double;
 		setup_doubleClick_forwarding();
 		setTimeout(() => {
@@ -66,14 +65,12 @@
 
 	function setup_doubleClick_forwarding() {
 		s_title.doubleClick_callback = (s_mouse: S_Mouse) => {
-			// Forward to s_widget's callback if it exists
 			if (s_widget.doubleClick_callback) {
 				s_widget.doubleClick_callback(s_mouse);
 			}
 		};
 	}
 
-	// Ensure double-click callback forwards to s_widget's callback when it's set
 	$: if (s_widget.doubleClick_callback) {
 		setup_doubleClick_forwarding();
 	}
@@ -83,12 +80,10 @@
 		hits.delete_hit_target(s_title);
 	});
 
-	// Register s_title with input element for hovering
 	$: if (!!input) {
 		s_title.set_html_element(input);
 	}
 
-	// Update styling based on edit state
 	$: {
 		const _ = $w_s_title_edit;
 		if (!!input) {
@@ -97,7 +92,6 @@
 		}
 	}
 
-	// Update positioning based on state
 	$: {
 		const reactives = `${$w_thing_color}
 			:::${$w_mouse_button_down}
@@ -117,7 +111,6 @@
 		}
 	}
 
-	// Handle edit state changes from w_s_title_edit store
 	$: {
 		const s_text_edit = $w_s_title_edit;
 		if (hasHTMLFocus() && !s_text_edit) {

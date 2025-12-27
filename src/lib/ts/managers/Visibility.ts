@@ -17,6 +17,7 @@ export class Visibility {
 	w_t_countDots			= writable<Array<T_Kinship>>();
 	w_id_popupView			= writable<string | null>();
 	w_show_save_data_button	= writable<boolean>(false);
+	w_show_catalist_details = writable<boolean>(false);
 	w_show_search_controls	= writable<boolean>(false);
 	w_show_related			= writable<boolean>(false);
 	w_show_details			= writable<boolean>(true);

@@ -1,12 +1,13 @@
 <script lang='ts'>
-	import { e, g, k, core, u, x, hits, debug, colors, controls, signals, elements, components } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Hit_Target, T_Mouse_Detection, T_Timer } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Timer, T_Signal, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { e, g, k, u, x, hits, show, debug, colors } from '../../ts/common/Global_Imports';
+	import { controls, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { Rect, Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
-	import { onMount, onDestroy, tick } from 'svelte';
 	export let g_widget!: G_Widget;
 	const s_widget = g_widget.s_widget;	// put me first
 	const { w_s_hover } = hits;
@@ -16,10 +17,11 @@
 	const { w_thing_color } = colors;
 	const ancestry = g_widget.ancestry;
 	const s_reveal = s_widget.s_reveal;
+	const { w_show_catalist_details } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_s_title_edit, w_ancestry_focus } = x;
-	const reveal_pointsTo_child = g_widget.pointsTo_child;
     const drag_points_right = g_widget.reveal_isAt_right;
+	const reveal_pointsTo_child = g_widget.pointsTo_child;
+	const { w_s_title_edit, w_ancestry_focus } = x;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let mouse_up_count = $w_count_mouse_up;
@@ -63,7 +65,7 @@
 		// Set up double-click detection on s_widget
 		s_widget.mouse_detection = T_Mouse_Detection.double;
 		s_widget.doubleClick_callback = (s_mouse: S_Mouse) => {
-			foo();
+			$w_show_catalist_details = true;
 		};
 		return () => {
 			debug.log_style('Widget unmounting for:', ancestry?.title);
@@ -75,10 +77,6 @@
 	onDestroy(() => {
 		hits.delete_hit_target(s_widget);
 	});
-
-	function foo() {
-		debug.log_edit(`DOUBLE CLICK DETECTED`);
-	}
 
 	$: {
 		const _ = `${$w_thing_color}

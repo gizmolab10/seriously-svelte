@@ -38,8 +38,6 @@ export default class S_UX {
 				return focus ?? h?.rootAncestry;
 			}
 		);
-		
-		// w_ancestry_forDetails is derived from search selection, grabs, or focus
 		this.w_ancestry_forDetails = derived(
 			[
 				search.w_s_search,
@@ -51,30 +49,23 @@ export default class S_UX {
 				this.w_ancestry_focus
 			],
 			([t_search, foundIndex, foundItems, showSearchControls, grabsItems, grabsIndex, focus]) => {
-				// First priority: search selected ancestry (if search is active)
-				const row = foundIndex;
+				const row = foundIndex;				// First priority: search selected ancestry (if search is active)
 				if (row !== null && showSearchControls && t_search === T_Search.selected) {
 					const thing = foundItems[row];
 					if (thing?.ancestry) {
 						return thing.ancestry;
 					}
 				}
-				
-				// Second priority: current grab
-				if (grabsItems.length > 0) {
+				if (grabsItems.length > 0) {		// Second priority: current grab
 					const grab = grabsItems[grabsIndex] as Ancestry | null;
 					if (grab) {
 						return grab;
 					}
 				}
-				
-				// Third priority: focus
-				if (focus) {
+				if (focus) {						// Third priority: focus
 					return focus;
 				}
-				
-				// Fallback: root ancestry
-				return h?.rootAncestry;
+				return h?.rootAncestry;				// Fallback: root ancestry
 			}
 		);
 	}
@@ -101,9 +92,6 @@ export default class S_UX {
 				{ recentsLength: this.si_recents.length }
 			);
 		}
-		
-		// w_ancestry_focus and w_ancestry_forDetails are now derived stores
-		// They update automatically when their dependencies change
 		this.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
 			if (ancestry) {
 				this.update_grabs_forSearch();
@@ -131,7 +119,6 @@ export default class S_UX {
 		} else {
 			this.si_grabs.find_next_item(next);
 		}
-		// w_ancestry_forDetails is now automatically updated via derived store
 		details.redraw();		// force re-render of details
 	}
 		
@@ -161,25 +148,11 @@ export default class S_UX {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.remove_all_beyond_index();
 			this.si_recents.push(pair);
-			// w_ancestry_focus and w_ancestry_forDetails are now automatically updated via derived stores
-			// this.double_check(ancestry);
 			x.w_s_alteration.set(null);
 			ancestry.expand();
 			hits.recalibrate();
 		}
 		return changed;
-	}
-
-	double_check(ancestry: Ancestry) {
-		// Dev-only invariant: verify recents index is in sync after push
-		if (typeof console !== 'undefined' && console.assert) {
-			const recentItem = this.si_recents.item as Identifiable_S_Items_Pair | null;
-			console.assert(
-				recentItem && recentItem[0] === ancestry,
-				'recents index out of sync after becomeFocus()',
-				{ ancestry: ancestry.id, recentItem: recentItem?.[0]?.id }
-			);
-		}
 	}
 
 	update_forFocus() {
@@ -201,7 +174,6 @@ export default class S_UX {
 		if (!radial.isDragging) {
 			this.si_grabs.items = [ancestry];
 			h?.stop_alteration();
-			// w_ancestry_forDetails is now automatically updated via derived store
 			debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		}
 	}
@@ -219,7 +191,6 @@ export default class S_UX {
 			this.si_grabs.items = items;
 			debug.log_grab(`  GRAB '${ancestry.title}'`);
 			h?.stop_alteration();
-			// w_ancestry_forDetails is now automatically updated via derived store
 		}
 	}
 
@@ -244,7 +215,6 @@ export default class S_UX {
 			}
 			this.si_grabs.items = grabbed;
 			debug.log_grab(`  UNGRAB '${ancestry.title}'`);
-			// w_ancestry_forDetails is now automatically updated via derived store
 		}
 	}
 
@@ -254,7 +224,6 @@ export default class S_UX {
 			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {
 				this.si_grabs.items = ancestries;
-				// w_ancestry_forDetails is now automatically updated via derived store
 			}
 		}
 	}

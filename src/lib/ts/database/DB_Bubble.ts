@@ -4,6 +4,7 @@ import { T_Preference } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Enumerations';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
+import { get } from 'svelte/store';
 
 enum T_MID {	// type of message or identifier
 	details,
@@ -204,6 +205,13 @@ export default class DB_Bubble extends DB_Common {
 		if (!this.will_send_events) {
 			this.will_send_events = true;
 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
+			show.w_t_graph.subscribe((graph_type: T_Graph) => {
+				if (this.allow_response_to[T_MID.mode]) {
+					window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
+					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);
+				}
+				this.allow_response_to[T_MID.mode] = true;
+			});
 			x.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
 				const focus_id = ancestry?.thing?.id ?? k.empty;
 				if (!!focus_id && focus_id != this.prior_id[T_MID.focus] && busy.isFocusEventEnabled) {
@@ -215,35 +223,43 @@ export default class DB_Bubble extends DB_Common {
 					this.allow_response_to[T_MID.focus] = true;
 				}
 			});
-			x.si_grabs.w_items.subscribe((ancestries: Array<Ancestry>) => {
-				const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
-				if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
-					if (this.allow_response_to[T_MID.grab]) {
-						this.prior_grabbed_ids = grabbed_ids;
-						window.parent.postMessage({ type: 'selected_ids', ids: grabbed_ids }, k.wildcard);
-						window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);
+			show.w_show_catalist_details.subscribe((inform_bubble: boolean) => {
+				if (!!inform_bubble) {
+					show.w_show_catalist_details.set(false);
+					const ancestries = get(x.si_grabs.w_items) as Array<Ancestry>;
+					const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
+					if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
+						if (this.allow_response_to[T_MID.grab]) {
+							this.prior_grabbed_ids = grabbed_ids;
+							window.parent.postMessage({ type: 'selected_ids', ids: grabbed_ids }, k.wildcard);
+							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);
+						}
+						this.allow_response_to[T_MID.grab] = true;
 					}
-					this.allow_response_to[T_MID.grab] = true;
 				}
 			});
-			show.w_t_graph.subscribe((graph_type: T_Graph) => {
-				if (this.allow_response_to[T_MID.mode]) {
-					window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);
-				}
-				this.allow_response_to[T_MID.mode] = true;
-			});
-			x.w_ancestry_forDetails.subscribe((ancestry: Ancestry | null) => {
-				const details_id = ancestry?.thing?.id ?? k.empty;
-				if (!!details_id && details_id != this.prior_id[T_MID.details]) {
-					if (this.allow_response_to[T_MID.details]) {
-						this.prior_id[T_MID.details] = details_id;
-						window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
-						window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
-					}
-					this.allow_response_to[T_MID.details] = true;
-				}
-			});
+			// x.si_grabs.w_items.subscribe((ancestries: Array<Ancestry>) => {
+			// 	const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
+			// 	if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
+			// 		if (this.allow_response_to[T_MID.grab]) {
+			// 			this.prior_grabbed_ids = grabbed_ids;
+			// 			window.parent.postMessage({ type: 'selected_ids', ids: grabbed_ids }, k.wildcard);
+			// 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);
+			// 		}
+			// 		this.allow_response_to[T_MID.grab] = true;
+			// 	}
+			// });
+			// x.w_ancestry_forDetails.subscribe((ancestry: Ancestry | null) => {
+			// 	const details_id = ancestry?.thing?.id ?? k.empty;
+			// 	if (!!details_id && details_id != this.prior_id[T_MID.details]) {
+			// 		if (this.allow_response_to[T_MID.details]) {
+			// 			this.prior_id[T_MID.details] = details_id;
+			// 			window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
+			// 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
+			// 		}
+			// 		this.allow_response_to[T_MID.details] = true;
+			// 	}
+			// });
 		}
 	}
 
