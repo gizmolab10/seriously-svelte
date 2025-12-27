@@ -1,5 +1,6 @@
 export class Builds {
 	notes: Record<number, Array<string>> = {
+		183 : ['December 27, 2025', 'fully wire up dynamic/static focus'],
 		182 : ['December 24, 2025', 'preference option to show children counts as numbers'],
 		181 : ['December 22, 2025', 'restore grabs when navigating history'],
 		180 : ['December 20, 2025', 'new breadcrumbs history type'],

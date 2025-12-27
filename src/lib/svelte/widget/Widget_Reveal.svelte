@@ -48,12 +48,15 @@
 		return () => s_component.disconnect();
 	});
 
-	// Set handler when element becomes available (handles re-renders)
 	$: if (!!element) {
 		s_reveal.set_html_element(element);
 		s_reveal.handle_s_mouse = (s_mouse) => {
 			if (s_mouse.isDown && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
 				h.ancestry_toggle_expansion(ancestry);
+				if (show.isDynamic_focus && ancestry.hidden_by_depth_limit) {
+					const focusAncestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.depth_limit - 1);
+					focusAncestry?.becomeFocus();
+				}
 			}
 			return true;
 		};
