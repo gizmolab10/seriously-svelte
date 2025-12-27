@@ -4,8 +4,8 @@ import { writable } from 'svelte/store';
 
 export class Core {
 
-	w_t_startup			  = writable<T_Startup>(T_Startup.start);
-	w_hierarchy			  = writable<Hierarchy>();
+	w_t_startup	= writable<T_Startup>(T_Startup.start);
+	w_hierarchy	= writable<Hierarchy>();
 
 }
 

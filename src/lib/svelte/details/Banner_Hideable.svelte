@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, core, u, x, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
-	import { tick } from 'svelte';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
+	import { tick } from 'svelte';
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails } = x;
 	const { w_t_details } = show;
