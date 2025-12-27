@@ -77,7 +77,7 @@ export default class G_Repeater {
 
 	button_left_for(column: number): number {
 		if (this.proportionate) {
-			return this.widths.slice(0, column).reduce((sum, width) => sum + width, this.title_gap + this.gap / 2);
+			return this.widths.slice(0, column).reduce((sum, width) => sum + width, this.title_gap - this.gap / 2);
 		}
 		let x = 0;
 		for (let i = 0; i < column; i++) {

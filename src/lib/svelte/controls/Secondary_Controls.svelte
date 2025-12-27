@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { Point, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import { g, k, show, features } from '../../ts/common/Global_Imports';
-	import Tree_Preferences from './Tree_Preferences.svelte';
+	import Tree_Controls from './Tree_Controls.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Search from '../search/Search.svelte';
 	const { w_rect_ofGraphView } = g;
@@ -30,9 +30,9 @@
 			position: absolute;
 			z-index: {T_Layer.frontmost};'>
 		{#if $w_show_search_controls}
-			<Search top={8} width={width}/>
+			<Search top={8}/>
 		{:else if $w_t_graph == T_Graph.tree}
-			<Tree_Preferences width={width}/>
+			<Tree_Controls/>
 		{/if}
 		{#if features.allow_tree_mode}
 			<Separator name='secondary-bottom-separator'

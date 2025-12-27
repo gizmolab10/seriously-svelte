@@ -169,6 +169,7 @@
   },
   "active": "4db059a2f6290c4d",
   "lastOpenFiles": [
+    "src/lib/svelte/controls/Tree_Controls.svelte",
     "notes/designs/architecture/state.md",
     "notes/designs/claude/project guide.md",
     "notes/designs/architecture/writables.md",
@@ -206,7 +207,6 @@
     "node_modules/vitest/node_modules/@jridgewell/sourcemap-codec/README.md",
     "node_modules/vitest/node_modules/vite/LICENSE.md",
     "node_modules/vitest/node_modules/vite/README.md",
-    "node_modules/vitest/node_modules/rollup/LICENSE.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

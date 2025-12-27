@@ -147,7 +147,7 @@
 			<Separator name='after-controls'
 				isHorizontal={false}
 				origin={new Point(lefts[5], -6)}
-				length={g.controls_boxHeight + 0}
+				length={g.controls_boxHeight + 0.5}
 				thickness={k.thickness.separator.main}
 				corner_radius={k.radius.gull_wings.thick}/>
 			<Segmented name='breadcrumb-type'

@@ -105,6 +105,11 @@ export enum T_Counts_Shown {
 	dots    = 'dots',
 }
 
+export enum T_Focus {
+	dynamic = 'dynamic',
+	static  = 'static',
+}
+
 export enum T_Auto_Adjust_Graph {
 	selection = 'center the selection',
 	fit		  = 'exactly fit',
