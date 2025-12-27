@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "a6a73a08f3f917ac",
+        "id": "80744e059c216209",
         "type": "tabs",
         "children": [
           {
-            "id": "78311facb11ea290",
+            "id": "4db059a2f6290c4d",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -136,13 +136,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/architecture/gotcha.md",
+                "file": "notes/designs/architecture/buttons.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of gotcha"
+              "title": "Outline of buttons"
             }
           }
         ],
@@ -165,9 +165,10 @@
   },
   "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
-    "notes/designs/architecture/gotchas.md",
     "notes/designs/guides/gotchas.md",
+    "notes/designs/architecture/buttons.md",
     "notes/designs/architecture/gotcha.md",
+    "notes/designs/architecture/gotchas.md",
     "notes/designs/guides/debugging.md",
     "notes/designs/architecture/state-design.md",
     "notes/designs/claude/project guide.md",
@@ -202,7 +203,6 @@
     "node_modules/vitest/node_modules/rollup/README.md",
     "node_modules/vitest/node_modules/es-module-lexer/README.md",
     "node_modules/vitest/node_modules/picomatch/README.md",
-    "node_modules/vitest/node_modules/magic-string/README.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

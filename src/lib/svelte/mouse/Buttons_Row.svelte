@@ -1,5 +1,7 @@
 <script lang='ts'>
-	import { k, u, elements, x, Point, colors, svgPaths, S_Element, S_Mouse, T_Hit_Target, T_Request, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { T_Action, T_Request, T_Button_SVG, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { k, Point, colors, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_count_button_restyle } from '../../ts/state/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/geometry/G_Repeater';
@@ -8,17 +10,17 @@
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
 	export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
 	export let separator_thickness = k.thickness.separator.main;
+    export let t_target = T_Hit_Target.button;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
-    export let type = T_Hit_Target.button;
 	export let font_sizes: Array<number>;
 	export let has_gull_wings = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
+	export let row_name = k.empty;
 	export let button_height = 13;
 	export let align_left = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
-	export let has_svg = false;
 	export let name = k.empty;
 	export let title_gap = 8;
 	export let width: number;
@@ -29,12 +31,15 @@
 	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, title_gap, true, font_sizes[0]);
+	const t_button_svg = ([T_Action[T_Action.browse], T_Action[T_Action.move]]).includes(row_name) ? T_Button_SVG.arrow : T_Button_SVG.none;
 	const s_button_dict_byColumn: Record<number, S_Element> = {};
+	const has_svg = t_button_svg !== T_Button_SVG.none;
 	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;
-	let reattachments = 0;
 	let style = k.empty;
+	let reattachments = 0;
 	let top = origin?.y ?? center?.y - button_height / 2;
+
 	$: row_title = row_titles[0];
 
 	//////////////////////////////////////////////////////////////
@@ -60,7 +65,7 @@
 		for (let column = 0; column < columns; column++) {
 			let s_button = s_button_dict_byColumn[column];
 			if (!s_button) {
-				s_button = elements.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), type, column);
+				s_button = elements.s_element_for(new Identifiable(`${name}-table-${row_name}-${button_name_for(column)}`), t_target, column);
 				s_button_dict_byColumn[column] = s_button;
 			}
 			s_button.set_forHovering(colors.default, 'pointer');
@@ -121,16 +126,27 @@
 						mouse_detection={mouse_detection}
 						s_button={s_button_dict_byColumn[column]}
 						width={g_repeater.button_width_for(column)}
-						name={`${name}-${button_name_for(column)}`}
 						origin={Point.x(g_repeater.button_left_for(column))}
+						name={`${name}-row-${row_name}-${button_name_for(column)}`}
 						handle_s_mouse={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
-						{#if has_svg && !!svgPaths.fat_polygon_path_for(title)}
+						{#if t_button_svg === T_Button_SVG.none}
+							{title}
+						{:else if t_button_svg === T_Button_SVG.triangle}
 							<svg
-								class='svg-button-path-for-{title}'>
+								class='svg-triangle-path-for-{title}'>
 								<path d={svgPaths.fat_polygon_path_for(title, svg_size)} fill='white'/>
 							</svg>
-						{:else}
-							{title}
+						{:else if t_button_svg === T_Button_SVG.arrow}
+							<svg
+								fill='white'
+								stroke='black'
+								width={svg_size}
+								height={svg_size}
+								stroke-width='0.3'
+								class='svg-arrow-path-for-{title}'
+								viewBox='0 0 {svg_size} {svg_size}'>
+								<path d={svgPaths.arrow_forTitle(svg_size, 3, title)}/>
+							</svg>
 						{/if}
 					</Button>
 				{/each}

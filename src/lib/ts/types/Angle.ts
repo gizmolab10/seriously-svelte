@@ -30,6 +30,8 @@ export default class Angle {
 	static sixteenth = Angle.full / 16;			// support octants
 	static eighth = Angle.full / 8;
 
+	static radians_from_degrees(degrees: number):	   number { return Math.PI / 180 * degrees; }
+
 	static angle_from_name(name: string): number | null {
 		switch (name) {
 			case 'up':				return -Math.PI / 2;
@@ -39,7 +41,17 @@ export default class Angle {
 		}
 		return null;
 	}
-	static radians_from_degrees(degrees: number): number { return Math.PI / 180 * degrees; }
+
+	static orientation_from_name(name: string): T_Orientation | null {
+		switch (name) {
+			case 'up':				return T_Orientation.up;
+			case 'down':			return T_Orientation.down;
+			case 'right': case '>': return T_Orientation.right;
+			case 'left':  case '<': return T_Orientation.left;
+		}
+		return null;
+	}
+
 	get angle_points_down(): boolean { return this.orientation_ofAngle == T_Orientation.down; }
 	get quadrant_basis_angle(): number { return tu.basis_angle_ofType_Quadrant(this.quadrant_ofAngle); }
 

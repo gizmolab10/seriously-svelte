@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { e, g, k, x, hits, colors, T_Mouse_Detection } from '../../ts/common/Global_Imports';
-	import { S_Mouse, S_Element, T_Layer, Point } from '../../ts/common/Global_Imports';
+	import { e, g, k, x, hits, Point, colors } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
 	export let handle_s_mouse: (s_mouse: S_Mouse) => boolean;

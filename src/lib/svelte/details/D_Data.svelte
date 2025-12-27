@@ -190,6 +190,7 @@
 		<Buttons_Row
 			gap={4}
 			margin={20}
+			row_name='data'
 			width={width + 5}
 			has_seperator={true}
 			font_sizes={font_sizes}

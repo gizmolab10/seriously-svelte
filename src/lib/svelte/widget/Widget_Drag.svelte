@@ -172,7 +172,7 @@
 						height={size}
 						fill={arrow_fill_color}
 						stroke={arrow_stroke_color}
-						svgPath={svgPaths.arrow(size, 4, T_Orientation.left)}/>
+						svgPath={svgPaths.arrow_forOrientation(size, 4, T_Orientation.left)}/>
 				{/if}
 			</div>
 		</button>

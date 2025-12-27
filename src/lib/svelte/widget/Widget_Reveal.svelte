@@ -163,7 +163,7 @@
 				width:{k.tiny_outer_dots.diameter}px;
 				height:{k.tiny_outer_dots.diameter}px;
 				z-index:{T_Layer.frontmost};'>
-				{#if !$w_show_countsAs_dots && show_reveal_count && ancestry.points_right}
+				{#if !$w_show_countsAs_dots && show_reveal_count}
 					<div class='numerical-count'
 						style='
 							left:-1px;

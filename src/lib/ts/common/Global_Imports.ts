@@ -31,10 +31,10 @@ import Tag from '../persistable/Tag';
 import Angle from '../types/Angle';
 
 import { T_Debug } from '../debug/Debug';
-import { T_Theme } from './Enumerations';
 import { T_Edit } from '../state/S_Title_Edit';
 import { T_Breadcrumbs } from './Enumerations';
 import { T_Timer } from '../signals/Mouse_Timer';
+import { T_Theme, T_Button_SVG } from './Enumerations';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
@@ -116,14 +116,14 @@ export {
 	T_Debug, T_Timer,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
-	T_Auto_Adjust_Graph, T_Cluster_Pager, T_Counts_Shown,
 	T_Startup, T_Drag, T_Alteration,
 	T_Order, T_Kinship, T_Breadcrumbs,
 	T_Quadrant, T_Orientation, T_Direction,
-	T_Banner, T_Detail, T_Request, T_Action,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,
 	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Format, T_File_Operation, T_Storage_Need,
+	T_Auto_Adjust_Graph, T_Cluster_Pager, T_Counts_Shown,
 	T_Signal, T_Control, T_Hit_Target, T_Mouse_Detection,
+	T_Banner, T_Detail, T_Request, T_Action, T_Button_SVG,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,
 };

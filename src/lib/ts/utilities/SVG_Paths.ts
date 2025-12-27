@@ -31,25 +31,30 @@ export default class SVG_Paths {
 		return `M ${start} ${radius} L ${end} ${radius} M ${radius} ${start} L ${radius} ${end}`;
 	}
 
-	arrow(diameter: number, margin: number, orientation: T_Orientation): string {
+	arrow_forTitle(diameter: number, margin: number, title: string): string {
+		const orientation = Angle.orientation_from_name(title);
+		return !orientation ? k.empty : this.arrow_forOrientation(diameter, margin, orientation);
+	}
+
+	arrow_forOrientation(diameter: number, margin: number, orientation: T_Orientation): string {
 		const start = margin;
-		const bodyThickness = 1.5;
 		const center = diameter / 2;
 		const end = diameter - margin;
-		const arrowheadBase = (diameter - margin * 2);
-		const arrowheadLength = (diameter - margin * 2) * 2 / 3;
+		const available = diameter - margin * 2;
+		const arrowheadBase = available;
+		const arrowheadLength = available * 2 / 3;
+		const bodyWidth = available * 0.3;
 		const bodyStart = start + arrowheadLength;
 		const bodyEnd = end;
-		
 		switch (orientation) {
 			case T_Orientation.right:
-				return `M ${end} ${center} L ${end - arrowheadLength} ${center - arrowheadBase / 2} L ${end - arrowheadLength} ${center - bodyThickness / 2} L ${start} ${center - bodyThickness / 2} L ${start} ${center + bodyThickness / 2} L ${end - arrowheadLength} ${center + bodyThickness / 2} L ${end - arrowheadLength} ${center + arrowheadBase / 2} Z`;
+				return `M ${end} ${center} L ${end - arrowheadLength} ${center - arrowheadBase / 2} L ${end - arrowheadLength} ${center - bodyWidth / 2} L ${start} ${center - bodyWidth / 2} L ${start} ${center + bodyWidth / 2} L ${end - arrowheadLength} ${center + bodyWidth / 2} L ${end - arrowheadLength} ${center + arrowheadBase / 2} Z`;
 			case T_Orientation.left:
-				return `M ${start} ${center} L ${bodyStart} ${center - arrowheadBase / 2} L ${bodyStart} ${center - bodyThickness / 2} L ${bodyEnd} ${center - bodyThickness / 2} L ${bodyEnd} ${center + bodyThickness / 2} L ${bodyStart} ${center + bodyThickness / 2} L ${bodyStart} ${center + arrowheadBase / 2} Z`;
+				return `M ${start} ${center} L ${bodyStart} ${center - arrowheadBase / 2} L ${bodyStart} ${center - bodyWidth / 2} L ${bodyEnd} ${center - bodyWidth / 2} L ${bodyEnd} ${center + bodyWidth / 2} L ${bodyStart} ${center + bodyWidth / 2} L ${bodyStart} ${center + arrowheadBase / 2} Z`;
 			case T_Orientation.up:
-				return `M ${center} ${start} L ${center - arrowheadBase / 2} ${start + arrowheadLength} L ${center - bodyThickness / 2} ${start + arrowheadLength} L ${center - bodyThickness / 2} ${end} L ${center + bodyThickness / 2} ${end} L ${center + bodyThickness / 2} ${start + arrowheadLength} L ${center + arrowheadBase / 2} ${start + arrowheadLength} Z`;
+				return `M ${center} ${start} L ${center - arrowheadBase / 2} ${bodyStart} L ${center - bodyWidth / 2} ${bodyStart} L ${center - bodyWidth / 2} ${bodyEnd} L ${center + bodyWidth / 2} ${bodyEnd} L ${center + bodyWidth / 2} ${bodyStart} L ${center + arrowheadBase / 2} ${bodyStart} Z`;
 			case T_Orientation.down:
-				return `M ${center} ${end} L ${center - arrowheadBase / 2} ${end - arrowheadLength} L ${center - bodyThickness / 2} ${end - arrowheadLength} L ${center - bodyThickness / 2} ${start} L ${center + bodyThickness / 2} ${start} L ${center + bodyThickness / 2} ${end - arrowheadLength} L ${center + arrowheadBase / 2} ${end - arrowheadLength} Z`;
+				return `M ${center} ${end} L ${center - arrowheadBase / 2} ${end - arrowheadLength} L ${center - bodyWidth / 2} ${end - arrowheadLength} L ${center - bodyWidth / 2} ${start} L ${center + bodyWidth / 2} ${start} L ${center + bodyWidth / 2} ${end - arrowheadLength} L ${center + arrowheadBase / 2} ${end - arrowheadLength} Z`;
 		}
 	}
 

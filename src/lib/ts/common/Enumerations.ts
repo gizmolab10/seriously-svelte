@@ -100,15 +100,21 @@ export enum T_Breadcrumbs {
 	history  = 'history',
 }
 
+export enum T_Counts_Shown {
+	numbers = 'numbers',
+	dots    = 'dots',
+}
+
 export enum T_Auto_Adjust_Graph {
 	selection = 'center the selection',
 	fit		  = 'exactly fit',
 	ignore	  = 'ignore',
 }
 
-export enum T_Counts_Shown {
-	numbers = 'numbers',
-	dots    = 'dots',
+export enum T_Button_SVG {
+	triangle = 'triangle',
+	arrow = 'arrow',
+	none = 'none',
 }
 
 export enum T_Search_Preference {

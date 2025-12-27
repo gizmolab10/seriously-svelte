@@ -1,10 +1,10 @@
 <script lang='ts'>
-    import {S_Mouse, S_Element, T_Hit_Target, T_Request, T_Action, T_Mouse_Detection } from '../../ts/common/Global_Imports';
-    import { k, s, show, Point, colors } from '../../ts/common/Global_Imports';
+    import { T_Action, T_Request, T_Button_SVG, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+    import { k, Point, S_Mouse } from '../../ts/common/Global_Imports';
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number) => boolean;
     export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
-    export let type = T_Hit_Target.button;
+    export let t_target = T_Hit_Target.button;
     export let font_sizes: Array<number>;
     export let button_titles: string[][];
     export let has_seperator = false;         // false means row titles precede buttons
@@ -34,8 +34,9 @@
         {#if closure(T_Request.is_visible, S_Mouse.empty, name, row, -1)}
             <Buttons_Row
                 gap={gap}
-                type={type}
+                name={name}
                 width={width}
+                t_target={t_target}
                 row_titles={titles}
                 has_title={has_title}
                 title_gap={title_gap}
@@ -44,7 +45,7 @@
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 mouse_detection={mouse_detection}
-                name={`${name}-table-${T_Action[row + row_offset]}`}
+                row_name={T_Action[row + row_offset]}
                 closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row + row_offset, column)}/>
         {/if}
     {/each}

@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { T_Layer, T_Detail, T_Action, T_Hit_Target, T_Kinship, T_Request, T_Predicate, T_Alteration, T_Mouse_Detection } from '../../ts/common/Global_Imports';
-	import { c, e, g, h, k, s, u, x, show, Size, Point, colors, signals, S_Mouse } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Action, T_Request, T_Predicate, T_Alteration, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { c, e, g, h, k, s, u, x, show, Point, colors, signals, S_Mouse } from '../../ts/common/Global_Imports';
 	import { elements, details, controls } from '../../ts/common/Global_Imports';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -203,7 +203,7 @@
 					has_title={has_title}
 					title_gap={title_gap}
 					font_sizes={font_sizes}
-					type={T_Hit_Target.action}
+					t_target={T_Hit_Target.action}
 					closure={handle_actionRequest}
 					button_height={k.height.button}
 					button_titles={button_titles[0]}
@@ -223,7 +223,7 @@
 					has_title={has_title}
 					title_gap={title_gap}
 					font_sizes={font_sizes}
-					type={T_Hit_Target.action}
+					t_target={T_Hit_Target.action}
 					closure={handle_actionRequest}
 					button_height={k.height.button}
 					button_titles={button_titles[1]}
