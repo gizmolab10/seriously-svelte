@@ -4,12 +4,9 @@
 	import Tree_Controls from './Tree_Controls.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Search from '../search/Search.svelte';
-	const { w_rect_ofGraphView } = g;
 	const height = g.controls_boxHeight;
-	const top = features.allow_tree_mode ? g.controls_boxHeight - 5 : 2;
-	const { w_show_details, w_show_search_controls, w_t_graph } = show;
-	const left = features.allow_tree_mode ? $w_rect_ofGraphView.origin.x - 4 : features.has_details_button ? 115 : 92;
-	const width = features.allow_tree_mode ? $w_rect_ofGraphView.size.width + ($w_show_details ? 10 : 11) : features.has_details_button ? 140 : 137;
+	const top = g.controls_boxHeight - 5;
+	const { w_show_search_controls, w_t_graph } = show;
 	let isVisible = false;
 
 	// two states: search and tree preferences
@@ -25,8 +22,9 @@
 	<div class='secondary'
 		style='
 			top: {top}px;
-			left: {left}px;
+			left: 0px;
 			height: {height}px;
+			width: {g.windowSize.width}px;
 			position: absolute;
 			z-index: {T_Layer.frontmost};'>
 		{#if $w_show_search_controls}
@@ -36,12 +34,12 @@
 		{/if}
 		{#if features.allow_tree_mode}
 			<Separator name='secondary-bottom-separator'
-				origin={new Point(($w_show_details ? 2 : 1), top)}
 				corner_radius={k.radius.gull_wings.thick}
 				thickness={k.thickness.separator.main}
+				length={g.windowSize.width + 2.5}
+				origin={new Point(2, top)}
 				has_both_wings={true}
-				isHorizontal={true}
-				length={width}/>
+				isHorizontal={true}/>
 		{/if}
 	</div>
 {/if}

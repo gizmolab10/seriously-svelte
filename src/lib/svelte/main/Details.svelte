@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, g, k, x, Point, search, features } from '../../ts/common/Global_Imports';
+	import { e, g, k, x, Point, search, features, show } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from '../details/Banner_Hideable.svelte';
 	import D_Preferences from '../details/D_Preferences.svelte';
@@ -10,6 +10,8 @@
 	import Separator from '../draw/Separator.svelte';
 	import D_Data from '../details/D_Data.svelte';
 	import D_Tags from '../details/D_Tags.svelte';
+	import { T_Graph } from '../../ts/common/Global_Imports';
+	const { w_t_graph, w_show_search_controls } = show;
 	const width = k.width.details;
 	const { w_s_search } = search;
 	const { w_count_details } = e;
@@ -18,6 +20,10 @@
 	const { w_description: w_grabs_description } = x.si_grabs;
 	const { w_description: w_tags_description } = x.si_thing_tags;
 	const { w_description: w_traits_description } = x.si_thing_traits;
+
+	$: secondary_isVisible = $w_show_search_controls || $w_t_graph == T_Graph.tree;
+	$: details_top = g.controls_boxHeight + (secondary_isVisible ? g.controls_boxHeight - 5 : 0);
+	$: details_height = g.windowSize.height - details_top;
 
 	$: {
 		const _ = `${$w_found}
@@ -38,13 +44,13 @@
 			display:flex;
 			overflow-y: auto;
 			position:absolute;
+			top:{details_top}px;
 			scrollbar-width: none;          /* Firefox */
 			flex-direction:column;
 			-ms-overflow-style: none;  
 			z-index:{T_Layer.details};
-			top:{g.controls_boxHeight}px;
 			width:{k.width.details - 6}px;
-			height:{g.windowSize.height - g.controls_boxHeight}px;'>
+			height:{details_height}px;'>
 		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>
@@ -78,8 +84,8 @@
 	margin={k.details_margin}
 	thickness={k.thickness.separator.main}
 	corner_radius={k.radius.gull_wings.thick}
-	length={g.windowSize.height - g.controls_boxHeight + 6.5}
-	origin={new Point(k.width.details - 2, g.controls_boxHeight - 2.5)}
+	length={details_height + 6.5}
+	origin={new Point(k.width.details - 2, details_top - 2.5)}
 />
 
 <style>
