@@ -404,5 +404,5 @@ function increment() {
 
 - [writables.md](./writables.md) - Analysis of store organization patterns
 - [hits.md](./hits.md) - How `S_Hit_Target` enables centralized hit testing
-- [styles-manager.md](./styles-manager.md) - How state objects enable centralized color computation
+- [styles-manager.md](notes/designs/architecture/styles.md) - How state objects enable centralized color computation
 

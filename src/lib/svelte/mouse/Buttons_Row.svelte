@@ -2,7 +2,6 @@
 	import { T_Action, T_Request, T_Button_SVG, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { k, Point, colors, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_count_button_restyle } from '../../ts/state/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/geometry/G_Repeater';
 	import Separator from '../draw/Separator.svelte';

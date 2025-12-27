@@ -7,7 +7,7 @@
  * Run with: yarn test UX_becomeFocus
  */
 
-import { x, s, h } from '../common/Global_Imports';
+import { x, core, h } from '../common/Global_Imports';
 import Ancestry from '../runtime/Ancestry';
 import { get } from 'svelte/store';
 

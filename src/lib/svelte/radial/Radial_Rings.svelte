@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, g, k, s, x, hits, busy, debug, colors, radial, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { e, g, k, core, x, hits, busy, debug, colors, radial, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Hit_Target, S_Component, S_Mouse } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_graph_radial, databases } from '../../ts/common/Global_Imports';
 	import Radial_Cluster from './Radial_Cluster.svelte';

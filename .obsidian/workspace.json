@@ -11,10 +11,14 @@
             "id": "4db059a2f6290c4d",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "notes/designs/architecture/writables.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "writables"
             }
           }
         ]
@@ -74,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 251.5
   },
   "right": {
     "id": "3a2b7a363fc7d49c",
@@ -136,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/architecture/buttons.md",
+                "file": "notes/designs/architecture/writables.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of buttons"
+              "title": "Outline of writables"
             }
           }
         ],
@@ -163,23 +167,27 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "4db059a2f6290c4d",
   "lastOpenFiles": [
-    "notes/designs/guides/gotchas.md",
+    "src/lib/ts/managers/Core.ts",
+    "notes/designs/architecture/controls.md",
+    "notes/designs/architecture/styles.md",
+    "notes/designs/architecture/writables.md",
+    "notes/designs/overview.md",
+    "notes/designs/guides/style.md",
+    "notes/designs/guides/refactoring.md",
+    "notes/designs/architecture/state.md",
+    "notes/designs/architecture/preferences.md",
+    "notes/designs/guides/debugging.md",
     "notes/designs/architecture/buttons.md",
+    "notes/designs/guides/gotchas.md",
     "notes/designs/architecture/gotcha.md",
     "notes/designs/architecture/gotchas.md",
-    "notes/designs/guides/debugging.md",
-    "notes/designs/architecture/state-design.md",
     "notes/designs/claude/project guide.md",
-    "notes/designs/guides/styles-guide.md",
-    "notes/designs/architecture/writables.md",
     "notes/designs/analysis/focus.md",
-    "notes/designs/architecture/controls.md",
     "notes/designs/analysis/layout-guide.md",
     "notes/designs/architecture",
     "notes/designs/analysis/breadcrumbs.md",
-    "notes/designs/guides/preferences.md",
     "notes/designs/analysis/refactor-clicks.md",
     "src/lib/ts/managers/Stores.ts",
     "notes/designs/analysis/STORES_PURPOSE.md",
@@ -199,10 +207,6 @@
     "node_modules/vitest/node_modules/vite/LICENSE.md",
     "node_modules/vitest/node_modules/vite/README.md",
     "node_modules/vitest/node_modules/rollup/LICENSE.md",
-    "node_modules/vitest/node_modules/postcss/README.md",
-    "node_modules/vitest/node_modules/rollup/README.md",
-    "node_modules/vitest/node_modules/es-module-lexer/README.md",
-    "node_modules/vitest/node_modules/picomatch/README.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, h, k, s, x, show, Point, details, elements } from '../../ts/common/Global_Imports';
+	import { g, h, k, core, x, show, Point, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
 	import { files } from '../../ts/files/Files';
 	import { onMount } from 'svelte';

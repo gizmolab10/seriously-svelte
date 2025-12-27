@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, s, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { h, k, core, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';

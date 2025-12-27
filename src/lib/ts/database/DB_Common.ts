@@ -1,7 +1,7 @@
 import { Tag, Trait, Thing, Hierarchy, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistable } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Enumerations';
-import { c, h, p, s, x, busy, debug, features, databases } from '../common/Global_Imports';
+import { c, h, p, core, x, busy, debug, features, databases } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 
 export enum T_Database {
@@ -145,15 +145,15 @@ export default class DB_Common {
 	async hierarchy_setup_fetch_andBuild() {
 		this.apply_queryStrings(c.queryStrings);
 		if (!h) {
-			s.w_hierarchy.set(new Hierarchy(this));
+			core.w_hierarchy.set(new Hierarchy(this));
 		}
-		s.w_t_startup.set(T_Startup.fetch);
+		core.w_t_startup.set(T_Startup.fetch);
 		if (!h.hasRoot) {
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		} else {
 			h.ancestries_assureAll_createUnique();
 			h.restore_fromPreferences();
-			s.w_t_startup.set(T_Startup.ready);		// so search will refresh its index
+			core.w_t_startup.set(T_Startup.ready);		// so search will refresh its index
 			x.setup_subscriptions();
 		}
 	}

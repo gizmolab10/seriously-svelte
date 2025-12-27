@@ -1,4 +1,4 @@
-import { g, k, p, s, x, show, hits, Point, Angle, debug, signals, elements, g_graph_radial } from '../common/Global_Imports';
+import { g, k, p, core, x, show, hits, Point, Angle, debug, signals, elements, g_graph_radial } from '../common/Global_Imports';
 import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
 import { G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -28,7 +28,7 @@ export default class Radial {
 	w_resize_radius = writable<number>(k.radius.ring_minimum);
 	
 	constructor() {
-		s.w_t_startup.subscribe((startup: T_Startup) => {
+		core.w_t_startup.subscribe((startup: T_Startup) => {
 			if (startup == T_Startup.ready) {
 				x.w_ancestry_focus.subscribe((ancestry) => {
 					this.reset();
@@ -191,7 +191,7 @@ export default class Radial {
 	restore_radial_preferences() {
 		this.w_rotate_angle.set( p.read_key(T_Preference.ring_angle) ?? 0);
 		this.w_resize_radius.set( Math.max( p.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
-		s.w_t_startup.subscribe((startup: T_Startup) => {
+		core.w_t_startup.subscribe((startup: T_Startup) => {
 			if (startup == T_Startup.ready) {
 				this.w_rotate_angle.subscribe((angle: number) => {
 					p.write_key(T_Preference.ring_angle, angle);

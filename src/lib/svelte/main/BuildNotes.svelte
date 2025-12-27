@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, show, colors, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, core, u, show, colors, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';

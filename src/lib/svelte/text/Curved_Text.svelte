@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Orientation, G_Cluster_Pager } from '../../ts/common/Global_Imports';
-	import { k, s, u, x, colors, Angle, Point } from '../../ts/common/Global_Imports';
+	import { k, core, u, x, colors, Angle, Point } from '../../ts/common/Global_Imports';
 	export let font_size = `${k.font_size.cluster_slider}px`;
 	export let background_color = $w_background_color;
 	export let font_family = $w_thing_fontFamily;

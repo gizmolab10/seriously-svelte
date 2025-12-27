@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, g, k, s, u, x, show, colors, search } from '../../ts/common/Global_Imports';
+	import { c, e, g, k, core, u, x, show, colors, search } from '../../ts/common/Global_Imports';
 	import { features, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { Point, T_Layer, T_Graph, T_Control, T_Breadcrumbs, S_Mouse } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';

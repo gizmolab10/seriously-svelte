@@ -52,7 +52,7 @@ import './Extensions';
 import { k } from './Constants';
 import { x } from '../managers/UX';
 import { e } from '../signals/Events';
-import { s } from '../managers/Stores';
+import { core } from '../managers/Core';
 import { g } from '../managers/Geometry';
 import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
@@ -99,7 +99,7 @@ export {
 
 	colors, radial, signals, 
 	interact, transparentize,
-	e, c, g, h, k, p, s, u, x,
+	e, c, g, h, k, p, core, u, x,
 	debug, svgPaths, databases,
 	hits, elements, components,
 	g_graph_tree, g_graph_radial,

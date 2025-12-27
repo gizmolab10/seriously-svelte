@@ -1,4 +1,4 @@
-import { c, e, g, k, s, show, search, g_graph_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
+import { c, e, g, k, core, show, search, g_graph_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 

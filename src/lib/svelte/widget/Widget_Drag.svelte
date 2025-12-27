@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Drag, T_Layer, T_Signal, T_Hit_Target, T_Orientation } from '../../ts/common/Global_Imports';
-	import { e, k, s, u, x, hits, show, debug, colors, radial } from '../../ts/common/Global_Imports';
+	import { e, k, core, u, x, hits, show, debug, colors, radial } from '../../ts/common/Global_Imports';
 	import { signals, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, g, k, s, u, x, hits, debug, search, colors, elements } from '../../ts/common/Global_Imports';
+	import { c, g, k, core, u, x, hits, debug, search, colors, elements } from '../../ts/common/Global_Imports';
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_index: w_found } = x.si_found;

@@ -1,152 +1,101 @@
 # Debugging Guide
 
-## Critical Principle: Verify Source Before Assuming Usage
+## Two Critical Principles
+
+1. **Verify source before assuming usage** - When something is undefined, check where it comes from first
+2. **Be systematic** - Form multiple hypotheses and test the complete pipeline, don't jump to assumptions
+
+## Principle 1: Verify Source First
 
 **When something is undefined or not working, ALWAYS check the source first.**
 
-### The Golden Rule
+### The Process
 
 1. **Check where it comes from** (imports, destructuring, property access)
 2. **Verify it exists on that object** (don't assume destructuring is correct)
 3. **Then investigate how it's being used**
 
-### Common Mistake Pattern
+### Common Patterns
 
-❌ **Wrong approach:**
-- Variable is undefined
-- Assume it's a usage/timing issue
-- Try to fix with async/await, get(), etc.
-- Miss that it's being accessed from the wrong object
-
-✅ **Correct approach:**
-- Variable is undefined
-- **First**: Check where it's imported/destructured from
-- **Second**: Verify it actually exists on that source object
-- **Third**: Check if it should come from a different object
-- **Then**: Investigate usage if source is correct
-
-## Step-by-Step Debugging Process
-
-### 1. When Something is Undefined
-
-**Step 1: Verify the source**
-```typescript
-// If you see this:
-const { w_s_title_edit } = s;
-
-// Check:
-// - Does `w_s_title_edit` exist on `s`?
-// - Where is `w_s_title_edit` actually defined?
-// - Should it come from a different object (x, u, etc.)?
-```
-
-**Step 2: Trace the definition**
-- Use `grep` to find where the variable/property is defined
-- Check the actual object it's defined on
-- Verify the import/destructuring matches
-
-**Step 3: Only then investigate usage**
-- If source is correct, then check timing/async issues
-- If source is wrong, fix that first
-
-### 2. When Stores Don't Work
-
-**Check order:**
-1. Is the store imported correctly?
-2. Is it destructured from the right object?
-3. Is it the right store instance?
-4. Then check if you need `get()` vs `$` syntax
-
-### 3. When Async Functions Have Issues
-
-**Check order:**
-1. Are all variables/imports correct?
-2. Are stores accessed correctly (capture value at start)?
-3. Then check async/await timing
-
-## Specific Patterns to Check
-
-### Destructuring from Wrong Object
-
+**Destructuring from wrong object:**
 ```typescript
 // BAD: Assuming destructuring is correct
-const { w_s_title_edit } = s;  // But w_s_title_edit is on x, not s!
+const { w_s_title_edit } = s;  // But it's on x, not s!
 
-// GOOD: Verify first
-// 1. Find where w_s_title_edit is defined
-// 2. Check which object it's on
-// 3. Destructure from correct object
+// GOOD: Verify first, then fix
 const { w_s_title_edit } = x;  // Correct!
 ```
 
-### Store Access in Async Functions
-
+**Store access in async functions:**
 ```typescript
-// BAD: Using $ syntax in async (won't work)
+// BAD: Using $ syntax in async
 async function foo() {
-    const value = $w_s_title_edit;  // ❌ Doesn't work in regular functions
+    const value = $w_s_title_edit;  // ❌ Doesn't work
 }
 
 // GOOD: Capture at function start
 async function foo() {
-    const s_text_edit = $w_s_title_edit;  // ✅ Works at function entry
-    // Use s_text_edit (captured value) throughout
+    const s_text_edit = $w_s_title_edit;  // ✅ Capture first
+    await something();
+    if (s_text_edit) s_text_edit.doSomething();  // Use captured value
 }
 ```
 
-### Undefined After Async Operation
+### Source Verification Checklist
 
-```typescript
-// BAD: Assuming store is still available
-async function foo() {
-    await something();
-    $w_s_title_edit.doSomething();  // ❌ Might be cleared
-}
-
-// GOOD: Capture before async
-async function foo() {
-    const s_text_edit = $w_s_title_edit;  // Capture first
-    await something();
-    if (s_text_edit) {  // Check captured value
-        s_text_edit.doSomething();
-    }
-}
-```
-
-## Verification Checklist
-
-Before assuming a usage issue, verify:
-
-- [ ] Is the variable/property imported correctly?
-- [ ] Is it destructured from the correct object?
-- [ ] Does it actually exist on that object? (check definition)
+- [ ] Is it imported/destructured correctly?
+- [ ] Does it exist on that object? (use `grep` or `codebase_search` to verify)
 - [ ] Is it the right instance/type?
-- [ ] Are there any typos in the name?
+- [ ] Any typos?
 
-Only after all of the above are verified should you investigate:
-- Timing issues
-- Async/await problems
-- Store reactivity issues
-- Scope/context problems
+**Only after verifying source should you investigate:** timing, async/await, reactivity, scope
 
-## Tools to Use
+## Principle 2: Be Systematic
 
-1. **grep**: Find where something is defined
-   ```bash
-   grep -r "w_s_title_edit\s*=" src/
-   ```
+**Don't jump to assumptions. Form multiple hypotheses and test the complete pipeline.**
 
-2. **codebase_search**: Find where something is used/defined
-   ```typescript
-   codebase_search("Where is w_s_title_edit defined?")
-   ```
+### The Problem
 
-3. **read_file**: Check the actual definition
-   ```typescript
-   read_file("path/to/file.ts")
-   ```
+When something appears broken, it's tempting to:
+- Jump to the most obvious solution (e.g., "mathy" fixes for visual issues)
+- Focus on one part of the system
+- Assume other parts are correct
+- Get tunnel vision on the first hypothesis
+
+### The Approach
+
+1. **Form multiple hypotheses** (rendering setup, data generation, data flow)
+2. **Test the complete pipeline** (Data → Component → DOM → Visual output)
+3. **Don't assume any part is correct** - verify each step
+4. **Test hypotheses independently** - don't get attached to your first guess
+
+### Example: Arrow Sizing Bug
+
+❌ **Wrong:** Assume path coordinates are wrong → spend time fixing math → miss that SVG was missing `width`/`height` attributes
+
+✅ **Right:** Form hypotheses → test rendering setup first → find missing attributes → fix found in 2 minutes
+
+### Systematic Checklist
+
+For visual/rendering issues:
+- [ ] Element attributes (width, height, viewBox, etc.)
+- [ ] CSS/styling (transform, scale, positioning)
+- [ ] Data generation (coordinates, calculations)
+- [ ] Data flow between components
+- [ ] Compare working vs non-working cases
+- [ ] Browser dev tools for actual rendered values
+
+## Tools
+
+- **grep**: `grep -r "pattern" src/` - Find definitions
+- **codebase_search**: Semantic search for usage/definitions
+- **read_file**: Check actual definitions
 
 ## Remember
 
-**The most common mistake is assuming the source is correct and jumping to usage fixes. Always verify the source first.**
+**Most common mistakes:**
+1. Assuming source is correct → jumping to usage fixes
+2. Not being systematic → jumping to assumptions instead of testing hypotheses
+
+**Always verify source first, then test the complete pipeline systematically.**
 

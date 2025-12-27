@@ -1,5 +1,5 @@
 import { S_Items, T_Search, T_Startup, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { g, h, s, u, hits, debug, radial } from '../common/Global_Imports';
+import { g, h, core, u, hits, debug, radial } from '../common/Global_Imports';
 import { details, controls, databases } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { get, writable, derived, type Readable } from 'svelte/store';
@@ -249,7 +249,7 @@ export default class S_UX {
 	}
 
 	update_grabs_forSearch() {
-		if (get(s.w_t_startup) == T_Startup.ready && get(search.w_s_search) != T_Search.off && this.si_found.length > 0) {
+		if (get(core.w_t_startup) == T_Startup.ready && get(search.w_s_search) != T_Search.off && this.si_found.length > 0) {
 			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
 			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {

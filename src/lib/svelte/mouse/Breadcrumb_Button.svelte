@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, h, k, s, u, x, hits, colors, search, elements, x, show } from '../../ts/common/Global_Imports';
+	import { g, h, k, core, u, x, hits, colors, search, elements, x, show } from '../../ts/common/Global_Imports';
 	import { Point, T_Search, T_Banner, T_Hit_Target, T_Breadcrumbs } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Button from './Button.svelte';

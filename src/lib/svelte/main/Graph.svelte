@@ -1,13 +1,13 @@
 <script lang='ts'>
-	import { e, g, h, k, s, u, x, hits, show, Rect, Point, builds, debug, signals, elements } from '../../ts/common/Global_Imports';
+	import { e, g, h, k, core, u, x, hits, show, Rect, Point, builds, debug, signals, elements } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Rubberband from '../mouse/Rubberband.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
-	const { w_t_startup } = s;
 	const { w_t_graph } = show;
+	const { w_t_startup } = core;
 	const size_big = k.height.button + 4;
 	const { w_s_hover, w_dragging } = hits;
 	const { w_items: w_expanded } = x.si_expanded;

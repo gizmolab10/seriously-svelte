@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, x, show, Rect, Point, colors, controls } from '../../ts/common/Global_Imports';
+	import { g, k, core, u, x, show, Rect, Point, colors, controls } from '../../ts/common/Global_Imports';
 	import { T_Auto_Adjust_Graph, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Kinship, T_Counts_Shown } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';

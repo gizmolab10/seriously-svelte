@@ -2,13 +2,13 @@
 	import { T_Signal, T_Startup, T_Breadcrumbs, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { show, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
 	import { Thing, Ancestry, S_Component} from '../../ts/common/Global_Imports';
-	import { c, e, g, h, k, s, u, x } from '../../ts/common/Global_Imports';
+	import { c, e, g, h, k, core, u, x } from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { onMount } from 'svelte';
 	export let width = g.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
-	const { w_t_startup } = s;
+	const { w_t_startup } = core;
 	const { w_s_search } = search;
 	const { w_thing_color } = colors;
 	const { w_t_breadcrumbs } = show;

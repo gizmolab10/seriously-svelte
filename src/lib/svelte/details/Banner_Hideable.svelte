@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, x, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
+	import { g, k, core, u, x, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
 	import { tick } from 'svelte';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Signal, T_Radial_Zone, T_Hit_Target, S_Component } from '../../ts/common/Global_Imports';
-	import { g, k, s, u, x, radial, signals, elements, g_graph_radial } from '../../ts/common/Global_Imports';
+	import { g, k, core, u, x, radial, signals, elements, g_graph_radial } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';

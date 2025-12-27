@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Request, T_Predicate, T_Alteration, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
-	import { c, e, g, h, k, s, u, x, show, Point, colors, signals, S_Mouse } from '../../ts/common/Global_Imports';
+	import { c, e, g, h, k, core, u, x, show, Point, colors, signals, S_Mouse } from '../../ts/common/Global_Imports';
 	import { elements, details, controls } from '../../ts/common/Global_Imports';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
 	import Separator from '../draw/Separator.svelte';

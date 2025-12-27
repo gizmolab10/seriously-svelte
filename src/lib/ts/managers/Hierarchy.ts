@@ -9,10 +9,10 @@ import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
-import { s } from './Stores';
+import { core } from './Core';
 
 export let h!: Hierarchy;
-s.w_hierarchy.subscribe(value => h = value);
+core.w_hierarchy.subscribe(value => h = value);
 export type Ancestry_ByHID = { [hid: Integer]: Ancestry }
 export type SI_Relationships_ByHID = { [hid: Integer]: S_Items<Relationship> }
 
@@ -1471,7 +1471,7 @@ export class Hierarchy {
 		} else if (!!focus) {
 			return focus;
 		} else {
-			return get(s.w_hierarchy)?.rootAncestry;
+			return get(core.w_hierarchy)?.rootAncestry;
 		}
 	}
 
@@ -1740,7 +1740,7 @@ export class Hierarchy {
 		busy.signal_data_redraw();
 		await this.db.persist_all();
 		this.db.update_load_time();
-		s.w_t_startup.set(T_Startup.ready);
+		core.w_t_startup.set(T_Startup.ready);
 		x.setup_subscriptions();
 	}
 
