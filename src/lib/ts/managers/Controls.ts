@@ -1,5 +1,5 @@
-import { c, e, g, k, core, show, search, g_graph_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
-import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
+import { c, e, g, k, x, show, search, g_graph_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
+import { T_Focus, T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 class Controls {
@@ -29,8 +29,9 @@ class Controls {
 	handle_segmented_choices(segmented_name: string, choices: string[]) {
 		switch (segmented_name) {
 			case 'search': search.w_search_preferences.set(choices[0] as unknown as T_Search_Preference); break;
-			case 'graph':  show.w_t_graph.set(choices[0] as unknown as T_Graph); break;
 			case 'tree':   g_graph_tree.set_tree_types(choices as Array<T_Kinship>); break;
+			case 'graph':  show.w_t_graph.set(choices[0] as unknown as T_Graph); break;
+			case 'focus':  show.w_t_focus.set(choices[0] as unknown as T_Focus); break;
 		}
 	}
 

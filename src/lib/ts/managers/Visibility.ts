@@ -1,5 +1,5 @@
-import { T_Graph, T_Detail, T_Kinship, T_Startup, T_Breadcrumbs } from '../common/Global_Imports';
-import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { T_Focus, T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference } from '../common/Global_Imports';
+import { T_Breadcrumbs, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { g, k, p, core, g_graph_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
@@ -10,6 +10,7 @@ export class Visibility {
 	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
 	w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(null);
 	w_t_directionals		= writable<boolean[]>([false, true]);
+	w_t_focus				= writable<T_Focus>(T_Focus.static);
 	w_t_graph				= writable<T_Graph>(T_Graph.tree);
 	w_t_details				= writable<Array<T_Detail>>([]);
 	w_t_trees				= writable<Array<T_Kinship>>();
@@ -79,6 +80,7 @@ export class Visibility {
 		this.w_t_trees		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
 		this.w_t_details	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
 		this.w_t_graph	.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
+		this.w_t_focus	.set(p.read_key(T_Preference.focus) ?? T_Focus.dynamic);
 	}
 	
 	reactivity_subscribe() {
@@ -95,6 +97,9 @@ export class Visibility {
 		});
 		this.w_t_graph.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.graph, flag);
+		});
+		this.w_t_focus.subscribe((flag: any) => {
+			writeAnd_reactTo(T_Preference.focus, flag);
 		});
 		this.w_show_search_controls.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.show_related, flag);

@@ -6,10 +6,10 @@
 	import Slider from '../mouse/Slider.svelte';
 	import { transparentize } from 'color2k';
 	export let zindex = T_Layer.graph;
-	const { w_t_trees } = show;
 	const { w_depth_limit } = g;
 	const heights = [ 3, 5, 18 ];
 	const { w_separator_color } = colors;
+	const { w_t_trees, w_t_focus } = show;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 2;
 	let widths: Array<number> = [];
@@ -68,14 +68,12 @@
 		corner_radius={k.radius.gull_wings.thick}/>
 	<Segmented name='focus-response-type'
 		width={50}
-		selected={[]}
 		allow_multiple={false}
+		selected={[$w_t_focus]}
 		height={segmented_height}
 		origin={new Point(lefts[2], 5)}
 		titles={[T_Focus.static, T_Focus.dynamic]}
-		handle_selection={(titles) => {
-			// TODO: implement handler
-		}}/>
+		handle_selection={(titles) => controls.handle_segmented_choices('focus', titles)}/>
 	<Slider
 		max={12}
 		width={117}
