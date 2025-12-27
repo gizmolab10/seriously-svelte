@@ -64,6 +64,8 @@ export class Visibility {
 	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
+	get isDynamic_focus(): boolean { return get(this.w_t_focus) == T_Focus.dynamic; }
+	get isStatic_focus(): boolean { return get(this.w_t_focus) == T_Focus.static; }
 
 	toggle_show_other_databases() {
 		const other_databases = !get(this.w_show_other_databases)

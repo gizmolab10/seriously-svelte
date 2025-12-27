@@ -160,7 +160,7 @@
 			size={k.height.dot}
 			color={pager_color}
 			direction='backward'
-			handle_click={handle_backward}
+			handle_mouseUp={handle_backward}
 			name={g_cluster.name + '-start'}
 			thumbTransform={start_thumb_transform}/>
 		<Cluster_Pager
@@ -168,7 +168,7 @@
 			direction='forward'
 			size={k.height.dot}
 			color={pager_color}
-			handle_click={handle_forward}
+			handle_mouseUp={handle_forward}
 			name={g_cluster.name + '-end'}
 			thumbTransform={end_thumb_transform}/>
 	</svg>

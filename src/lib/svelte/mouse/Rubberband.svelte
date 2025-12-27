@@ -148,7 +148,7 @@
                 $w_dragging = T_Drag.graph;
             } else {
                 // Start rubberband - we know no widget/dot/ring was clicked
-                // because handle_click_at prioritizes those targets
+                // because handle_s_mouse_at prioritizes those targets
                 const constrained = constrainToRect(startPoint);
                 original_grab_count = x.si_grabs.items.length;
                 rect.y = constrained.y;

@@ -105,7 +105,7 @@
 			label={label}
 			label_color={label_color}
 			label_underline={label_underline}
-			handle_click={handleClick_onLabel} />
+			handle_mouseUp={handleClick_onLabel} />
 	</div>
 </div>
 

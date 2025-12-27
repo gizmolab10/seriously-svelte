@@ -34,7 +34,7 @@
 	//															//
 	//  buttons row sends column & T_Request:					//
 	// 	  is_disabled calls:	isAction_disabledAt		//
-	//	  handle_click calls:	handle_action_clickedAt ...		//
+	//	  handle_s_mouse calls:	handle_action_clickedAt ...		//
 	//    n.b., long press generates multiple calls				//
 	//  buttons table adds row (here it becomes row)			//
 	//															//
@@ -143,7 +143,7 @@
 			case T_Request.is_visible:	 return !isAltering ? true : row_isAltering(row);
 			case T_Request.is_disabled:  return e.isAction_disabledAt(row, column);
 			case T_Request.is_inverted:  return !isAltering ? false : isAction_invertedAt(row, column);
-			case T_Request.handle_click: return handle_action_autorepeatAt(s_mouse, row, column, name_for(row, column + 1));
+			case T_Request.handle_s_mouse: return handle_action_autorepeatAt(s_mouse, row, column, name_for(row, column + 1));
 		}
 		return null;
 	}

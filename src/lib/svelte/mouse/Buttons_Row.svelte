@@ -127,7 +127,7 @@
 						width={g_repeater.button_width_for(column)}
 						origin={Point.x(g_repeater.button_left_for(column))}
 						name={`${name}-row-${row_name}-${button_name_for(column)}`}
-						handle_s_mouse={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
+						handle_s_mouse={(s_mouse) => closure(T_Request.handle_s_mouse, s_mouse, column)}>
 						{#if t_button_svg === T_Button_SVG.none}
 							{title}
 						{:else if t_button_svg === T_Button_SVG.triangle}

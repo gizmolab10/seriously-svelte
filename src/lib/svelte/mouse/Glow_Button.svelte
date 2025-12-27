@@ -4,7 +4,7 @@
     import Identifiable from '../../ts/runtime/Identifiable';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import { onMount } from 'svelte';
-    export let handle_click: (title: string) => boolean;
+    export let handle_mouseUp: (title: string) => boolean;
     export let font_size: number = k.font_size.banners;
     export let detects_autorepeat: boolean = false;
     export let banner_id: string = k.empty;
@@ -36,18 +36,18 @@
 		banner_color = colors.banner;
 	}
 
-    // Set up handle_s_mouse and autorepeat reactively to capture current handle_click
+    // Set up handle_s_mouse and autorepeat reactively to capture current handle_mouseUp
     $: if (!!s_element && !!glow_button) {
         s_element.set_html_element(glow_button);
         // Capture current values to avoid stale closures
-        const current_handle_click = handle_click;
+        const current_handle_mouseUp = handle_mouseUp;
         const current_click_title = click_title;
         
         if (detects_autorepeat) {
             // For autorepeat buttons: only set up autorepeat callback
             // The callback fires immediately on mouse down (handled by Hits.ts)
             s_element.mouse_detection = T_Mouse_Detection.autorepeat;
-            s_element.autorepeat_callback = () => current_handle_click(current_click_title);
+            s_element.autorepeat_callback = () => current_handle_mouseUp(current_click_title);
             s_element.autorepeat_id = 0;
             // handle_s_mouse just returns true (autorepeat handles the click)
             s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
@@ -59,7 +59,7 @@
             s_element.autorepeat_callback = undefined;
             s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
                 if (s_mouse.isDown) {
-                    current_handle_click(current_click_title);
+                    current_handle_mouseUp(current_click_title);
                 }
                 return true;
             };

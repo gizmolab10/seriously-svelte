@@ -154,7 +154,7 @@
 			origin={new Point(1, 125)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_toggle_properties}
+			handle_mouseUp={handle_toggle_properties}
 			thickness={k.thickness.separator.details}
 			title='click to {details.show_properties ? 'hide' : 'show more'}'/>
 	{/if}

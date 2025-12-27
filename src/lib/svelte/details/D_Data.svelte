@@ -83,7 +83,7 @@
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = (details.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		switch (t_request) {
-			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
+			case T_Request.handle_s_mouse: return handle_mouseUp_forColumn(s_mouse, column);
 			case T_Request.name:        return ids[column];
 			case T_Request.is_visible:  return true;
 			default:                    return false;
@@ -104,7 +104,7 @@
 		}
 	}
 	
-	function handle_click_forColumn(s_mouse, column) {
+	function handle_mouseUp_forColumn(s_mouse, column) {
 		const beginning = details.t_storage_need == T_Storage_Need.direction;
 		const ids = beginning ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isDown) {
@@ -137,8 +137,8 @@
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_show_other_databases}
 			thickness={k.thickness.separator.details}
+			handle_mouseUp={handle_show_other_databases}
 			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		<Separator name='show-other-databases'
 			isHorizontal={true}
@@ -148,8 +148,8 @@
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_show_other_databases}
 			thickness={k.thickness.separator.details}
+			handle_mouseUp={handle_show_other_databases}
 			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		{#if $w_show_other_databases}
 			<Segmented name='databases'

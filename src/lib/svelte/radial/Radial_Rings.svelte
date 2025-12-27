@@ -36,8 +36,8 @@
 	onMount(() => {
 		update_fill_colors();
 		// Set up click handlers for centralized hit system
-		radial.s_rotation.handle_s_mouse = handle_rotation_click;
-		radial.s_resizing.handle_s_mouse = handle_resize_click;
+		radial.s_rotation.handle_s_mouse = handle_s_mouse_forRotation;
+		radial.s_resizing.handle_s_mouse = handle_s_mouse_forResize;
 		return () => s_component.disconnect();
 	});
 
@@ -86,7 +86,7 @@
 		update_fill_colors();
 	}
 
-	function handle_rotation_click(s_mouse: S_Mouse): boolean {
+	function handle_s_mouse_forRotation(s_mouse: S_Mouse): boolean {
 		if (s_mouse.isDown && s_mouse.event) {
 			const zone = radial.ring_zone_atMouseLocation;
 			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
@@ -100,7 +100,7 @@
 		return false;
 	}
 
-	function handle_resize_click(s_mouse: S_Mouse): boolean {
+	function handle_s_mouse_forResize(s_mouse: S_Mouse): boolean {
 		if (s_mouse.isDown && s_mouse.event) {
 			const zone = radial.ring_zone_atMouseLocation;
 			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;

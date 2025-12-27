@@ -201,12 +201,12 @@ export enum T_Mouse_Detection {
 }
 
 export enum T_Request {
-	handle_click = 'handle_click',
-	is_disabled	 = 'is_disabled',
-	is_inverted	 = 'is_inverted',
-	is_visible	 = 'is_visible',
-	is_hit		 = 'is_hit',
-	name		 = 'name',
+	handle_s_mouse = 'handle_s_mouse',
+	is_disabled	   = 'is_disabled',
+	is_inverted	   = 'is_inverted',
+	is_visible	   = 'is_visible',
+	is_hit		   = 'is_hit',
+	name		   = 'name',
 }
 
 export enum T_Signal {

@@ -2,7 +2,7 @@
 	import { k, hits, elements, svgPaths, colors } from '../../ts/common/Global_Imports';
 	import { Point, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
-	export let handle_click: () => void = () => {};
+	export let handle_mouseUp: () => void = () => {};
 	export let thumbTransform = k.empty;
 	export let thumb_path_d = k.empty;
 	export let size = k.height.dot;
@@ -41,7 +41,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		if (s_mouse.isUp) {
-			handle_click();
+			handle_mouseUp();
 			return true;
 		}
 		return false;

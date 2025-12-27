@@ -119,9 +119,9 @@
 			role="button"
 			tabindex="0"
 			style='
-				overflow: visible;
 				width: {size}px;
 				height: {size}px;
+				overflow: visible;
 				position: relative;'>
 			<div style='
 				top: 0px;

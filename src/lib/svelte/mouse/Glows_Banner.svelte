@@ -60,7 +60,7 @@
 			name={banner_title}
 			banner_id={banner_id}
 			font_size={font_size}
-			handle_click={intercept_click}
+			handle_mouseUp={intercept_click}
 			detects_autorepeat={title != banner_id}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}

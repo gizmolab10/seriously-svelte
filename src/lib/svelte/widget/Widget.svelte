@@ -106,7 +106,7 @@
 			const waitingForDoubleClick = hits.pending_singleClick_target === s_widget && 
 				hits.click_timer.hasTimer_forID(T_Timer.double);
 			if (!waitingForDoubleClick) {
-				handle_click_event_fromHover();
+				handle_mouseUp();
 			}
 		}
 	}
@@ -133,7 +133,7 @@
 		return (controls.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget;
 	}
 
-	function handle_click_event_fromHover() {
+	function handle_mouseUp() {
 		ancestry?.grab_forShift(false);
 		update_style();
 	}

@@ -1,10 +1,10 @@
-import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
+import { T_Focus, T_Create, T_Startup, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { g, k, p, u, x, busy, show, debug, controls, features } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
-import { files, colors, signals, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { DB_Name, T_Database } from '../database/DB_Common';
+import { files, colors, databases } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
@@ -851,7 +851,7 @@ export class Hierarchy {
 	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, parentAncestry: Ancestry) {
 		const newThingAncestry = await this.bulkAlias_remember_recursive_persistentRelocateRight(ancestry, parentAncestry);
 		if (!!newThingAncestry) {
-			signals.signal_reattach_widgets_from(parentAncestry);
+			// signals.signal_reattach_widgets_from(parentAncestry);
 			if (parentAncestry.isExpanded) {
 				newThingAncestry.grabOnly();
 			} else {
@@ -1004,8 +1004,8 @@ export class Hierarchy {
 		const [graph_needsSweep, graph_needsReattach] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
 		if (graph_needsSweep) {
 			g.grand_sweep();
-		} else if (graph_needsReattach) {
-			signals.signal_reattach_widgets_fromFocus();
+		// } else if (graph_needsReattach) {
+		// 	signals.signal_reattach_widgets_fromFocus();
 		}
 	}
 
@@ -1102,7 +1102,7 @@ export class Hierarchy {
 			if (!newGrabIsFocus && !!newFocusAncestry && (controls.inTreeMode || RIGHT || !newFocusIsVisible)) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const becomeFocus = (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusIsVisible);
-				if (becomeFocus && newFocusAncestry.becomeFocus()) {
+				if (show.isDynamic_focus && becomeFocus && newFocusAncestry.becomeFocus()) {
 					graph_needsSweep = true;
 				}
 			}

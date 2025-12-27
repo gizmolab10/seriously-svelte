@@ -56,7 +56,7 @@ export default class Hits {
 
 	static readonly _____CLICKS: unique symbol;
 
-	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
+	handle_s_mouse_at(point: Point, s_mouse: S_Mouse): boolean {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
 		if (!!s_mouse.event) {

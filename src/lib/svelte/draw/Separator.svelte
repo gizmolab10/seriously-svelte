@@ -2,7 +2,7 @@
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
-	export let handle_click: (event: Event) => {} | null = null;
+	export let handle_mouseUp: (event: Event) => {} | null = null;
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
 	export let title_font_size = k.font_size.separator;
 	export let thickness = k.thickness.separator.main;
@@ -32,7 +32,7 @@
 	// length			length of the separator
 	// margin		
 	// zindex
-	// handle_click		renders as a clickable label instead
+	// handle_mouseUp		renders as a clickable label instead
 
 	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, $w_separator_color);
 	$: wingsCenter_single = wingsCenter_for(isHorizontal, length, thickness, false);
@@ -99,7 +99,7 @@
 	{/if}
 {/if}
 {#if !!title}
-	{#if handle_click}
+	{#if handle_mouseUp}
 		<div class='clickable-title'
 			style='
 				left:-1px;
@@ -112,19 +112,19 @@
 				label={title}
 				zindex={zindex + 1}
 				label_underline={true}
-				handle_click={handle_click}
-				font_size={title_font_size}/>
+				font_size={title_font_size}
+				handle_mouseUp={handle_mouseUp}/>
 		</div>
 	{:else}
 		<div class='static-title'
 			style='
 				z-index:{zindex};
 				padding: 0px 5px;
-				top:{title_top + 1}px;
-				left:{title_left}px;
 				position:{position};
 				white-space: nowrap;
+				left:{title_left}px;
 				z-index:{zindex + 2};
+				top:{title_top + 1}px;
 				width:{title_width}px;
 				font-size:{title_font_size}px;
 				background-color:{$w_background_color};'>
