@@ -100,14 +100,15 @@ export enum T_Breadcrumbs {
 	history  = 'history',
 }
 
-export enum T_Counts_Shown {
-	numbers = 'numbers',
-	dots    = 'dots',
-}
-
 export enum T_Focus {
 	dynamic = 'dynamic',
 	static  = 'static',
+}
+
+export enum T_Counts_Shown {
+	numbers = 'numbers',
+	hidden  = 'hidden',
+	dots    = 'dots',
 }
 
 export enum T_Auto_Adjust_Graph {
@@ -318,7 +319,7 @@ export enum T_Preference {
 	focus_forParents  = 'focus_forParents',
 	other_databases	  = 'other_databases',
 	cluster_sliders	  = 'cluster_sliders',
-	countsAs_dots	  = 'countsAs_dots',
+	show_countsAs	  = 'show_countsAs',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// shown in details view, vertical stack
 	paging_style	  = 'paging_style',

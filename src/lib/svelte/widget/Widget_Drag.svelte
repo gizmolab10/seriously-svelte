@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Drag, T_Layer, T_Signal, T_Hit_Target, T_Orientation } from '../../ts/common/Global_Imports';
+	import { T_Drag, T_Layer, T_Signal, T_Counts_Shown, T_Hit_Target, T_Orientation } from '../../ts/common/Global_Imports';
 	import { e, k, core, u, x, hits, show, debug, colors, radial } from '../../ts/common/Global_Imports';
 	import { signals, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
@@ -15,7 +15,7 @@
 	const { w_background_color } = colors;
 	const { w_s_hover, w_dragging } = hits;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_t_countDots, w_show_countsAs_dots } = show;
+	const { w_t_countDots, w_show_countsAs } = show;
 	const { w_ancestry_focus, w_ancestry_forDetails } = x;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
@@ -60,7 +60,7 @@
 	});
 
 	$: {
-		const _ = `${$w_t_countDots}:::${$w_show_countsAs_dots}`;
+		const _ = `${$w_t_countDots}:::${$w_show_countsAs}`;
 		update_svgPaths();
 	}
 
@@ -106,7 +106,7 @@
 
 	function update_svgPathsExtra() {
 		svgPathFor_related = svgPathFor_ellipses = null;
-		if (!!thing && $w_show_countsAs_dots) {
+		if (!!thing && ($w_show_countsAs == T_Counts_Shown.dots)) {
 			const count = thing.parents.length;		
 			if (count > 1 && show.parent_dots) {
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
@@ -166,7 +166,7 @@
 						fill={$w_background_color}
 						svgPath={svgPathFor_related}/>
 				{/if}
-				{#if ancestry.isFocus && !$w_show_countsAs_dots}
+				{#if ancestry.isFocus && ($w_show_countsAs != T_Counts_Shown.dots)}
 					<SVG_D3 name={'svg-focus-' + name}
 						width={size}
 						height={size}

@@ -21,12 +21,12 @@
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager, w_show_countsAs_dots } = show;
+	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager, w_show_countsAs } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
 
-	$: show_dots = $w_show_countsAs_dots;
+	$: show_dots = $w_show_countsAs == T_Counts_Shown.dots;
 	$: offset = show_dots ? 2 : 0;
 
 	$: heights = [
@@ -43,10 +43,10 @@
 		5];
 
 	$: tops = u.cumulativeSum(heights);
-	$: selected_counts = show_dots ? [T_Counts_Shown.dots] : [T_Counts_Shown.numbers];
+	$: selected_counts = [$w_show_countsAs];
 
 	$: {
-		const _ = !!$w_show_countsAs_dots;
+		const _ = !!$w_show_countsAs;
 		if (!!color_wrapper) {
 			(async () => {
 				await tick();
@@ -79,7 +79,7 @@
 
 	function handle_counts_shown(types: string[]) {
 		if (types.length > 0) {
-			$w_show_countsAs_dots = types[0] === T_Counts_Shown.dots;
+			$w_show_countsAs = types[0] as T_Counts_Shown;
 		}
 	}
 
@@ -108,7 +108,7 @@
 		has_gull_wings={true}
 		margin={k.details_margin}
 		origin={Point.y(tops[0])}
-		title='show list lengths as'
+		title='show list sizes as'
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
 	<Segmented name='counts-shown-options'
@@ -119,7 +119,7 @@
 		height={segmented_height}
 		origin={Point.y(tops[1])}
 		handle_selection={handle_counts_shown}
-		titles={[T_Counts_Shown.dots, T_Counts_Shown.numbers]}
+		titles={[T_Counts_Shown.dots, T_Counts_Shown.numbers, T_Counts_Shown.hidden]}
 		selected={selected_counts}/>
 	{#if show_dots}
 		<Separator name='tiny-dots-separator'

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { h, k, core, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
-	import { S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { S_Element, S_Component, T_Layer, T_Counts_Shown, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	export let pointsTo_child = true;
@@ -21,7 +21,7 @@
 	const count_fontSize = reveal_count < 10 ? 8 : 7;
 	const reveal_count_top = reveal_count < 10 ? 3.2 : 4;
 	const { w_thing_color, w_background_color } = colors;
-	const { w_t_countDots, w_show_countsAs_dots } = show;
+	const { w_t_countDots, w_show_countsAs } = show;
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
@@ -166,7 +166,7 @@
 				width:{k.tiny_outer_dots.diameter}px;
 				height:{k.tiny_outer_dots.diameter}px;
 				z-index:{T_Layer.frontmost};'>
-				{#if !$w_show_countsAs_dots && show_reveal_count}
+				{#if ($w_show_countsAs == T_Counts_Shown.numbers) && show_reveal_count && !svgPathFor_fat_center_dot}
 					<div class='numerical-count'
 						style='
 							left:-1px;
@@ -181,7 +181,7 @@
 							shape-rendering: geometricPrecision;'>
 						{reveal_count}
 					</div>
-				{:else if $w_show_countsAs_dots && !!svgPathFor_tiny_outer_dots}
+				{:else if ($w_show_countsAs == T_Counts_Shown.dots) && !!svgPathFor_tiny_outer_dots}
 					<svg class='tiny-outer-dots-svg'
 						viewBox='{viewBox}'
 						preserveAspectRatio='none'

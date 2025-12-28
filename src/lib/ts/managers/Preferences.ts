@@ -150,7 +150,7 @@ export class Preferences {
 		x.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
 		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
 		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.ancestry);
-		show.w_show_countsAs_dots .set( this.read_key(T_Preference.countsAs_dots)	 ?? true);
+		show.w_show_countsAs  .set( this.read_key(T_Preference.show_countsAs) ?? T_Counts_Shown.dots);
 		this.reactivity_subscribe()
 	}
 	
@@ -224,8 +224,8 @@ export class Preferences {
 		show.w_t_breadcrumbs.subscribe((breadcrumbs: T_Breadcrumbs) => {
 			this.write_key(T_Preference.breadcrumbs, breadcrumbs);
 		});
-		show.w_show_countsAs_dots.subscribe((as_dots: boolean) => {
-			this.write_key(T_Preference.countsAs_dots, as_dots);
+		show.w_show_countsAs.subscribe((counts_shown: T_Counts_Shown) => {
+			this.write_key(T_Preference.show_countsAs, counts_shown);
 		});
 		
 		// OTHER
