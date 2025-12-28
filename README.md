@@ -1,5 +1,22 @@
 # Webseriously Project Guide
 
+## Table of Contents
+- [Project Overview](#project-overview)
+  - [Naming Conventions](#naming-conventions)
+  - [Directory Structure](#directory-structure)
+  - [Core Concepts](#core-concepts)
+  - [Key Features](#key-features)
+  - [Architecture & Patterns](#architecture--patterns)
+- [Development](#development)
+  - [Setup](#setup)
+  - [Code Style](#code-style)
+  - [Important Files](#important-files)
+  - [Debugging](#debugging)
+  - [Gotchas](#gotchas)
+- [Notes](#notes)
+  - [DO / DON'T](#do--dont)
+  - [Additional Resources](#additional-resources)
+
 This document provides comprehensive guidance for anyone working on the Webseriously project.
 
 ## Project Overview
@@ -304,23 +321,30 @@ class MyThing extends Persistable {
 
 **Internal Documentation**:
 
-**Architecture**
-- [hits.md](../architecture/hits.md) - Click/hover system, migration guide
-- [state.md](../architecture/state.md) - State objects vs Svelte patterns
-- [writables.md](../architecture/writables.md) - Store inventory by manager
-- [buttons.md](../architecture/buttons.md) - Button hierarchy, SVG icons
-- [controls.md](../architecture/controls.md) - Control components
-- [preferences.md](../architecture/preferences.md) - Settings management
-- [styles.md](../architecture/styles.md) - Styling system
+**Index**: [overview.md](notes/designs/overview.md) - Complete index of all design documentation
 
-**Guides**
-- [style.md](../guides/style.md) - **CRITICAL** - Complete codebase conventions
-- [debugging.md](../guides/debugging.md) - Systematic debugging methodology
-- [gotchas.md](../guides/gotchas.md) - Common pitfalls
-- [refactoring.md](../guides/refactoring.md) - Refactoring principles
-- [markdown.md](../guides/markdown.md) - Markdown formatting
+**Architecture** (notes/designs/architecture/):
+- [hits.md](notes/designs/architecture/hits.md) - Click/hover system, migration guide
+- [state.md](notes/designs/architecture/state.md) - State objects vs Svelte patterns
+- [writables.md](notes/designs/architecture/writables.md) - Store inventory by manager
+- [buttons.md](notes/designs/architecture/buttons.md) - Button hierarchy, SVG icons
+- [controls.md](notes/designs/architecture/controls.md) - Control components
+- [preferences.md](notes/designs/architecture/preferences.md) - Settings management
+- [styles.md](notes/designs/architecture/styles.md) - Styling system
+- [ux.md](notes/designs/architecture/ux.md) - UX manager (focus, grabs, details)
+- [database.md](notes/designs/architecture/database.md) - Database abstraction layer
+- [bubble.md](notes/designs/architecture/bubble.md) - Bubble.io plugin integration
+- [search.md](notes/designs/architecture/search.md) - Search functionality
+- [paging.md](notes/designs/architecture/paging.md) - Radial paging system
+- [components.md](notes/designs/architecture/components.md) - Components manager
+- [details.md](notes/designs/architecture/details.md) - Details panel architecture
 
-**Index**: [overview.md](../overview.md) - All design documentation
+**Guides** (notes/designs/guides/):
+- [style.md](notes/designs/guides/style.md) - **CRITICAL** - Complete codebase conventions
+- [debugging.md](notes/designs/guides/debugging.md) - Systematic debugging methodology
+- [gotchas.md](notes/designs/guides/gotchas.md) - Common pitfalls
+- [refactoring.md](notes/designs/guides/refactoring.md) - Refactoring principles
+- [markdown.md](notes/designs/guides/markdown.md) - Markdown formatting
 
 ---
 

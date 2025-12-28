@@ -1,5 +1,31 @@
 # Controls Layout: The `lefts` Array System
 
+## Table of Contents
+- [Overview](#overview)
+- [How `lefts` is Computed](#how-lefts-is-computed)
+  - [Step 1: Define Widths](#step-1-define-widths)
+  - [Step 2: Extract Values in Key Order](#step-2-extract-values-in-key-order)
+  - [Step 3: Compute Cumulative Sum](#step-3-compute-cumulative-sum)
+- [Control Order](#control-order)
+- [How to Change the Order of Controls](#how-to-change-the-order-of-controls)
+  - [(a) Change the Order in `left_widths`](#a-change-the-order-in-left_widths)
+  - [(b) Update HTML Indices to Match](#b-update-html-indices-to-match)
+- [Complete Reordering Workflow](#complete-reordering-workflow)
+- [Important Notes](#important-notes)
+- [Example: Moving "details" to the End](#example-moving-details-to-the-end)
+- [Migration Plan: Grow/Shrink Buttons to Next_Previous](#migration-plan-growshrink-buttons-to-next_previous)
+  - [Current Implementation](#current-implementation)
+  - [Target Implementation](#target-implementation)
+  - [Challenges](#challenges)
+  - [Migration Steps](#migration-steps)
+  - [Considerations](#considerations)
+- [Handler Interface Analysis: Synthetic S_Mouse vs Refactoring](#handler-interface-analysis-synthetic-s_mouse-vs-refactoring)
+  - [The Interface Mismatch](#the-interface-mismatch)
+  - [Approach A: Create Synthetic S_Mouse Events (Recommended)](#approach-a-create-synthetic-s_mouse-events-recommended)
+  - [Approach B: Refactor Handler Interface](#approach-b-refactor-handler-interface)
+  - [Recommendation: Approach A with Next_Previous Modification](#recommendation-approach-a-with-next_previous-modification)
+  - [Benefits After Migration](#benefits-after-migration)
+
 This document describes how the `lefts` array is computed and used for positioning controls in `Primary_Controls.svelte`, and how to reorder controls.
 
 ## Overview

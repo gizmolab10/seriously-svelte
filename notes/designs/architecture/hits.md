@@ -1,5 +1,37 @@
 # Clicks Design
 
+## Table of Contents
+- [Overview & Status](#overview--status)
+  - [Overview](#overview)
+  - [Status](#status)
+  - [Benefits](#benefits)
+  - [Features](#features)
+- [Architecture](#architecture)
+  - [Core Concepts](#core-concepts)
+  - [Click Detection Flow](#click-detection-flow)
+  - [Event Flow Diagram](#event-flow-diagram)
+  - [S_Hit_Target](#s_hit_target)
+  - [Component Pattern](#component-pattern)
+  - [S_Mouse](#s_mouse)
+- [Centralized Timing System](#centralized-timing-system)
+  - [T_Mouse_Detection Enum](#t_mouse_detection-enum)
+  - [State Management](#state-management)
+  - [Event Flow](#event-flow)
+  - [Features](#features-1)
+- [Migration Guide](#migration-guide)
+  - [Migration Steps](#migration-steps)
+  - [Component Status](#component-status)
+- [Testing](#testing)
+  - [Setup](#setup)
+  - [Terms](#terms)
+  - [Regression](#regression)
+  - [Autorepeat](#autorepeat)
+  - [Double-Click](#double-click)
+  - [Long-Click](#long-click)
+- [Reference](#reference)
+  - [Risks & Mitigation](#risks--mitigation)
+  - [Component Complexity](#component-complexity)
+
 ## Overview & Status
 
 ### Overview

@@ -4,6 +4,13 @@
 
 `if_block.p is not a function`
 
+## Table of Contents
+- [Problem: Nested Blocks](#problem-nested-blocks)
+- [Solution: Flatten Nested Blocks](#solution-flatten-nested-blocks)
+- [Safe Patterns](#safe-patterns)
+- [Best Practices](#best-practices)
+- [Reference](#reference)
+
 ## Problem: Nested Blocks
 
 Store `$A` is in the outer block, and condition `B` is in the inner block. When `$A` changes rapidly, the inner block can be in a transitional state (being created/destroyed) while the parent block tries to update it. The error really means "if_block is undefined."

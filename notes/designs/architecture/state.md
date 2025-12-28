@@ -1,5 +1,28 @@
 # State Design: Why Svelte Needs State Objects
 
+## Table of Contents
+- [Overview](#overview)
+- [The Problem: Svelte Component Lifecycle Limitations](#the-problem-svelte-component-lifecycle-limitations)
+  - [Example: Component Recreation Problem](#example-component-recreation-problem)
+- [Why State Objects?](#why-state-objects)
+  - [1. **Survival Across Component Recreation**](#1-survival-across-component-recreation)
+  - [2. **Single Source of Truth for Computed Properties**](#2-single-source-of-truth-for-computed-properties)
+  - [3. **Cross-Component State Coordination**](#3-cross-component-state-coordination)
+  - [4. **Manager Access Without Component Context**](#4-manager-access-without-component-context)
+  - [5. **State Snapshots for Computation**](#5-state-snapshots-for-computation)
+- [Current State Object Hierarchy](#current-state-object-hierarchy)
+- [Alternatives Available Off-the-Shelf](#alternatives-available-off-the-shelf)
+  - [1. **Svelte Stores Only** ❌ Insufficient](#1-svelte-stores-only--insufficient)
+  - [2. **Pinia** (State Management Library)](#2-pinia-state-management-library)
+  - [3. **Zustand** (Lightweight State Management)](#3-zustand-lightweight-state-management)
+  - [4. **Svelte Context API**](#4-svelte-context-api)
+  - [5. **Class Instances in Module Scope** (Our Approach)](#5-class-instances-in-module-scope-our-approach)
+  - [6. **Redux/Flux Pattern**](#6-reduxflux-pattern)
+  - [7. **MobX** (Reactive State Management)](#7-mobx-reactive-state-management)
+- [Why Our Approach (And Why It's Not Widely Documented)](#why-our-approach-and-why-its-not-widely-documented)
+- [Key Insights](#key-insights)
+- [Related Documents](#related-documents)
+
 ## Overview
 
 This document explains why Webseriously uses state objects (classes prefixed with `S_`) alongside Svelte stores, explores alternatives available off-the-shelf, and discusses why this pattern isn't widely documented in the Svelte community (hint: most applications don't need it).

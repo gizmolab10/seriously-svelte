@@ -1,5 +1,22 @@
 # Button Components Analysis
 
+## Table of Contents
+- [Overview](#overview)
+- [Component Hierarchy](#component-hierarchy)
+  - [Base Component: `Button.svelte`](#base-component-buttonsvelte)
+  - [Specialized Variants](#specialized-variants)
+- [SVG Configuration Data Flow](#svg-configuration-data-flow)
+  - [Path Generation System](#path-generation-system)
+  - [Rendering Components](#rendering-components)
+  - [Complete Data Flow Example: Buttons_Row](#complete-data-flow-example-buttons_row)
+  - [Complete Data Flow Example: Triangle_Button](#complete-data-flow-example-triangle_button)
+- [State Management](#state-management)
+- [Key Patterns](#key-patterns)
+  - [1. **Closure Pattern** (Buttons_Row, Buttons_Table)](#1-closure-pattern-buttons_row-buttons_table)
+  - [2. **Reactive Style Updates**](#2-reactive-style-updates)
+  - [3. **SVG Conditional Rendering**](#3-svg-conditional-rendering)
+- [Reference](#reference)
+
 ## Overview
 
 Webseriously uses a hierarchy of button components, from a base `Button` component to specialized variants. All buttons use `S_Element` for state management and support SVG icons through a centralized path generation system.

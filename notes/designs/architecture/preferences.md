@@ -1,5 +1,15 @@
 # Preferences System: Store Presentation and Persistence
 
+## Table of Contents
+- [Overview](#overview)
+- [Example: `w_t_auto_adjust_graph`](#example-wt_auto_adjust_graph)
+  - [Store Definition](#store-definition)
+  - [UI Presentation (`D_Preferences.svelte`)](#ui-presentation-d_preferencessvelte)
+  - [Persistence (`Preferences.ts`)](#persistence-preferencests)
+- [Complete Flow Diagram](#complete-flow-diagram)
+- [Key Patterns](#key-patterns)
+- [Other Examples](#other-examples)
+
 This document describes how a preference store (e.g., `w_t_auto_adjust_graph`) is presented in the UI and persisted to localStorage.
 
 ## Overview

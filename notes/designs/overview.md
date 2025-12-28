@@ -1,5 +1,13 @@
 # Designs Overview
 
+## Table of Contents
+- [analysis/](#analysis)
+- [architecture/](#architecture)
+- [claude/](#claude)
+- [guides/](#guides)
+- [next/](#next)
+- [obsolete/](#obsolete)
+
 Brief summary of all design documentation, organized by folder.
 
 ## analysis/

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/architecture/state.md",
+                "file": "notes/designs/overview.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "state"
+              "title": "overview"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/architecture/state.md",
+                "file": "notes/designs/obsolete/hover/hover.widget.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of state"
+              "title": "Outline of hover.widget"
             }
           }
         ],
@@ -167,34 +167,38 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "4db059a2f6290c4d",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/designs/overview.md",
+    "notes/designs/guides/markdown.md",
+    "README.md",
+    "notes/designs/architecture/details.md",
+    "notes/designs/architecture/database.md",
+    "notes/designs/architecture/controls.md",
+    "notes/designs/architecture/components.md",
+    "notes/designs/architecture/buttons.md",
+    "notes/designs/architecture/bubble.md",
+    "notes/designs/guides/debugging.md",
+    "notes/designs/guides/gotchas.md",
+    "notes/designs/architecture/ux.md",
+    "notes/designs/architecture/search.md",
+    "notes/designs/architecture/paging.md",
+    "notes/designs/architecture/state.md",
     "notes/designs/claude/project guide.md",
     "notes/designs/claude/README.md",
     "src/lib/svelte/controls/Tree_Controls.svelte",
-    "notes/designs/architecture/state.md",
     "notes/designs/architecture/writables.md",
     "notes/designs/claude/CLAUDE.md",
     "src/lib/ts/managers/Core.ts",
-    "notes/designs/architecture/controls.md",
     "notes/designs/architecture/styles.md",
-    "notes/designs/overview.md",
     "notes/designs/guides/style.md",
     "notes/designs/guides/refactoring.md",
     "notes/designs/architecture/preferences.md",
-    "notes/designs/guides/debugging.md",
-    "notes/designs/architecture/buttons.md",
-    "notes/designs/guides/gotchas.md",
     "notes/designs/architecture/gotcha.md",
     "notes/designs/architecture/gotchas.md",
     "notes/designs/analysis/focus.md",
-    "notes/designs/analysis/layout-guide.md",
     "notes/designs/architecture",
-    "notes/designs/analysis/breadcrumbs.md",
-    "notes/designs/analysis/refactor-clicks.md",
     "src/lib/ts/managers/Stores.ts",
-    "notes/designs/analysis/STORES_PURPOSE.md",
-    "notes/designs/analysis/derivable_stores.md",
     "vitest.config.ts",
     "src/lib/ts/tests/setup.ts",
     "src/lib/ts/tests/UX_integration.test.ts",
@@ -203,10 +207,6 @@
     "src/lib/ts/tests/UX_becomeFocus.test.ts",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
-    "node_modules/svelte/node_modules/mdn-data/css/readme.md",
-    "node_modules/vitest/node_modules/@jridgewell/sourcemap-codec/README.md",
-    "node_modules/vitest/node_modules/vite/LICENSE.md",
-    "node_modules/vitest/node_modules/vite/README.md",
     "dist/assets/seriously-icon.png",
     "dist/vite.svg",
     "dist/settings.svg"

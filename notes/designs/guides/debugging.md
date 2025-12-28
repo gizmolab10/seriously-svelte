@@ -1,5 +1,19 @@
 # Debugging Guide
 
+## Table of Contents
+- [Two Critical Principles](#two-critical-principles)
+- [Principle 1: Verify Source First](#principle-1-verify-source-first)
+  - [The Process](#the-process)
+  - [Common Patterns](#common-patterns)
+  - [Source Verification Checklist](#source-verification-checklist)
+- [Principle 2: Be Systematic](#principle-2-be-systematic)
+  - [The Problem](#the-problem)
+  - [The Approach](#the-approach)
+  - [Example: Arrow Sizing Bug](#example-arrow-sizing-bug)
+  - [Systematic Checklist](#systematic-checklist)
+- [Tools](#tools)
+- [Remember](#remember)
+
 ## Two Critical Principles
 
 1. **Verify source before assuming usage** - When something is undefined, check where it comes from first

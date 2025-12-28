@@ -1,5 +1,15 @@
 # Writable Stores Architecture
 
+## Table of Contents
+- [Overview](#overview)
+- [Manager Pattern](#manager-pattern)
+- [Store Types](#store-types)
+  - [Writable Stores](#writable-stores)
+  - [Derived Stores](#derived-stores)
+- [Patterns](#patterns)
+- [Best Practices](#best-practices)
+- [Store Organization](#store-organization)
+
 ## Overview
 
 Svelte writable and derived stores for reactive state management. All stores are organized in manager classes that own stores for their domain.
