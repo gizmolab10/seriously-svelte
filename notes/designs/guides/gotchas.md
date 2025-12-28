@@ -1,9 +1,14 @@
+# Lessons about svelte
+
+One day, I edited some code and later, i ran the app. Ack, i get this cryptic error.
+
+           `if_block.p is not a function`
+
+ I asked AI to investigate, resolve and then summarize.
+
 # Nested `{#if}` Race Conditions
 
 **A store in an `{#if}` clause can create race conditions inside the clause.** When reactive stores change rapidly, nested `{#if}` blocks can be in transitional states (being created/destroyed) while the parent block tries to update them, causing this error:
-
-`if_block.p is not a function`
-
 ## Table of Contents
 - [Problem: Nested Blocks](#problem-nested-blocks)
 - [Solution: Flatten Nested Blocks](#solution-flatten-nested-blocks)

@@ -1,5 +1,7 @@
 # Documentation
 
+I asked the AI to write instructions for installing, configuring and running vitepress in a way that I could understand it and it could read it and do it.
+
 ## Viewing Markdown Files in Browser
 
 This project uses VitePress to provide a documentation website for browsing all markdown files in a web browser.

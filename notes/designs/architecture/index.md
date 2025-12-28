@@ -1,0 +1,16 @@
+# Architecture
+
+- [Bubble](./bubble.md)
+- [Buttons](./buttons.md)
+- [Components](./components.md)
+- [Controls](./controls.md)
+- [Database](./database.md)
+- [Details](./details.md)
+- [Hits](./hits.md)
+- [Paging](./paging.md)
+- [Preferences](./preferences.md)
+- [Search](./search.md)
+- [State](./state.md)
+- [Styles](./styles.md)
+- [UX](./ux.md)
+- [Writables](./writables.md)

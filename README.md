@@ -173,7 +173,7 @@ Computes positions/sizes for tree and radial modes.
 
 **Key Classes**: `G_Widget`, `G_TreeGraph`, `G_RadialGraph`, `G_Cluster`, `G_TreeBranches`, `G_TreeLine`, `G_Paging`
 
-See [analysis/layout-guide.md](../analysis/layout-guide.md) and [analysis/geometry.md](../analysis/geometry.md).
+See [analysis/layout-guide.md](refactor-layout.md) and [analysis/geometry.md](../analysis/geometry.md).
 
 ## Development
 

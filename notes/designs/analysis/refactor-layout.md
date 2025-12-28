@@ -1,4 +1,4 @@
-# Layout Algorithm Refactoring
+ # Layout Algorithm Refactoring
 
 The goals here are two:
 - replace existing code and recreate from scratch

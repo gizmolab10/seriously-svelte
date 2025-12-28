@@ -14,6 +14,9 @@
 - [Tools](#tools)
 - [Remember](#remember)
 
+## Debugging 101
+
+I asked the AI to write what it had learned while going around in circles, unable to consider venturing outside the box.
 ## Two Critical Principles
 
 1. **Verify source before assuming usage** - When something is undefined, check where it comes from first

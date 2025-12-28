@@ -1,5 +1,7 @@
 ## Guide for creating md files
 
+This anchor-strategy might be a hack. This is the first attempt to formalize the material in the analysis section.
+
 ## Table of Contents
 - [Guide for creating md files](#guide-for-creating-md-files)
   - [Debugging](#debugging)

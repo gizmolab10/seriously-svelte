@@ -1,6 +1,6 @@
 # Timers
 
-This document summarizes the mouse timing centralization work and related refactoring patterns established during this session. Use section references like "do X like section Y in timer-project" to apply these patterns to future work.
+This document summarizes the mouse timing centralization work and related refactoring patterns established during this session. Use section references like "do X like section Y in here" to apply these patterns to future work.
 
 ## Mouse Timing Centralization
 
