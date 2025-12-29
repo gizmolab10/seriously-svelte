@@ -19,7 +19,7 @@
 	const s_reveal = s_widget.s_reveal;
 	const { w_show_catalist_details } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
-    const drag_points_right = g_widget.reveal_isAt_right;
+    const reveal_isAt_right = g_widget.reveal_isAt_right;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
 	const { w_s_title_edit, w_ancestry_focus } = x;
 	let observer: MutationObserver | null = null;
@@ -30,7 +30,9 @@
 	let revealCenter = Point.zero;
 	let s_component: S_Component;
 	let widget_style = k.empty;
+	let showing_reveal = false;
 	let reveal_id = k.unknown;
+	let showing_drag = false;
 	let trigger = k.empty;
 	let height = 0;
 	let left = 0;
@@ -77,6 +79,9 @@
 	onDestroy(() => {
 		hits.delete_hit_target(s_widget);
 	});
+
+	$: showing_drag = (!ancestry.isFocus || !controls.inRadialMode) && (!ancestry.isRoot || controls.inRadialMode);
+	$: showing_reveal = (!ancestry.isFocus || !controls.inRadialMode) && (ancestry?.showsReveal_forPointingToChild(reveal_pointsTo_child));
 
 	$: {
 		const _ = `${$w_thing_color}
@@ -203,17 +208,15 @@
 			<Widget_Title
 				s_title = {s_title}
 				fontSize = {k.font_size.common}px/>
-			{#if !ancestry.isFocus || !controls.inRadialMode}
-				{#if !ancestry.isRoot || controls.inRadialMode}
-					<Widget_Drag
-						s_drag = {s_drag}
-						points_right = {drag_points_right}/>
-				{/if}
-				{#if ancestry?.showsReveal_forPointingToChild(reveal_pointsTo_child)}
-					<Widget_Reveal
-						s_reveal = {s_reveal}
-						pointsTo_child = {reveal_pointsTo_child}/>
-				{/if}
+			{#if showing_drag}
+				<Widget_Drag
+					s_drag = {s_drag}
+					reveal_isAt_right = {reveal_isAt_right}/>
+			{/if}
+			{#if showing_reveal}
+				<Widget_Reveal
+					s_reveal = {s_reveal}
+					pointsTo_child = {reveal_pointsTo_child}/>
 			{/if}
 		</div>
 	</div>

@@ -1,5 +1,7 @@
 # Geometry Manager Design
 
+Quick reference for who does what in layout. Geometry.ts coordinates, the G_* helpers do the actual math. Signals trigger rebuilds, stores trigger reactivity, direct calls when you need control.
+
 ## Responsibilities
 
 ### Geometry.ts

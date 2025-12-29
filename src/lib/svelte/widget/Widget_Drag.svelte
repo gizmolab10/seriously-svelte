@@ -5,7 +5,7 @@
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-	export let points_right = true;
+	export let reveal_isAt_right = true;
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
 	const capture_size = size;
@@ -112,7 +112,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (controls.inRadialMode ? 5.2 : 4.5) * (points_right ? -1 : 1);
+				const x = (controls.inRadialMode ? 5.2 : 4.5) * (reveal_isAt_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}
@@ -121,7 +121,7 @@
 </script>
 
 {#if s_drag}
-	<div class='drag-responder'
+	<div class='drag-wrapper'
 		style={wrapper_style}
 		bind:this={element}>
 		<button class={name}

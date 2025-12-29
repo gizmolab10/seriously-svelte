@@ -1,5 +1,7 @@
 # Components Manager Architecture
 
+S_Component objects hold state about user activity. Svelte sucks at this. The app needs to interact with the svelte components.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Purpose](#purpose)

@@ -1,5 +1,7 @@
 # Writable Stores Architecture
 
+Each manager owns stores for its domain. Nice quick inventory.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Manager Pattern](#manager-pattern)

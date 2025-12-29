@@ -1,5 +1,7 @@
 # Bubble Integration Architecture
 
+Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage to synchronize with bubble. Ugly stuff here, but it works.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Architecture](#architecture)

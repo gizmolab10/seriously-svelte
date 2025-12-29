@@ -1,5 +1,7 @@
 # Focus Initialization Path
 
+Tracked down why w_ancestry_focus was undefined during G_TreeGraph initialization. Module load order got me - G_TreeGraph subscribes at load time before the initialization sequence runs. Added proper seeding and safeguards.
+
 ## Overview
 
 `w_ancestry_focus` is a Svelte writable store that tracks the currently focused ancestry in the application. It is derived from the `si_recents` history index, which serves as the single source of truth for focus state.

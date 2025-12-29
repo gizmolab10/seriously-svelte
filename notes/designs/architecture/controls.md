@@ -1,5 +1,7 @@
 # Controls Layout: The `lefts` Array System
 
+The `lefts` array controls horizontal positioning of all the primary controls. Cumulative sum of widths, numeric key order matters. Want to move stuff around? This explains the system and how to reorder without breaking everything.
+
 ## Table of Contents
 - [Overview](#overview)
 - [How `lefts` is Computed](#how-lefts-is-computed)

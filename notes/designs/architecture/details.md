@@ -1,5 +1,7 @@
 # Details Panel Architecture
 
+The details panel shows info about whatever's currently selected or in focus. Collapsible sections, coordinated with UX manager. Also, how how the sections track what to show?
+
 ## Table of Contents
 - [Overview](#overview)
 - [Key Classes](#key-classes)

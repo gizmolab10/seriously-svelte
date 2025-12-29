@@ -1,5 +1,7 @@
 # Search Functionality Architecture
 
+Instant search. Type a single letter and the matches appear instantly. Type more or choose one and done. economical use of screen real estate.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Stores](#stores)

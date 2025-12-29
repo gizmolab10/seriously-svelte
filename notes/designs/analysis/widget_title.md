@@ -1,5 +1,7 @@
 # Widget_Title Design Responsibilities
 
+Documented the editable title component before replacing it. Captures what it does (display, selection, inline editing, width measurement, hit detection) and how it coordinates with other systems. Completed replacement work.
+
 ## Purpose
 
 Widget_Title is the editable text component within a widget that displays and allows editing of a Thing's title. This document captured the existing component and guided implementing its replacement. Completed ✅ 

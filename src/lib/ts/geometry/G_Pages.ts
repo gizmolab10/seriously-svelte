@@ -30,23 +30,23 @@ export class G_Pages {
 	}
 
 	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
-	g_paging_for(g_cluster: G_Cluster): G_Paging { return this.g_paging_forPredicate_toChildren(g_cluster.predicate, g_cluster.children_cluster); }
-	g_pagings_dict_forChildren(children_cluster: boolean): Dictionary<G_Paging> { return children_cluster ? this.child_pagings_dict : this.parent_pagings_dict; }
+	g_paging_for(g_cluster: G_Cluster): G_Paging { return this.g_paging_forPredicate_toChildren(g_cluster.predicate, g_cluster.isCluster_ofChildren); }
+	g_pagings_dict_forChildren(isCluster_ofChildren: boolean): Dictionary<G_Paging> { return isCluster_ofChildren ? this.child_pagings_dict : this.parent_pagings_dict; }
 
 	add_g_paging(g_paging: G_Paging) {
-		const g_pagings = this.g_pagings_dict_forChildren(g_paging.children_cluster);
+		const g_pagings = this.g_pagings_dict_forChildren(g_paging.isCluster_ofChildren);
 		g_pagings[g_paging.kind] = g_paging;
 	}
 
-	g_paging_forPredicate_toChildren(predicate: Predicate, children_cluster: boolean): G_Paging {
-		let g_pagings = this.g_pagings_dict_forChildren(children_cluster);
+	g_paging_forPredicate_toChildren(predicate: Predicate, isCluster_ofChildren: boolean): G_Paging {
+		let g_pagings = this.g_pagings_dict_forChildren(isCluster_ofChildren);
 		let g_paging = g_pagings[predicate.kind]
 		if (!g_paging) {
 			g_paging = new G_Paging();
 			g_paging.kind = predicate.kind;
 			g_paging.thing_id = this.thing_id;
 			g_pagings[predicate.kind] = g_paging;
-			g_paging.children_cluster = children_cluster;
+			g_paging.isCluster_ofChildren = isCluster_ofChildren;
 		}
 		return g_paging;
 	}

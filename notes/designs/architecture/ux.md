@@ -1,5 +1,7 @@
 # UX Manager Architecture
 
+What's focused, what's grabbed, what's being edited, what to show in details. Stores and derived stores. Fast!
+
 ## Table of Contents
 - [Overview](#overview)
 - [Responsibilities](#responsibilities)

@@ -1,5 +1,7 @@
 # Database Abstraction Architecture
 
+I built this to run on Firebase, Airtable, Local, and Test databases. They share a unified CRUD interface. It was almost a no-brainer to switch between them. Each database gets its own Hierarchy instance, so switching doesn't lose loaded data.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Architecture](#architecture)

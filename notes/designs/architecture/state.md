@@ -1,5 +1,7 @@
 # State Design: Why Svelte Needs State Objects
 
+Svelte [[components]] are terrible at carrying state (most apps don't need it). my app does, a lot of it. thus, separate state objects. they have many flavors.
+
 ## Table of Contents
 - [Overview](#overview)
 - [The Problem: Svelte Component Lifecycle Limitations](#the-problem-svelte-component-lifecycle-limitations)

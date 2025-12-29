@@ -20,13 +20,13 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	ancestries_shown: Array<Ancestry> = [];
 	g_cluster_pager = new G_Cluster_Pager(false);
-	g_cluster_widgets: G_Widget[] = [];
 	g_thumbArc = new G_Cluster_Pager(true);
+	ancestries_shown: Array<Ancestry> = [];
+	g_cluster_widgets: G_Widget[] = [];
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
-	children_cluster: boolean;
+	isCluster_ofChildren: boolean;
 	arc_in_lower_half = false;
 	label_center = Point.zero;
 	cluster_title = k.empty;
@@ -36,12 +36,11 @@ export default class G_Cluster {
 	total_widgets = 0;
 	isPaging = false;
 
-	// heavy lifting for positioning 
-	// everything in one cluster of the radial view
+	// heavy lifting for positioning everything in one cluster
 
 	destructor() { this.ancestries = []; }
-	constructor(predicate: Predicate, children_cluster: boolean) {
-		this.children_cluster = children_cluster;
+	constructor(predicate: Predicate, isCluster_ofChildren: boolean) {
+		this.isCluster_ofChildren = isCluster_ofChildren;
 		this.predicate = predicate;
 		radial.w_resize_radius.subscribe((radius: number) => {
 			if (this.g_cluster_pager.outside_arc_radius != radius) {
@@ -76,7 +75,7 @@ export default class G_Cluster {
 		const children_angle = get(radial.w_rotate_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
-			this.children_cluster ? children_angle :		// one directional, use global
+			this.isCluster_ofChildren ? children_angle :		// one directional, use global
 			children_angle - tweak;
 		return raw ?? 0;
 	}
@@ -130,11 +129,11 @@ export default class G_Cluster {
 		return focus ? this.g_paging_forAncestry(focus) : null;
 	}
 	get show_forks():			 boolean { return get(show.w_t_cluster_pager) == T_Cluster_Pager.sliders; }
-	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.children_cluster); }
+	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.isCluster_ofChildren); }
 
-	g_paging_forPredicate_toChildren(predicate: Predicate, children_cluster: boolean): G_Paging | null {
+	g_paging_forPredicate_toChildren(predicate: Predicate, isCluster_ofChildren: boolean): G_Paging | null {
 		const g_pages = radial.g_pages_forThingID(get(x.w_ancestry_focus)?.thing?.id);
-		return g_pages?.g_paging_forPredicate_toChildren(predicate, children_cluster) ?? null;
+		return g_pages?.g_paging_forPredicate_toChildren(predicate, isCluster_ofChildren) ?? null;
 	}
 
 	g_paging_forAncestry(ancestry: Ancestry): G_Paging | null {
@@ -179,9 +178,9 @@ export default class G_Cluster {
 	static readonly _____ANGLES: unique symbol;
 	
 	private get isSingular(): boolean { return this.total_widgets == 1; }
-	private get isParental(): boolean { return !this.children_cluster && !this.predicate?.isBidirectional; }
+	private get isParental(): boolean { return !this.isCluster_ofChildren && !this.predicate?.isBidirectional; }
 	private get radial_vector_ofFork(): Point { return Point.fromPolar(radial.ring_radius, this.angle_ofCluster); }
-	private get direction_kind(): string { return this.isParental ? this.isSingular ? 'parent' : 'parents' : this.children_cluster ? this.isSingular ? 'child' : 'children' : this.kind; }
+	private get direction_kind(): string { return this.isParental ? this.isSingular ? 'parent' : 'parents' : this.isCluster_ofChildren ? this.isSingular ? 'child' : 'children' : this.kind; }
 
 	private update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
@@ -197,7 +196,7 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const factor = 1;//this.predicate.kind == T_Predicate.contains ? this.children_cluster ? 0 : 1 : 2;
+			const factor = 1;//this.predicate.kind == T_Predicate.contains ? this.isCluster_ofChildren ? 0 : 1 : 2;
 			const inset = (factor + 3) * k.thickness.radial.ring / 6;
 			const radial_vector = Point.x(radial.ring_radius + inset);
 			const radial_vector_ofFork = this.radial_vector_ofFork;				// points at middle widget (of cluster)

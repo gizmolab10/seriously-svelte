@@ -1,5 +1,7 @@
 # Mouse Timing Centralization Refactor
 
+Each component was managing its own timers - autorepeat here, long-click there, hover-leave everywhere. Moved it all into Hits manager. Components now declare intent ("I need autorepeat"), manager handles lifecycle. State survives re-renders because it lives on the target, not the component.
+
 ## Architectural Pattern
 
 ### Before: Distributed Timing

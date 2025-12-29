@@ -1,6 +1,6 @@
 # Timers
 
-This document summarizes the mouse timing centralization work and related refactoring patterns established during this session. Use section references like "do X like section Y in here" to apply these patterns to future work.
+Session notes from the mouse timing centralization work. Captured patterns and principles that emerged - declaration over management, state persistence, enum-based config. Use these sections as reference for future refactoring.
 
 ## Mouse Timing Centralization
 

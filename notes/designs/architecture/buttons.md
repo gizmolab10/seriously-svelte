@@ -1,5 +1,7 @@
 # Button Components Analysis
 
+These just cropped up, ad-hoc, at the beginning of the project. Might give it a sanity check.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Component Hierarchy](#component-hierarchy)

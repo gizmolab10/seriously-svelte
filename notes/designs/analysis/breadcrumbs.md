@@ -1,5 +1,7 @@
 # Breadcrumbs Design Analysis
 
+Breadcrumbs show either ancestry path or navigation history. Three parts work together - selector, next/previous buttons, and the crumb buttons themselves. This doc maps out how they coordinate with UX manager to track history and restore grabs. Also includes migration plan to make w_ancestry_focus fully derived from si_recents index.
+
 ## Overview
 
 The breadcrumbs system provides navigation through the ancestry hierarchy and browsing history. It consists of three integrated components that work together to display and navigate between different ancestries in the graph.

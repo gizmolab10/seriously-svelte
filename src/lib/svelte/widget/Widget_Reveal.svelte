@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, core, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { h, k, core, u, x, hits, show, debug, colors, signals, controls, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component, T_Layer, T_Counts_Shown, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -15,13 +15,13 @@
 	const g_widget = ancestry.g_widget;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
-	const { w_items: w_expanded } = x.si_expanded;
-	const reveal_count = ancestry.children.length;
+	const reveal_count = g_widget.reveal_count;
 	const show_reveal_count = reveal_count > 1;
-	const count_fontSize = reveal_count < 10 ? 8 : 7;
-	const reveal_count_top = reveal_count < 10 ? 3.2 : 4;
-	const { w_thing_color, w_background_color } = colors;
+	const { w_items: w_expanded } = x.si_expanded;
 	const { w_t_countDots, w_show_countsAs } = show;
+	const count_fontSize = reveal_count < 10 ? 8 : 7;
+	const reveal_count_top = reveal_count < 10 ? 3.4 : 4;
+	const { w_thing_color, w_background_color } = colors;
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
@@ -51,12 +51,17 @@
 	$: if (!!element) {
 		s_reveal.set_html_element(element);
 		s_reveal.handle_s_mouse = (s_mouse) => {
-			if (s_mouse.isDown && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
-				h.ancestry_toggle_expansion(ancestry);
-				if (show.isDynamic_focus && ancestry.hidden_by_depth_limit) {
-					const focusAncestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.depth_limit - 1);
-					focusAncestry?.becomeFocus();
+			if (s_mouse.isDown) {
+				let focus_ancestry: Ancestry | null = null;
+				if (controls.inRadialMode) {
+					focus_ancestry = ancestry;
+				} else if (ancestry.hasChildren || ancestry.thing.isBulkAlias) {
+					h.ancestry_toggle_expansion(ancestry);
+					if (show.isDynamic_focus && ancestry.hidden_by_depth_limit) {
+						focus_ancestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.depth_limit - 1);
+					}
 				}
+				focus_ancestry?.becomeFocus();
 			}
 			return true;
 		};
@@ -115,7 +120,7 @@
 </script>
 
 {#if s_reveal}
-	<div class='reveal-responder'
+	<div class='reveal-wrapper'
 		style={wrapper_style}
 		bind:this={element}>
 		<div class='reveal-dot'
@@ -158,7 +163,7 @@
 					/>
 				</div>
 			{/if}
-			<div class='tiny-outer-dots' style='
+			<div class='reveal-count' style='
 				overflow:visible;
 				position:absolute;
 				top:{k.tiny_outer_dots.offset.y}px;
@@ -167,9 +172,9 @@
 				height:{k.tiny_outer_dots.diameter}px;
 				z-index:{T_Layer.frontmost};'>
 				{#if ($w_show_countsAs == T_Counts_Shown.numbers) && show_reveal_count && !svgPathFor_fat_center_dot}
-					<div class='numerical-count'
+					<div class='reveal-count-number'
 						style='
-							left:-1px;
+							left:-1.2px;
 							width:100%;
 							height:100%;
 							position: absolute;

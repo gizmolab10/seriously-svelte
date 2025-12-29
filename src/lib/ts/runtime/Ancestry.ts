@@ -133,6 +133,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____RELATIONSHIPS: unique symbol;
 	
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
+	get count_ofParents():					  number { return this.parentRelationships.length; }
 	get relevantRelationships_count():		  number { return this.relevantRelationships.length; }
 	get hasRelationships():					 boolean { return this.hasParents || this.hasChildren; }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships.length > 0; }
@@ -337,7 +338,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____MOVE_UP: unique symbol;
 
 	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		if (this.children_cluster) {													// trees and radials
+		if (this.isCluster_ofChildren) {													// trees and radials
 			return this.persistentMoveUp_forChild_maybe(up, SHIFT, OPTION, EXTREME);
 		} else if (this.isBidirectional) {												// radials
 			return this.persistentMoveUp_forBidirectional_maybe(up, SHIFT, OPTION, EXTREME);
@@ -434,10 +435,10 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____ORDER: unique symbol;
 	
-	get order(): number { return this.relationship?.order_forPointsTo(this.children_cluster) ?? -12345; }
+	get order(): number { return this.relationship?.order_forPointsTo(this.isCluster_ofChildren) ?? -12345; }
 	
 	order_setTo(order: number) {
-		this.relationship?.order_setTo_forPointsTo(order, this.children_cluster);
+		this.relationship?.order_setTo_forPointsTo(order, this.isCluster_ofChildren);
 	}
 
 	reorder_within(ancestries: Array<Ancestry>, up: boolean) {
@@ -579,7 +580,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____OTHER_ANCESTRIES: unique symbol;
 
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
+	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(1); }
 	get childAncestries():    Array<Ancestry> { return this.ancestries_createUnique_forKinship(T_Kinship.children) ?? []; }
 	get branchAncestries():   Array<Ancestry> { return get(g.w_branches_areChildren) ? this.childAncestries : this.parentAncestries; }
 
@@ -652,7 +653,7 @@ export default class Ancestry extends Identifiable {
 		return null;
 	}
 
-	ancestry_createUnique_byStrippingBack(back: number = 1): Ancestry | null {
+	ancestry_createUnique_byStrippingBack(back: number): Ancestry | null {
 		const ids = this.relationship_ids;
 		if (back == 0) {
 			return this;
@@ -826,7 +827,7 @@ export default class Ancestry extends Identifiable {
 
 	isChildOf(other: Ancestry):		 boolean { return this.id_thing == other.thingAt(2)?.id; }
 	hasParents_ofKind(kind: string): boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
-	get children_cluster():		 boolean { return this.g_cluster?.children_cluster ?? true }
+	get isCluster_ofChildren():		 boolean { return this.g_cluster?.isCluster_ofChildren ?? true }
 	get hasParents():				 boolean { return this.parentRelationships.length > 0; }
 	get hasChildren():				 boolean { return this.childRelationships.length > 0; }
 	get lastChild():				   Thing { return this.children.slice(-1)[0]; }
@@ -925,15 +926,14 @@ export default class Ancestry extends Identifiable {
 	rect_ofComponent(component: S_Component | null):				   Rect | null { return component?.rect ?? null; }
 
 	showsReveal_forPointingToChild(pointsTo_child: boolean): boolean {
-		const isRadialFocus = controls.inRadialMode && this.isFocus;
+		const hasParents = this.count_ofParents > 0;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
-		const isBidirectional = this.predicate?.isBidirectional ?? true;
 		const hasChildren = this.count_ofChilcren(pointsTo_child) > 0;
-		// In radial mode, only show reveal dots for children cluster widgets
+		const isBidirectional = this.predicate?.isBidirectional ?? true;
 		if (controls.inRadialMode) {
-			return this.children_cluster && (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
+			return !isBidirectional && !this.isFocus && (hasParents || hasChildren || isBulkAlias);
 		}
-		return (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
+		return !isBidirectional && (hasChildren || isBulkAlias);
 	}
 
 	thing_isImmediateParentOf(ancestry: Ancestry, kind: string): boolean {

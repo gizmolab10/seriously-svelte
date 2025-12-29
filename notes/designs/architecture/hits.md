@@ -1,4 +1,6 @@
-# Clicks Design
+# Hits Design
+
+Only one element in the app can react to the mouse. That's just plain sensible. The **Hits** spatial index knows which one. It's the **single source of truth** for hover, click, autorepeat, long-click, and double-click. Consistent behavior everywhere.
 
 ## Table of Contents
 - [Overview & Status](#overview--status)

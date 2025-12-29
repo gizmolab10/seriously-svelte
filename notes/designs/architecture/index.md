@@ -1,7 +1,9 @@
 # Architecture
 
-- [Bubble](./bubble.md)
-- [Buttons](./buttons.md)
+I built a surprising number of managers, 14.
+
+- [Bubble](./bubble.md) not really a manager
+- [Buttons](./buttons.md) needs a sanity check
 - [Components](./components.md)
 - [Controls](./controls.md)
 - [Database](./database.md)

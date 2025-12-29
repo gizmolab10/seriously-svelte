@@ -20,7 +20,7 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: 'Project', link: '/readme' },
-          { text: 'Documentation', link: '/overview' }
+          { text: 'Documentation', link: '/documentation' }
         ]
       },
       {

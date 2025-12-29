@@ -205,7 +205,7 @@ export default class Radial {
 				this.w_g_paging.subscribe((g_paging: G_Paging) => {
 					p.writeDB_key(T_Preference.paging, this.g_pages_dict_byThingID);
 					if (!!g_paging) {
-						g_graph_radial.layout_forChildren_cluster(g_paging.children_cluster);
+						g_graph_radial.layout_forChildren_cluster(g_paging.isCluster_ofChildren);
 						g_graph_radial.layout_forPaging();
 					}
 				})

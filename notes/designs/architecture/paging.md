@@ -1,5 +1,7 @@
 # Radial Paging System Architecture
 
+Three clusters of widgets nestle around the radial ring. Often enough, there's not enough room. So, we show only a page at a time. The user can adjust the page. Lots of ghastly geometry goes into making it feel comfortable.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Key Classes](#key-classes)

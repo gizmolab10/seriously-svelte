@@ -1,5 +1,7 @@
 # Preferences System: Store Presentation and Persistence
 
+Okay, so I like to give people choices about looks and what have you. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Example: `w_t_auto_adjust_graph`](#example-wt_auto_adjust_graph)

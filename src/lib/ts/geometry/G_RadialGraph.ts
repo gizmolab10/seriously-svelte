@@ -46,10 +46,10 @@ export default class G_RadialGraph {
 		}
 	}
 
-	layout_forChildren_cluster(children_cluster: boolean) {
+	layout_forChildren_cluster(isCluster_ofChildren: boolean) {
 		const focus_ancestry = get(x.w_ancestry_focus);
 		if (!!focus_ancestry) {
-			if (children_cluster) {
+			if (isCluster_ofChildren) {
 				let childAncestries = focus_ancestry.ancestries_createUnique_forKinship(T_Kinship.children);
 				this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
 			} else {
@@ -80,11 +80,11 @@ export default class G_RadialGraph {
 		return null;
 	}
 
-	private g_cluster_forPredicate_toChild(predicate: Predicate, children_cluster: boolean) : G_Cluster {
-		const g_clusters = children_cluster ? this.g_child_clusters : this.g_parent_clusters;;
+	private g_cluster_forPredicate_toChild(predicate: Predicate, isCluster_ofChildren: boolean) : G_Cluster {
+		const g_clusters = isCluster_ofChildren ? this.g_child_clusters : this.g_parent_clusters;;
 		let g_cluster = g_clusters[predicate.kind];
 		if (!g_cluster) {
-			g_cluster = new G_Cluster(predicate, children_cluster);
+			g_cluster = new G_Cluster(predicate, isCluster_ofChildren);
 			g_clusters[predicate.kind] = g_cluster;
 		}
 		return g_cluster;
@@ -96,9 +96,9 @@ export default class G_RadialGraph {
 		return this.g_clusters.reduce((sum, cluster) => sum + cluster.total_widgets, 0);
 	}
 
-	private assignAncestries_toClusterFor(ancestries: Array<Ancestry> | null, predicate: Predicate | null, children_cluster: boolean) {
+	private assignAncestries_toClusterFor(ancestries: Array<Ancestry> | null, predicate: Predicate | null, isCluster_ofChildren: boolean) {
 		if (!!predicate && !!ancestries) {
-			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, children_cluster);
+			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, isCluster_ofChildren);
 			g_cluster.setAncestries(ancestries);
 			for (const ancestry of [...ancestries]) {
 				ancestry.g_widget.g_cluster = g_cluster;
@@ -131,9 +131,9 @@ export default class G_RadialGraph {
 
 	static readonly _____PAGING: unique symbol;
 
-	g_paging_forPredicate_toChildren(predicate: Predicate, children_cluster: boolean): G_Paging | null {
+	g_paging_forPredicate_toChildren(predicate: Predicate, isCluster_ofChildren: boolean): G_Paging | null {
 		const g_thing_pages = radial.g_pages_forThingID(get(x.w_ancestry_focus)?.thing?.id);
-		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, children_cluster) ?? null;
+		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, isCluster_ofChildren) ?? null;
 	}
 
 	layout_forPaging() {

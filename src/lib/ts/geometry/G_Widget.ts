@@ -14,11 +14,11 @@ export default class G_Widget {
 	offset_ofWidget = Point.zero;
 	origin_ofWidget = Point.zero;
 	origin_ofRadial = Point.zero;
-	reveal_isAt_right = true;
 	origin_ofTrunk = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	size_ofSubtree = Size.zero;
+	reveal_isAt_right = true;
 	pointsTo_child = true;
 	g_cluster!: G_Cluster;
 	s_widget!: S_Widget;
@@ -62,10 +62,12 @@ export default class G_Widget {
 	static readonly _____PRIMITIVES: unique symbol;
 
 	static empty(ancestry: Ancestry) { return new G_Widget(ancestry); }
+
 	get absolute_center_ofDrag(): Point { return this.origin.offsetBy(this.center_ofDrag); }
 	get absolute_center_ofReveal(): Point { return this.origin.offsetBy(this.center_ofReveal); }
-	get origin_ofGraphDrawing(): Point { return this.t_widget == T_Widget.radial ? this.origin_ofRadial : this.origin; }
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.pointsTo_child) ?? false; }
+	get origin_ofGraphDrawing(): Point { return this.t_widget == T_Widget.radial ? this.origin_ofRadial : this.origin; }
+	get reveal_count(): number { return (!this.g_cluster || this.g_cluster.isCluster_ofChildren) ? this.ancestry.children.length : this.ancestry.count_ofParents; }
 
 	private get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;

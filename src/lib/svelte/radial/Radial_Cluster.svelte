@@ -97,7 +97,7 @@
 	style='
 		z-index:{T_Layer.paging};
 		background-color: transparent;'>
-	<div class='cluster-responder'
+	<div class='cluster-wrapper'
 		style={wrapper_style}>
         <svg class='svg-radial-cluster'
 			viewBox={viewBox}>

@@ -192,8 +192,7 @@
             .rubberband-blocking .controls, 
             .rubberband-blocking .segmented, 
             .rubberband-blocking .details-stack,
-            .rubberband-blocking .bottom-controls,
-            .rubberband-blocking .mouse-responder) {
+            .rubberband-blocking .bottom-controls) {
         pointer-events: none !important;
     }
 
