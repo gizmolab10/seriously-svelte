@@ -2,7 +2,7 @@
 
 Code debt. Snarly, ad-hoc, organically fussed with, did i say temperamental? Man crawling across the desert, barely able to say "refactor, need refactor."
 
-Aren't people saying, how perfect AI is at doing such a mundane, hair-pulling chore? Sure, but kinda know not to trust AI refactoring my baby. So, I asked it to compile these guidelines. Then, I asked it to use it on an easy, simple refactoring: [**Centralize timing of user clicks**](clicks.md). The result? Nice, almost painless. Needed mild manual intervention, and go!
+Aren't people saying, how perfect AI is at doing such a mundane, hair-pulling chore? Sure, but kinda know not to trust AI refactoring my baby. So, I asked it to compile these guidelines. Then, I asked it to use it on an easy, simple refactoring: [**Centralize timing of user clicks**](../refactor/clicks.md). The result? Nice, almost painless. Needed mild manual intervention, and go!
 
 I plan to use this to do some harder refactoring, making a backup, first.
 

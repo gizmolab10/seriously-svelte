@@ -50,7 +50,7 @@ Key settings:
 ## Running
 
 4. Start the dev server: `yarn docs:dev`
-5. Open browser to the URL shown (usually http://localhost:5173)
+5. Open browser to the URL shown (usually on port 5176)
 6. Edit markdown files in notes/designs - changes appear instantly
 
 ## How It Works

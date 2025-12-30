@@ -14,7 +14,7 @@ To start the docs server, just run:
 yarn docs:dev
 ```
 
-That's it! Yarn will handle everything. The server will start at http://localhost:5174/ (or another port if 5174 is busy).
+That's it! Yarn will handle everything. The server will start on port 5176 (or another port if 5176 is busy).
 
 ### Other Commands
 

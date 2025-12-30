@@ -3,7 +3,7 @@
 
 **Webseriously** is a sophisticated Svelte-based visualization and data management application with hierarchical graph displays, interactive UI components, and multi-database support. Can be embedded as a Bubble.io plugin or run standalone.
 
-Deeper Dives, beyond the scope off this file, [can be found here](documentation).
+Deeper Dives, beyond the scope off this file, [can be found here](notes/designs/documentation.md).
 ## Table of Contents
 - [Project Overview](#project-overview)
   - [Naming Conventions](#naming-conventions)
@@ -116,7 +116,7 @@ A state class is a source of truth. It is often about what the user happens to b
 - state classes persist across component recreation
 - components reactive code is self-documenting
 
-See [architecture/state.md](../architecture/state.md) for why we use state objects vs standard Svelte patterns.
+See [architecture/state.md](notes/designs/architecture/state.md) for why we use state objects vs standard Svelte patterns.
 
 #### 2. Manager Pattern
 
@@ -165,7 +165,7 @@ RBush spatial indexing (O(log n) queries) for efficient hit detection.
 ✅ **DO**: Use `Mouse_Responder` for clicks, register via `s_element.set_html_element()`, check `s_element.isHovering`
 ❌ **DON'T**: Modify `hits.w_s_hover` directly, mix with manual `on:mouseenter/leave`, forget `hits.delete_hit_target()`
 
-See [architecture/hits.md](../architecture/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
+See [architecture/hits.md](notes/designs/architecture/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
 
 #### 7. Geometry Layout
 
@@ -175,7 +175,7 @@ Computes positions/sizes for tree and radial modes.
 
 **Key Classes**: `G_Widget`, `G_TreeGraph`, `G_RadialGraph`, `G_Cluster`, `G_TreeBranches`, `G_TreeLine`, `G_Paging`
 
-See [analysis/layout-guide.md](layout.md) and [analysis/geometry.md](geometry.md).
+See [analysis/layout-guide.md](notes/designs/refactor/layout.md) and [analysis/geometry.md](notes/designs/architecture/geometry.md).
 
 ## Development
 
@@ -226,7 +226,7 @@ Tests in `src/lib/ts/tests/`, naming: `*.test.ts` or `*Test.ts`
 
 ### Code Style
 
-**CRITICAL** - See [guides/style.md](../guides/style.md) for:
+**CRITICAL** - See [guides/style.md](notes/designs/guides/style.md) for:
 - Length-based ordering (imports, props, CSS, case statements)
 - Tab-based alignment
 - Svelte formatting
@@ -261,7 +261,7 @@ class MyThing extends Persistable {
 
 ### Debugging
 
-**Two Principles** (see [guides/debugging.md](../guides/debugging.md)):
+**Two Principles** (see [guides/debugging.md](notes/designs/guides/debugging.md)):
 1. **Verify source first** - Check imports/destructuring before assuming usage issues
 2. **Be systematic** - Form multiple hypotheses, test complete pipeline
 
@@ -283,7 +283,7 @@ class MyThing extends Persistable {
 - Hit testing: spatial indexing, register targets properly
 - Widget layout differences: tree vs radial modes
 - Focus widget (radial): no reveal dot
-- Race conditions (see [guides/gotchas.md](../guides/gotchas.md))
+- Race conditions (see [guides/gotchas.md](notes/designs/guides/gotchas.md))
 
 ## Notes
 
@@ -345,7 +345,7 @@ class MyThing extends Persistable {
 - [style.md](notes/designs/guides/style.md) - **CRITICAL** - Complete codebase conventions
 - [debugging.md](notes/designs/guides/debugging.md) - Systematic debugging methodology
 - [gotchas.md](notes/designs/guides/gotchas.md) - Common pitfalls
-- [refactoring.md](refactoring.md) - Refactoring principles
+- [refactoring.md](notes/designs/guides/refactoring.md) - Refactoring principles
 - [markdown.md](notes/designs/guides/markdown.md) - Markdown formatting
 
 ---

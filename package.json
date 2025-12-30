@@ -15,7 +15,7 @@
         "dev": "vite",
         "docs": "typedoc",
         "docs:dev": "vitepress dev",
-        "docs:build": "vitepress build",
+        "docs:build": "vitepress build > vitepress.build.txt 2>&1",
         "docs:preview": "vitepress preview",
         "build": "vite build",
         "rollup": "rollup -c",
