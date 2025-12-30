@@ -21,11 +21,6 @@ Complete guide to refactoring Breadcrumbs.svelte using composition patterns. Par
   - [Phase 5: Testing & Cleanup](#phase-5-testing--cleanup)
 - [Issues Identified](#issues-identified)
 - [Files to Modify](#files-to-modify)
-- [Work Performed](#work-performed)
-  - [Phase 1 Completion](#phase-1-completion)
-  - [Phase 2 Completion](#phase-2-completion)
-  - [Phase 3 Completion](#phase-3-completion)
-  - [Phase 4 Completion](#phase-4-completion)
 
 ## Overview
 
@@ -325,6 +320,32 @@ This ensures breadcrumbs re-render whenever focus changes, even if the hierarchy
 /Users/sand/GitHub/webseriously/notes/screenshots/breadcrumbs-before/
 ```
 
+#### Work Performed
+
+**Tasks completed:**
+1. ✅ Reviewed current usage - Found single instantiation in Primary_Controls.svelte
+2. ✅ Documented current behavior - Listed all 10 reactive stores and dependencies
+3. ✅ Fixed failing test - Added focus HID to trigger calculation to fix "Breadcrumbs update when focus changes"
+
+**Key findings:**
+- Breadcrumbs only instantiated once in Primary_Controls.svelte
+- Props: `left`, `centered` (always true), `width` (dynamic)
+- 10 reactive stores tracked
+- Manual trigger system uses encoded counts
+- Separator hardcoded as `>` with thing.color
+
+**Bug fix deployed:**
+Modified `/src/lib/svelte/controls/Breadcrumbs.svelte` line 63:
+```typescript
+// Before:
+trigger = encoded_counts * 10000 + reattachments * 100 + lefts[0];
+
+// After:
+trigger = encoded_counts * 10000 + reattachments * 100 + lefts[0] + ($w_ancestry_focus?.hid ?? 0);
+```
+
+This ensures breadcrumbs re-render when focus changes, even if hierarchy structure stays the same.
+
 ### Phase 2: Extract Components
 
 - [x] **Create Breadcrumb_Separator.svelte** ✅
@@ -342,6 +363,56 @@ This ensures breadcrumbs re-render whenever focus changes, even if the hierarchy
   - Create simple test page that renders them
   - Verify styling matches original
 
+#### Work Performed
+
+**Tasks completed:**
+1. ✅ Created `Breadcrumb_Separator.svelte` component
+2. ✅ Decided NOT to create Breadcrumb_Item (Breadcrumb_Button already handles this)
+
+**Component created:** `/src/lib/svelte/controls/Breadcrumb_Separator.svelte`
+
+**Props:**
+- `color: string` - The color of the separator (from ancestry.thing.color)
+- `left: number` - Horizontal position in pixels
+- `top: number = 5` - Vertical position in pixels (default 5)
+
+**Features:**
+- Default slot for customization - consumers can override the `>` separator
+- Slot exposes `color` prop for custom separator styling
+- Matches exact styling of current inline separator
+- Position absolute with configurable top/left
+
+**Component code:**
+```svelte
+<script lang='ts'>
+	export let color: string;
+	export let left: number;
+	export let top: number = 5;
+</script>
+
+<slot {color}>
+	<div class='between-breadcrumbs'
+		style='
+			top:{top}px;
+			position:absolute;
+			color:{color};
+			left:{left}px;'>
+		>
+	</div>
+</slot>
+```
+
+**Usage:**
+```svelte
+<!-- Default separator -->
+<Breadcrumb_Separator {color} {left} />
+
+<!-- Custom separator with slot -->
+<Breadcrumb_Separator {color} {left} let:color>
+  <span style="color:{color}">→</span>
+</Breadcrumb_Separator>
+```
+
 ### Phase 3: Refactor Parent
 
 - [x] **Import Breadcrumb_Separator** ✅
@@ -351,6 +422,55 @@ This ensures breadcrumbs re-render whenever focus changes, even if the hierarchy
   - Replaced `<div class='between-breadcrumbs'>` with `<Breadcrumb_Separator {color} {left} />`
   - Kept all other code unchanged
   - No breaking changes
+
+#### Work Performed
+
+**Tasks completed:**
+1. ✅ Imported Breadcrumb_Separator component
+2. ✅ Replaced inline separator with Breadcrumb_Separator
+
+**Import added:**
+```typescript
+import Breadcrumb_Separator from './Breadcrumb_Separator.svelte';
+```
+
+**Template change:**
+```svelte
+<!-- OLD - inline separator div -->
+{#if index > 0}
+  <div class='between-breadcrumbs'
+    style='
+      top:5px;
+      position:absolute;
+      color:{a.thing.color};
+      left:{lefts[index] - size + 5.5}px;'>
+    >
+  </div>
+{/if}
+
+<!-- NEW - extracted component -->
+{#if index > 0}
+  <Breadcrumb_Separator 
+    color={a.thing.color}
+    left={lefts[index] - size + 5.5} />
+{/if}
+```
+
+**What was NOT changed:**
+- No new props added
+- No mode logic moved
+- No trigger system changes
+- No reactivity changes
+- Layout positioning unchanged (container still at `left:7px`)
+- All existing functionality preserved
+
+**Result:**
+- ✅ App works exactly as before
+- ✅ Breadcrumbs render correctly
+- ✅ Mode switching works
+- ✅ Layout is correct
+- ✅ Cleaner template with extracted component
+- ✅ Separator can be customized via Breadcrumb_Separator's slot
 
 ### Phase 4: Update Consumers
 
@@ -378,11 +498,110 @@ This ensures breadcrumbs re-render whenever focus changes, even if the hierarchy
   ```
 
 - [ ] **Test mode switching**
-  - [ ] Run app - loads without errors
+  - [x] Run app - loads without errors
   - [ ] Verify ancestry mode works
   - [ ] Verify recents mode works
   - [ ] Check transitions between modes
   - [ ] Test all breadcrumb functionality
+
+#### Work Performed
+
+**Tasks completed:**
+1. ✅ Added `ancestries` prop to Breadcrumbs.svelte
+2. ✅ Removed `ancestries_forBreadcrumbs()` from Breadcrumbs.svelte
+3. ✅ Removed `w_t_breadcrumbs` store import from Breadcrumbs.svelte
+4. ✅ Added `ancestries_forBreadcrumbs()` function to Primary_Controls.svelte
+5. ✅ Updated Breadcrumbs instantiation with `ancestries` prop
+
+**Changes to Breadcrumbs.svelte:**
+
+**Added prop:**
+```typescript
+export let ancestries: Array<Ancestry>;
+```
+
+**Removed imports:**
+```typescript
+// REMOVED: const { w_t_breadcrumbs } = show;
+```
+
+**Removed function:**
+```typescript
+// REMOVED:
+// function ancestries_forBreadcrumbs(): Array<Ancestry> {
+//   if ($w_t_breadcrumbs == T_Breadcrumbs.ancestry) {
+//     return $w_ancestry_forDetails.heritage;
+//   } else {
+//     return x.si_recents.items.map(item => item[0]);
+//   }
+// }
+```
+
+**Updated reactive dependency:**
+```typescript
+// Added ancestries.length to trigger updates when ancestries change
+:::${ancestries.length}
+```
+
+**Updated update() function:**
+```typescript
+// Before:
+const ancestries = ancestries_forBreadcrumbs();
+[crumb_ancestries, widths, lefts, encoded_counts] = g.layout_breadcrumbs(ancestries, centered, left, width);
+
+// After:
+[crumb_ancestries, widths, lefts, encoded_counts] = g.layout_breadcrumbs(ancestries, centered, left, width);
+```
+
+**Changes to Primary_Controls.svelte:**
+
+**Added import:**
+```typescript
+const { w_ancestry_forDetails } = x;
+```
+
+**Added function:**
+```typescript
+function ancestries_forBreadcrumbs() {
+  if ($w_t_breadcrumbs == T_Breadcrumbs.ancestry) {
+    return $w_ancestry_forDetails?.heritage ?? [];
+  } else {
+    return x.si_recents.items.map(item => item[0]);
+  }
+}
+```
+
+**Updated Breadcrumbs usage:**
+```svelte
+<!-- Before -->
+<Breadcrumbs
+  left={lefts[8]}
+  centered={true}
+  width={g.windowSize.width - lefts[8] - 10}/>
+
+<!-- After -->
+<Breadcrumbs
+  ancestries={ancestries_forBreadcrumbs()}
+  left={lefts[8]}
+  centered={true}
+  width={g.windowSize.width - lefts[8] - 10}/>
+```
+
+**Architecture achieved:**
+- ✅ Breadcrumbs is now a pure presentation component
+- ✅ Parent (Primary_Controls) handles data selection logic
+- ✅ Mode switching logic centralized in parent
+- ✅ Single responsibility principle enforced
+- ✅ Component easier to test and reason about
+
+**Files modified:**
+- `/src/lib/svelte/controls/Breadcrumbs.svelte`
+- `/src/lib/svelte/controls/Primary_Controls.svelte`
+
+**Next step:**
+- Test that app loads without errors
+- Verify breadcrumbs work in both ancestry and history modes
+- Verify layout is not broken
 
 ### Phase 5: Testing & Cleanup
 
@@ -446,211 +665,3 @@ This ensures breadcrumbs re-render whenever focus changes, even if the hierarchy
 
 **Update documentation:**
 - `/Users/sand/GitHub/webseriously/notes/designs/architecture/breadcrumbs.md` (Phase 5)
-
-## Work Performed
-
-### Phase 1 Completion
-
-**Tasks completed:**
-1. ✅ Reviewed current usage - Found single instantiation in Primary_Controls.svelte
-2. ✅ Documented current behavior - Listed all 10 reactive stores and dependencies
-3. ✅ Fixed failing test - Added focus HID to trigger calculation to fix "Breadcrumbs update when focus changes"
-
-**Key findings:**
-- Breadcrumbs only instantiated once in Primary_Controls.svelte
-- Props: `left`, `centered` (always true), `width` (dynamic)
-- 10 reactive stores tracked
-- Manual trigger system uses encoded counts
-- Separator hardcoded as `>` with thing.color
-
-**Bug fix deployed:**
-Modified `/src/lib/svelte/controls/Breadcrumbs.svelte` line 63:
-```typescript
-// Before:
-trigger = encoded_counts * 10000 + reattachments * 100 + lefts[0];
-
-// After:
-trigger = encoded_counts * 10000 + reattachments * 100 + lefts[0] + ($w_ancestry_focus?.hid ?? 0);
-```
-
-This ensures breadcrumbs re-render when focus changes, even if hierarchy structure stays the same.
-
-### Phase 2 Completion
-
-**Tasks completed:**
-1. ✅ Created `Breadcrumb_Separator.svelte` component
-2. ✅ Decided NOT to create Breadcrumb_Item (Breadcrumb_Button already handles this)
-
-**Component created:** `/src/lib/svelte/controls/Breadcrumb_Separator.svelte`
-
-**Props:**
-- `color: string` - The color of the separator (from ancestry.thing.color)
-- `left: number` - Horizontal position in pixels
-- `top: number = 5` - Vertical position in pixels (default 5)
-
-**Features:**
-- Default slot for customization - consumers can override the `>` separator
-- Slot exposes `color` prop for custom separator styling
-- Matches exact styling of current inline separator
-- Position absolute with configurable top/left
-
-**Component code:**
-```svelte
-<script lang='ts'>
-	export let color: string;
-	export let left: number;
-	export let top: number = 5;
-</script>
-
-<slot {color}>
-	<div class='between-breadcrumbs'
-		style='
-			top:{top}px;
-			position:absolute;
-			color:{color};
-			left:{left}px;'>
-		>
-	</div>
-</slot>
-```
-
-**Usage (future Phase 3):**
-```svelte
-<!-- Default separator -->
-<Breadcrumb_Separator {color} {left} />
-
-<!-- Custom separator with slot -->
-<Breadcrumb_Separator {color} {left} let:color>
-  <span style="color:{color}">→</span>
-</Breadcrumb_Separator>
-```
-
-**Next steps:**
-- Phase 3: Integrate Breadcrumb_Separator into Breadcrumbs.svelte
-- Phase 3: Replace manual trigger with `$derived`
-- Phase 4: Move mode logic to Primary_Controls.svelte
-
-### Phase 3 Completion
-
-**Tasks completed:**
-1. ✅ Imported Breadcrumb_Separator component
-2. ✅ Replaced inline separator with Breadcrumb_Separator
-
-**Changes made:**
-
-**Import added:**
-```typescript
-import Breadcrumb_Separator from './Breadcrumb_Separator.svelte';
-```
-
-**Template change:**
-```svelte
-<!-- OLD - inline separator div -->
-{#if index > 0}
-  <div class='between-breadcrumbs'
-    style='
-      top:5px;
-      position:absolute;
-      color:{a.thing.color};
-      left:{lefts[index] - size + 5.5}px;'>
-    >
-  </div>
-{/if}
-
-<!-- NEW - extracted component -->
-{#if index > 0}
-  <Breadcrumb_Separator 
-    color={a.thing.color}
-    left={lefts[index] - size + 5.5} />
-{/if}
-```
-
-**What was NOT changed:**
-- No new props added
-- No mode logic moved
-- No trigger system changes
-- No reactivity changes
-- Layout positioning unchanged (container still at `left:7px`)
-- All existing functionality preserved
-
-**Result:**
-- ✅ App works exactly as before
-- ✅ Breadcrumbs render correctly
-- ✅ Mode switching works
-- ✅ Layout is correct
-- ✅ Cleaner template with extracted component
-- ✅ Separator can be customized via Breadcrumb_Separator's slot
-
-**Next steps:**
-- Phase 4+ abandoned - composition refactor too complex
-- This completes the breadcrumbs refactor
-- Breadcrumb_Separator component available for reuse
-
-### Phase 4 Completion
-
-**Tasks completed:**
-1. ✅ Moved mode logic to Primary_Controls.svelte
-2. ✅ Added `ancestries_forBreadcrumbs()` function to parent
-3. ✅ Updated Breadcrumbs instantiation with `ancestries` prop
-4. ✅ Added null safety for `$w_ancestry_forDetails`
-
-**Changes to Primary_Controls.svelte:**
-
-**Added import:**
-```typescript
-const { w_ancestry_forDetails } = x;
-```
-
-**Added function (moved from Breadcrumbs.svelte):**
-```typescript
-function ancestries_forBreadcrumbs() {
-  if ($w_t_breadcrumbs == T_Breadcrumbs.ancestry) {
-    return $w_ancestry_forDetails?.heritage ?? [];  // Added null safety
-  } else {
-    return x.si_recents.items.map(item => item[0]);
-  }
-}
-```
-
-**Updated Breadcrumbs usage:**
-```svelte
-<!-- OLD -->
-<Breadcrumbs
-  left={lefts[8]}
-  centered={true}
-  width={g.windowSize.width - lefts[8] - 10}/>
-
-<!-- NEW -->
-<Breadcrumbs
-  ancestries={ancestries_forBreadcrumbs()}  // NEW PROP
-  left={lefts[8]}
-  centered={true}
-  width={g.windowSize.width - lefts[8] - 10}/>
-```
-
-**Bug fixes:**
-- Added optional chaining (`?.`) and nullish coalescing (`??`) to handle undefined `$w_ancestry_forDetails`
-- Returns empty array `[]` when ancestry data not yet available
-- Prevents "Cannot read properties of undefined" error on initial load
-
-**Reactivity fixed:**
-- Svelte 5 syntax (`$effect`, `$state`) replaced with Svelte 4 (`$:`, `let`)
-- Component now compiles and runs correctly
-
-**Architecture achieved:**
-- ✅ Breadcrumbs component is now a pure presentation component
-- ✅ Parent (Primary_Controls) handles data selection logic
-- ✅ Mode switching logic centralized in one place
-- ✅ Single responsibility principle enforced
-- ✅ Component is now easier to test and reason about
-
-**Result:**
-- App loads without errors
-- Breadcrumbs render correctly
-- Mode switching works (ancestry vs history)
-- Composition pattern successfully implemented
-
-**Next steps:**
-- Phase 5: Comprehensive testing
-- Phase 5: Clean up any remaining dead code
-- Phase 5: Update architecture documentation

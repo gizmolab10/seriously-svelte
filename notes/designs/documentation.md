@@ -36,5 +36,5 @@ Comprehensive review of current overall design of components and interactions.
 - [[debugging.md]] - Systematic debugging methodology and source verification principles
 - [[gotchas.md]] - Common pitfalls and gotchas to avoid
 - [[markdown.md]] - Markdown formatting guidelines and patterns
-- [[refactoring.md]] - Refactoring principles and patterns
+- [[refactoring]] - Refactoring principles and patterns
 - [[style.md]] - Code style guidelines and conventions

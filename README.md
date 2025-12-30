@@ -345,7 +345,7 @@ class MyThing extends Persistable {
 - [style.md](notes/designs/guides/style.md) - **CRITICAL** - Complete codebase conventions
 - [debugging.md](notes/designs/guides/debugging.md) - Systematic debugging methodology
 - [gotchas.md](notes/designs/guides/gotchas.md) - Common pitfalls
-- [refactoring.md](notes/designs/guides/refactoring.md) - Refactoring principles
+- [refactoring.md](refactoring.md) - Refactoring principles
 - [markdown.md](notes/designs/guides/markdown.md) - Markdown formatting
 
 ---
