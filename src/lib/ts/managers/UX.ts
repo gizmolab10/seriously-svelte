@@ -128,12 +128,10 @@ export default class S_UX {
 		if (this.si_recents.find_next_item(next)) {		// w_ancestry_focus is now updated
 			const [focus, grabs] = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
 			focus?.expand();
-			console.log(` [next] focus '${focus.title}'`);
 			if (!!grabs) {
 				this.si_grabs = grabs;		// restores index as well as items
 				for (const grab of grabs.items) {
 					if (!!grab) {
-						console.log(` [next] grab '${grab.title}'`);
 						grab.ancestry_assureIsVisible();
 					}
 				}

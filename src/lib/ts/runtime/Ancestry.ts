@@ -926,10 +926,10 @@ export default class Ancestry extends Identifiable {
 	rect_ofComponent(component: S_Component | null):				   Rect | null { return component?.rect ?? null; }
 
 	showsReveal_forPointingToChild(pointsTo_child: boolean): boolean {
-		const hasParents = this.count_ofParents > 0;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
-		const hasChildren = this.count_ofChilcren(pointsTo_child) > 0;
+		const hasParents = !pointsTo_child && this.count_ofParents > 0;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
+		const hasChildren = pointsTo_child && this.count_ofChilcren(true) > 0;
 		if (controls.inRadialMode) {
 			return !isBidirectional && !this.isFocus && (hasParents || hasChildren || isBulkAlias);
 		}

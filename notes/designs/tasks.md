@@ -2,7 +2,7 @@
 
   - [ ] read breadcrumbs.md and implement phase 3
   - [ ] add description of work performed
-  - [x] rewrite Test refactored component with specific tasks i can perform (as checkboxes)
+  - [ ] make painfully certain that layout is not broken
 
 **prior goals (completed, ignore)**
 

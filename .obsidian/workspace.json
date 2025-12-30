@@ -184,9 +184,9 @@
   },
   "active": "6ebda5365924a459",
   "lastOpenFiles": [
-    "notes/designs/guides/refactoring.md",
-    "notes/designs/refactor/breadcrumbs.md",
     "notes/designs/tasks.md",
+    "notes/designs/refactor/breadcrumbs.md",
+    "notes/designs/guides/refactoring.md",
     "notes/designs/guides/instructions.md",
     "notes/designs/refactor/clicks.md",
     "src/lib/svelte/controls/Breadcrumb_Separator.svelte",
