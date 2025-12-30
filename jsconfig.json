@@ -33,5 +33,5 @@
 		"src/lib/**/*.js",
 		"src/lib/**/*.ts",
 		"src/main.js"
-, "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte", "notes/aside/2025/Widget_Title.svelte", "notes/aside/2025/Mouse_Responder.svelte"	]
+, "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte", "notes/aside/2025/Widget_Title.svelte", "notes/aside/2025/Mouse_Responder.svelte", "notes/archives/2025/Breadcrumb_Separator.svelte"	]
 }

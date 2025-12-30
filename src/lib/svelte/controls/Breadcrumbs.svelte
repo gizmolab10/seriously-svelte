@@ -4,7 +4,6 @@
 	import { Thing, Ancestry, S_Component} from '../../ts/common/Global_Imports';
 	import { c, e, g, h, k, core, u, x } from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
-	import Breadcrumb_Separator from './Breadcrumb_Separator.svelte';
 	import { onMount } from 'svelte';
 	export let width = g.windowSize.width;
 	export let centered: boolean = false;
@@ -79,9 +78,14 @@
 			position:absolute;'>
 		{#each crumb_ancestries as a, index}
 			{#if index > 0}
-				<Breadcrumb_Separator 
-					color={a.thing.color}
-					left={lefts[index] - size + 5.5} />
+				<div class='between-breadcrumbs'
+					style='
+						top:5px;
+						position:absolute;
+						color:{a.thing.color};
+						left:{lefts[index] - size + 5.5}px;'>
+					>
+				</div>
 			{/if}
 			<div class='breadcrumb'
 				style='
