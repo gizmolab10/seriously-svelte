@@ -492,3 +492,62 @@ The breadcrumbs system provides dual navigation modes:
 
 All three parts (selector, next/previous, crumb buttons) work together with UX.ts to maintain and navigate through the user's exploration history, preserving both focus and selection state at each navigation point.
 
+## Comparison: Architecture vs Design Documents
+
+Two breadcrumbs documents exist with different purposes:
+
+### architecture/breadcrumbs.md (This Document)
+
+**Focus:** System-level architecture and integration
+
+**What it covers:**
+- How three parts work together (selector, next/previous, crumb buttons)
+- Data flow through the entire breadcrumbs system
+- Integration with UX.ts manager (recents, grabs, focus)
+- History management and state preservation
+- Migration plan for making w_ancestry_focus derived from si_recents.index
+
+**Audience:** Developers working on the navigation system, history management, or UX.ts integration
+
+**Scope:** Broad - covers the whole breadcrumbs feature and how it fits into the app
+
+### design of breadcrumbs.md
+
+**Focus:** Component-level implementation details
+
+**What it covers:**
+- Single component responsibility (Breadcrumbs.svelte)
+- The trigger system and why it exists
+- Reactive block mechanics
+- Phase 4 refactor problem (moved mode logic to parent)
+- Why the refactor broke focus updates
+- Recommended fix (focusId prop)
+
+**Audience:** Developers working on Breadcrumbs.svelte component itself or debugging reactivity issues
+
+**Scope:** Narrow - focuses on one component's internal workings and a specific refactor problem
+
+### Key Differences
+
+**Architecture** (this doc):
+- Describes the system
+- Shows how pieces connect
+- Documents data flow
+- Explains UX.ts integration
+
+**Design** (other doc):
+- Describes one component
+- Shows internal mechanics
+- Documents a failed refactor
+- Explains trigger system
+
+**When to use which:**
+- Working on navigation/history? Read architecture (this doc)
+- Debugging Breadcrumbs.svelte? Read design
+- Adding new breadcrumb features? Read both
+- Fixing focus update bugs? Start with design, then architecture
+
+**Why two docs:**
+
+The architecture doc was written first to document the system. The design doc was created later when the Phase 4 refactor broke things, to analyze why Breadcrumbs.svelte specifically stopped updating on focus changes. They serve different debugging and development needs.
+

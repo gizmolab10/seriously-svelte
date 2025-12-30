@@ -11,10 +11,14 @@
             "id": "076811636a6e3b9a",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "notes/designs/refactor/breadcrumbs.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "breadcrumbs"
             }
           }
         ]
@@ -136,12 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "notes/designs/refactor/breadcrumbs.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of breadcrumbs"
             }
           }
         ],
@@ -164,6 +169,15 @@
   },
   "active": "076811636a6e3b9a",
   "lastOpenFiles": [
+    "notes/designs/refactor/design of breadcrumbs.md",
+    "notes/designs/refactor/breadcrumbs.md",
+    "notes/designs/architecture/breadcrumbs.md",
+    "notes/designs/guides/refactoring.md",
+    "notes/designs/guides/migration.md",
+    "notes/designs/guides/composition.md",
+    "notes/designs/refactor/banners.md",
+    "notes/designs/guides/svelte.5.md",
+    "notes/designs/architecture/states.md",
     "notes/archives/2025/Breadcrumb_Separator.svelte",
     "src/lib/svelte/controls/Breadcrumb_Separator.svelte",
     "notes/designs/work/widget_title.md",
@@ -174,12 +188,8 @@
     "notes/designs/work/breadcrumbs re-compositioon.md",
     "notes/designs/work",
     "notes/designs/tasks.md",
-    "notes/designs/refactor/refactoring.md",
-    "notes/designs/refactor/migration.md",
     "notes/designs/refactor/layout.md",
-    "notes/designs/refactor/composition.md",
     "notes/designs/refactor/clicks.md",
-    "notes/designs/refactor/breadcrumbs.md",
     "notes/designs/refactor",
     "notes/designs/next/index.md",
     "notes/designs/index.md",
@@ -189,17 +199,12 @@
     "notes/designs/guides/index.md",
     "notes/designs/guides/documentation.md",
     "notes/designs/guides/digest.md",
-    "notes/designs/documentation.md",
-    "notes/designs/architecture/ux.md",
-    "notes/designs/architecture/search.md",
-    "notes/designs/architecture/paging.md",
     "notes/designs/obsolete/slim/slim/utils.ts",
     "notes/designs/obsolete/slim/slim/types.ts",
     "notes/designs/obsolete/slim/slim/StateMachine.ts",
     "notes/designs/obsolete/slim/slim/SlimStore.ts",
     "notes/designs/obsolete/slim/slim/SignalBridge.ts",
     "notes/designs/obsolete/slim/slim/PhaseOneStore.ts",
-    "notes/designs/obsolete/slim/slim.sh",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",
