@@ -15,24 +15,20 @@ export default defineConfig({
   themeConfig: {
 
     sidebar: [
-      {
-        text: 'Home',
-        collapsed: true,
-        items: [
-          { text: 'Project', link: '/readme' },
-          { text: 'Documentation', link: '/documentation' }
-        ]
-      },
+      { text: 'Introduction', link: '/readme' },
+      { text: 'Documentation', link: '/documentation' },
       {
         text: 'Architecture',
         collapsed: true,
         items: [
+          { text: 'Breadcrumbs', link: '/architecture/breadcrumbs' },
           { text: 'Bubble', link: '/architecture/bubble' },
           { text: 'Buttons', link: '/architecture/buttons' },
           { text: 'Components', link: '/architecture/components' },
           { text: 'Controls', link: '/architecture/controls' },
           { text: 'Database', link: '/architecture/database' },
           { text: 'Details', link: '/architecture/details' },
+          { text: 'Geometry', link: '/architecture/geometry' },
           { text: 'Hits', link: '/architecture/hits' },
           { text: 'Paging', link: '/architecture/paging' },
           { text: 'Preferences', link: '/architecture/preferences' },
@@ -50,20 +46,29 @@ export default defineConfig({
           { text: 'Debugging', link: '/guides/debugging' },
           { text: 'Documentation', link: '/guides/documentation' },
           { text: 'Gotchas', link: '/guides/gotchas' },
+          { text: 'Instructions', link: '/guides/instructions' },
           { text: 'Markdown', link: '/guides/markdown' },
           { text: 'Refactoring', link: '/guides/refactoring' },
-          { text: 'Style Guide', link: '/guides/style' }
+          { text: 'Style Guide', link: '/guides/style' },
+          { text: 'VitePress', link: '/guides/vitepress' },
+          { text: 'Voice', link: '/guides/voice' },
+        ]
+      },
+      {
+        text: 'Refactor',
+        collapsed: true,
+        items: [
+          { text: 'Breadcrumbs', link: '/refactor/breadcrumbs' },
+          { text: 'Clicks', link: '/refactor/clicks' },
+          { text: 'Composition', link: '/refactor/composition' },
+          { text: 'Layout', link: '/refactor/layout' },
         ]
       },
       {
         text: 'Analysis',
         collapsed: true,
         items: [
-          { text: 'Breadcrumbs', link: '/analysis/breadcrumbs' },
           { text: 'Focus', link: '/analysis/focus' },
-          { text: 'Geometry', link: '/analysis/geometry' },
-          { text: 'Layout Guide', link: '/analysis/refactor-layout' },
-          { text: 'Refactor Clicks', link: '/analysis/refactor-clicks' },
           { text: 'Timers', link: '/analysis/timers' },
           { text: 'Widget Title', link: '/analysis/widget_title' }
         ]

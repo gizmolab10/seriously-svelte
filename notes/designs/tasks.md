@@ -1,39 +1,27 @@
- **goal**: read all the md files that are NOT listed below. pay particular attention to the text i added above the TOC. i want you to use the same "tone of writing" i used. okay? so, read each file listed below. in each, above the TOC, using that tone, add a synopsis of the file. oh, and then check the box!
- 
- Architecture (most of them):
-  - [x] bubble.md
-  - [x] components.md
-  - [x] controls.md
-  - [x] database.md
-  - [x] details.md
-  - [x] hits.md
-  - [x] paging.md
-  - [x] preferences.md
-  - [x] search.md
-  - [x] state.md
-  - [x] styles.md
-  - [x] ux.md
-  - [x] writables.md
+**goal**: migrate breadcrumbs phase 3
 
-  Analysis (most of them):
-  - [x] breadcrumbs.md
-  - [x] focus.md
-  - [x] geometry.md
-  - [x] index.md (just a list)
-  - [x] refactor-clicks.md
-  - [x] timers.md
-  - [x] widget_title.md
+  - [ ] read breadcrumbs.md and implement phase 3
+  - [ ] add description of work performed
+  - [x] rewrite Test refactored component with specific tasks i can perform (as checkboxes)
 
-  Guides (just the index):
-  - [x] index.md (just a list)
+**prior goals (completed, ignore)**
 
-  The files that DO have intro text above the TOC are:
-  - [ ] guides/debugging.md
-  - [ ] guides/documentation.md
-  - [ ] guides/gotchas.md
-  - [ ] guides/markdown.md
-  - [ ] guides/refactoring.md
-  - [ ] guides/style.md
-  - [ ] architecture/buttons.md
-  - [ ] architecture/index.md
-  - [ ] analysis/refactor-layout.md
+  - [x] write a new design guides file "composition.md"
+  - [x] research how svelte suggests using composition and props
+  - [x] choose one svelte component
+  - [x] describe how it uses composition and props
+  - [x] suggest how it could take more advantage of using them
+  - [x] create a check list of all components that could take more advantage
+  - [x] add a brief comment to each summarizing the nature of the change
+
+  - [x] read composition.md
+  - [x] add a new section called "migration of Breadcrumbs"
+  - [x] add checkbox items of all the steps
+
+  - [x] read breadcrumbs.md and implement phase 1
+  - [x] write a breadcrumbs migration strategy
+  
+  - [x] read breadcrumbs.md and implement phase 2
+  - [x] add description of work performed
+  - [x] update the TOC
+  

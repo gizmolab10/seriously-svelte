@@ -11,11 +11,11 @@ Brief summary of all design documentation, organized by folder.
 
 Notes taken during a feature addition or debugging session.
 
-- [[breadcrumbs.md]] - Breadcrumbs navigation system design and component integration
+- [[notes/designs/architecture/breadcrumbs]] - Breadcrumbs navigation system design and component integration
 - [[focus.md]] - Focus management and ancestry tracking
-- [[geometry.md]] - Geometric calculations and layout algorithms
-- [[refactor-layout]] - Layout system patterns and guidelines
-- [[refactor-clicks.md]] - Mouse click timing centralization refactoring patterns
+- [[geometry]] - Geometric calculations and layout algorithms
+- [[layout]] - Layout system patterns and guidelines
+- [[clicks]] - Mouse click timing centralization refactoring patterns
 - [[timers.md]] - Mouse timing centralization work and timer management
 - [[widget_title.md]] - Widget title display and interaction patterns
 

@@ -1,9 +1,9 @@
-# Webseriously Project Guide
+# Webseriously Project
 
 
 **Webseriously** is a sophisticated Svelte-based visualization and data management application with hierarchical graph displays, interactive UI components, and multi-database support. Can be embedded as a Bubble.io plugin or run standalone.
 
-Deeper Dives, beyond the scope off this file, [can be found here](notes/designs/documentation|documentation).
+Deeper Dives, beyond the scope off this file, [can be found here](documentation).
 ## Table of Contents
 - [Project Overview](#project-overview)
   - [Naming Conventions](#naming-conventions)
@@ -175,7 +175,7 @@ Computes positions/sizes for tree and radial modes.
 
 **Key Classes**: `G_Widget`, `G_TreeGraph`, `G_RadialGraph`, `G_Cluster`, `G_TreeBranches`, `G_TreeLine`, `G_Paging`
 
-See [analysis/layout-guide.md](refactor-layout.md) and [analysis/geometry.md](../analysis/geometry.md).
+See [analysis/layout-guide.md](layout.md) and [analysis/geometry.md](geometry.md).
 
 ## Development
 
