@@ -1,6 +1,8 @@
 # Database Abstraction Architecture
 
-I built this to run on Firebase, Airtable, Local, and Test databases. They share a unified CRUD interface. It was almost a no-brainer to switch between them. Each database gets its own Hierarchy instance, so switching doesn't lose loaded data.
+I built this to run on Firebase, Airtable, Local, and Test databases. They share a unified CRUD interface. Each database gets its own Hierarchy instance, so live-switching back-and-forth doesn't lose loaded data.
+
+Once a database record is in memory, I call it a [[persistable]].
 
 ## Table of Contents
 - [Overview](#overview)

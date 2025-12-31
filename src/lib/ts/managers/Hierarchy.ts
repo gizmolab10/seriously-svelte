@@ -1,4 +1,4 @@
-import { T_Focus, T_Create, T_Startup, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
+import { T_Create, T_Startup, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { g, k, p, u, x, busy, show, debug, controls, features } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';

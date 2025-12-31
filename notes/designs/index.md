@@ -4,7 +4,9 @@ Project documentation and design notes.
 
 ## Contents
 
-- [Overview](./documentation.md)
-- [Guides](./guides/)
-- [Architecture](./architecture/)
-- [Analyses](./work/)
+* [Overview](./documentation.md)
+* [Architecture](./architecture/)
+* [Guidelines](./guides/)
+* [Work](./work/)
+
+

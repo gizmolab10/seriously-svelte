@@ -1,0 +1,585 @@
+# Component Organization Architecture
+
+Webseriously's Svelte components are organized into 11 specialized directories, each with a clear purpose and responsibility. This structure enables maintainability, reusability, and clear separation of concerns.
+
+## Table of Contents
+- [Overview](#overview)
+- [Directory Structure](#directory-structure)
+- [Component Categories](#component-categories)
+- [Naming Conventions](#naming-conventions)
+- [Component Patterns](#component-patterns)
+- [State Management](#state-management)
+- [Best Practices](#best-practices)
+
+## Overview
+
+Component organization follows these principles:
+- **By purpose** - Components grouped by what they do, not how they work
+- **Clear boundaries** - Each directory has a single responsibility
+- **Reusability** - Shared components in appropriate directories
+- **Progressive complexity** - Simple components in `draw/`, complex in `main/`
+
+## Directory Structure
+
+```
+src/lib/svelte/
+├── controls/        # Primary/secondary controls, breadcrumbs, tree controls
+├── details/         # Detail panels (actions, data, header, preferences, selection, tags, traits)
+├── draw/            # SVG primitives (boxes, circles, gradients, portals, separators, spinners)
+├── experimental/    # Work-in-progress components
+├── main/            # Core app (SeriouslyApp, Panel, Graph, Details, Import, BuildNotes)
+├── mouse/           # Interactive elements (buttons, sliders, rubberband, steppers, color pickers)
+├── radial/          # Radial graph (clusters, rings)
+├── search/          # Search interface and results
+├── text/            # Text rendering (angled, curved, editors, tables)
+├── tree/            # Tree graph (branches, lines)
+└── widget/          # Widget system (drag, reveal, title)
+```
+
+## Component Categories
+
+### controls/ - Graph Controls
+**Purpose**: Top-level control buttons and navigation
+
+**Components**:
+- `Breadcrumbs.svelte` - Ancestry navigation breadcrumbs
+- `Primary_Controls.svelte` - Main control buttons (zoom, mode, etc.)
+- `Secondary_Controls.svelte` - Additional controls
+- `Tree_Controls.svelte` - Tree-specific controls
+
+**State**:
+- Uses `controls` manager
+- `S_Element` for hit testing
+- Reactive to `x.w_ancestry_focus`
+
+**Example**:
+```svelte
+<!-- Breadcrumbs.svelte -->
+<script>
+  import { x } from '$lib/ts/common/Global_Imports';
+  
+  $: ancestry = $x.w_ancestry_focus;
+  $: breadcrumbs = ancestry?.breadcrumbs ?? [];
+</script>
+
+{#each breadcrumbs as crumb}
+  <Breadcrumb_Button {crumb} />
+{/each}
+```
+
+---
+
+### details/ - Detail Panels
+**Purpose**: Tabbed detail panels for focused Thing
+
+**Components**:
+- `Banner_Hideable.svelte` - Collapsible banner header
+- `D_Actions.svelte` - Action buttons (browse, focus, add, delete, move)
+- `D_Data.svelte` - Thing data editor
+- `D_Header.svelte` - Detail panel header
+- `D_Preferences.svelte` - Per-thing preferences
+- `D_Selection.svelte` - Selection/grab management
+- `D_Tags.svelte` - Tag assignment
+- `D_Traits.svelte` - Trait key-value editor
+
+**State**:
+- Uses `details` manager
+- `w_tab` for active tab
+- `w_visible` for panel visibility
+- Reactive to `x.w_ancestry_focus`
+
+**Example**:
+```svelte
+<!-- D_Actions.svelte -->
+<script>
+  import { x, h } from '$lib/ts/common/Global_Imports';
+  
+  $: thing = $x.w_ancestry_focus?.thing;
+  
+  function browse_left() {
+    const sibling = h.sibling_left_forThing(thing);
+    if (sibling) x.ancestry_focus_set(h.ancestry_forThing(sibling));
+  }
+</script>
+
+<Button on:click={browse_left}>←</Button>
+```
+
+---
+
+### draw/ - SVG Primitives
+**Purpose**: Reusable SVG drawing components
+
+**Components**:
+- `Box.svelte` - Rectangles with fill/stroke
+- `Circle.svelte` - Circles (dots, widgets)
+- `Gull_Wings.svelte` - Gull wing decorations
+- `Portal.svelte` - Portal rendering
+- `Printable.svelte` - Print-friendly wrappers
+- `SVG_D3.svelte` - D3.js integration layer
+- `SVG_Gradient.svelte` - Gradient definitions
+- `Separator.svelte` - Visual separators
+- `Spinner.svelte` - Loading spinners
+- `Transparent_Circle.svelte` - Hit-testable transparent circles
+
+**State**:
+- Stateless presentation components
+- Props for geometry and colors
+- No direct store subscriptions
+
+**Example**:
+```svelte
+<!-- Circle.svelte -->
+<script>
+  export let cx: number;
+  export let cy: number;
+  export let r: number;
+  export let fill: string = 'white';
+  export let stroke: string = 'black';
+</script>
+
+<circle {cx} {cy} {r} {fill} {stroke} />
+```
+
+---
+
+### experimental/ - WIP Components
+**Purpose**: Components under active development
+
+**Note**: Components here may be incomplete, unstable, or experimental. Not used in production until moved to appropriate directory.
+
+---
+
+### main/ - Core Application
+**Purpose**: Top-level application structure
+
+**Components**:
+- `SeriouslyApp.svelte` - Root application component
+- `Panel.svelte` - Main panel container
+- `Graph.svelte` - Graph viewport
+- `Details.svelte` - Detail panel container
+- `Import.svelte` - Data import interface
+- `BuildNotes.svelte` - Build notes display
+
+**State**:
+- Uses `core` manager
+- `w_t_startup` for app lifecycle
+- Coordinates all other components
+
+**Example**:
+```svelte
+<!-- SeriouslyApp.svelte -->
+<script>
+  import { core, features } from '$lib/ts/common/Global_Imports';
+  
+  $: startup = $core.w_t_startup;
+</script>
+
+{#if startup === T_Startup.loading}
+  <Spinner />
+{:else if startup === T_Startup.ready}
+  <Panel />
+  {#if features.standalone_UI}
+    <Details />
+  {/if}
+{/if}
+```
+
+---
+
+### mouse/ - Interactive Elements
+**Purpose**: Mouse-driven UI components
+
+**Components**:
+- `Breadcrumb_Button.svelte` - Clickable breadcrumb chips
+- `Button.svelte` - Generic button with autorepeat/long-click
+- `Buttons_Row.svelte` - Horizontal button group
+- `Buttons_Table.svelte` - Button grid layout
+- `Clickable_Label.svelte` - Clickable text labels
+- `Close_Button.svelte` - Close/dismiss buttons
+- `Cluster_Pager.svelte` - Radial cluster paging controls
+- `Color.svelte` - Color picker
+- `Glow_Button.svelte` - Glowing interactive buttons
+- `Glows_Banner.svelte` - Banner with glow effects
+- `Next_Previous.svelte` - Next/previous navigation
+- `Rubberband.svelte` - Rubberband selection
+- `Segmented.svelte` - Segmented control
+- `Slider.svelte` - Value slider
+- `Steppers.svelte` - Increment/decrement steppers
+- `Triangle_Button.svelte` - Triangle-shaped buttons
+
+**State**:
+- Uses `hits` manager for click detection
+- `S_Element` for each interactive element
+- `mouse_detection` for autorepeat/long-click/double-click
+
+**Example**:
+```svelte
+<!-- Button.svelte -->
+<script>
+  import { elements, hits } from '$lib/ts/common/Global_Imports';
+  import { T_Mouse_Detection } from '$lib/ts/common/Enumerations';
+  
+  export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
+  export let handle_s_mouse: (s_mouse: S_Mouse) => boolean;
+  
+  const s_element = elements.s_element_for(...);
+  let element: HTMLElement;
+  
+  onMount(() => {
+    s_element.set_html_element(element);
+    s_element.handle_s_mouse = handle_s_mouse;
+    s_element.mouse_detection = mouse_detection;
+  });
+  
+  onDestroy(() => {
+    hits.delete_hit_target(s_element);
+  });
+</script>
+
+<div bind:this={element}>
+  <slot />
+</div>
+```
+
+---
+
+### radial/ - Radial Graph
+**Purpose**: Radial graph visualization components
+
+**Components**:
+- `Radial_Cluster.svelte` - Cluster of widgets in radial layout
+- `Radial_Graph.svelte` - Radial graph container
+- `Radial_Rings.svelte` - Concentric rings for depth levels
+
+**State**:
+- Uses `radial` manager
+- `G_RadialGraph` for layout
+- `G_Cluster` for cluster positioning
+- Reactive to `x.w_ancestry_focus`
+
+**Example**:
+```svelte
+<!-- Radial_Cluster.svelte -->
+<script>
+  import { g, radial } from '$lib/ts/common/Global_Imports';
+  
+  export let ancestry: Ancestry;
+  
+  $: cluster = radial.cluster_for(ancestry);
+  $: widgets = cluster?.widgets ?? [];
+</script>
+
+{#each widgets as widget}
+  <Widget {widget} />
+{/each}
+```
+
+---
+
+### search/ - Search Interface
+**Purpose**: Search functionality and results display
+
+**Components**:
+- `Search.svelte` - Search input and controls
+- `Search_Results.svelte` - Search result list
+- `Search_Toggle.svelte` - Show/hide search panel
+
+**State**:
+- Uses `search` manager
+- `w_results` for search results
+- `w_query` for current query
+- `w_visible` for panel visibility
+
+**Example**:
+```svelte
+<!-- Search.svelte -->
+<script>
+  import { search } from '$lib/ts/common/Global_Imports';
+  
+  let query = '';
+  
+  $: results = $search.w_results;
+  
+  function handle_search() {
+    search.search(query);
+  }
+</script>
+
+<input bind:value={query} on:input={handle_search} />
+<Search_Results {results} />
+```
+
+---
+
+### text/ - Text Rendering
+**Purpose**: Specialized text rendering components
+
+**Components**:
+- `Angled_Text.svelte` - Text at arbitrary angles
+- `Curved_Text.svelte` - Text along curved paths
+- `Text_Editor.svelte` - Inline text editing
+- `Text_Table.svelte` - Tabular text layout
+
+**State**:
+- Presentation components
+- Props for geometry and content
+- `S_Title_Edit` for editing state
+
+**Example**:
+```svelte
+<!-- Curved_Text.svelte -->
+<script>
+  export let text: string;
+  export let path: string;  // SVG path
+  export let fill: string = 'black';
+</script>
+
+<defs>
+  <path id="text-path" d={path} />
+</defs>
+<text {fill}>
+  <textPath href="#text-path">
+    {text}
+  </textPath>
+</text>
+```
+
+---
+
+### tree/ - Tree Graph
+**Purpose**: Tree graph visualization components
+
+**Components**:
+- `Tree_Branches.svelte` - Vertical branch layout
+- `Tree_Graph.svelte` - Tree graph container
+- `Tree_Line.svelte` - Parent-child connection lines
+
+**State**:
+- Uses `geometry` manager
+- `G_TreeGraph` for layout
+- `G_TreeBranches` for branch positioning
+- Reactive to `x.w_ancestry_focus`
+
+**Example**:
+```svelte
+<!-- Tree_Graph.svelte -->
+<script>
+  import { g, x } from '$lib/ts/common/Global_Imports';
+  
+  $: focus = $x.w_ancestry_focus;
+  $: tree_layout = g.g_tree.layout_for(focus);
+</script>
+
+{#if tree_layout}
+  <Tree_Branches {tree_layout} />
+{/if}
+```
+
+---
+
+### widget/ - Widget System
+**Purpose**: Widget rendering and interaction
+
+**Components**:
+- `Widget.svelte` - Main widget component (circle + title)
+- `Widget_Drag.svelte` - Drag dot
+- `Widget_Reveal.svelte` - Reveal/hide children dot
+- `Widget_Title.svelte` - Widget title text
+
+**State**:
+- Uses `elements` manager
+- `S_Widget` for widget state
+- `S_Element` for drag/reveal dots
+- Reactive to `x.w_ancestry_focus`, `x.w_grabs`
+
+**Example**:
+```svelte
+<!-- Widget.svelte -->
+<script>
+  import { elements, x } from '$lib/ts/common/Global_Imports';
+  
+  export let ancestry: Ancestry;
+  
+  const s_widget = elements.s_widget_forAncestry(ancestry);
+  
+  $: isFocus = ancestry.isEqualTo($x.w_ancestry_focus);
+  $: isGrabbed = ancestry.isGrabbed;
+  $: fill = s_widget.fill;
+  $: stroke = s_widget.stroke;
+</script>
+
+<Circle cx={s_widget.cx} cy={s_widget.cy} r={s_widget.r} {fill} {stroke} />
+<Widget_Title {s_widget} />
+{#if s_widget.shows_drag}
+  <Widget_Drag {s_widget} />
+{/if}
+{#if s_widget.shows_reveal}
+  <Widget_Reveal {s_widget} />
+{/if}
+```
+
+---
+
+## Naming Conventions
+
+### File Names
+- `PascalCase.svelte` for components
+- Descriptive, not abbreviated
+- Prefix indicates category (D_ for details, G_ for geometry helpers)
+
+### Component Prefixes
+- `D_` - Detail panel components
+- `G_` - Geometry/layout components (TypeScript, not Svelte)
+- `S_` - State classes (TypeScript)
+- `T_` - Type/enum definitions (TypeScript)
+
+### Example:
+```
+details/D_Actions.svelte        # Detail panel for actions
+geometry/G_TreeGraph.ts         # Tree graph layout (TypeScript)
+state/S_Widget.ts               # Widget state (TypeScript)
+```
+
+## Component Patterns
+
+### Pattern 1: Stateless Presentation
+**Use for**: SVG primitives, simple rendering
+
+```svelte
+<script>
+  export let cx: number;
+  export let cy: number;
+  export let r: number;
+  export let fill: string;
+</script>
+
+<circle {cx} {cy} {r} {fill} />
+```
+
+### Pattern 2: State Object + Reactive Props
+**Use for**: Graph elements (widgets, dots)
+
+```svelte
+<script>
+  import { elements } from '$lib/ts/common/Global_Imports';
+  
+  export let ancestry: Ancestry;
+  
+  const s_widget = elements.s_widget_forAncestry(ancestry);
+  
+  $: fill = s_widget.fill;
+  $: stroke = s_widget.stroke;
+</script>
+
+<Circle cx={s_widget.cx} cy={s_widget.cy} r={s_widget.r} {fill} {stroke} />
+```
+
+### Pattern 3: Hit Testing + Click Handling
+**Use for**: Interactive elements (buttons, controls)
+
+```svelte
+<script>
+  import { elements, hits } from '$lib/ts/common/Global_Imports';
+  
+  const s_element = elements.s_element_for(...);
+  let element: HTMLElement;
+  
+  onMount(() => {
+    s_element.set_html_element(element);
+    s_element.handle_s_mouse = (s_mouse: S_Mouse) => {
+      // Handle click
+      return true;
+    };
+  });
+  
+  onDestroy(() => {
+    hits.delete_hit_target(s_element);
+  });
+</script>
+
+<div bind:this={element}>
+  <!-- Content -->
+</div>
+```
+
+### Pattern 4: Manager Coordination
+**Use for**: Top-level containers, panels
+
+```svelte
+<script>
+  import { core, details, x } from '$lib/ts/common/Global_Imports';
+  
+  $: hierarchy = $core.w_hierarchy;
+  $: tab = $details.w_tab;
+  $: focus = $x.w_ancestry_focus;
+</script>
+
+{#if $details.w_visible}
+  {#if tab === T_Details_Tab.actions}
+    <D_Actions />
+  {:else if tab === T_Details_Tab.data}
+    <D_Data />
+  {/if}
+{/if}
+```
+
+## State Management
+
+### State Objects (S_*)
+Components use state objects from the `elements` manager:
+
+```typescript
+// Get or create S_Element
+const s_element = elements.s_element_for(identifiable, T_Hit_Target.widget, 'my-widget');
+
+// Get or create S_Widget
+const s_widget = elements.s_widget_forAncestry(ancestry);
+```
+
+### Reactive Stores
+Components subscribe to manager stores:
+
+```svelte
+$: hierarchy = $core.w_hierarchy;
+$: focus = $x.w_ancestry_focus;
+$: hovering = $hits.w_s_hover;
+```
+
+### Computed Properties
+State objects provide getters:
+
+```typescript
+$: fill = s_widget.fill;        // Computed from state
+$: stroke = s_widget.stroke;    // Computed from state
+$: isHovering = s_widget.isHovering;  // Reactive to hits.w_s_hover
+```
+
+## Best Practices
+
+### ✅ DO
+
+- **Place components by purpose** - Controls in controls/, details in details/, etc.
+- **Use state objects** - Get from `elements` manager, don't create directly
+- **Register hit targets** - Call `s_element.set_html_element()` in `onMount`
+- **Clean up in onDestroy** - Unregister hit targets, cancel subscriptions
+- **Use manager stores** - Subscribe to `w_*` stores for reactivity
+- **Keep presentation stateless** - SVG primitives should be pure props
+- **Name descriptively** - `Radial_Cluster.svelte`, not `RC.svelte`
+
+### ❌ DON'T
+
+- **Mix concerns** - Tree components in radial/, mouse handling in draw/, etc.
+- **Create state objects directly** - Use `elements.s_element_for()`
+- **Duplicate interactive logic** - Use `Button.svelte` or `Glow_Button.svelte`
+- **Forget cleanup** - Memory leaks from unregistered hit targets
+- **Store manager references** - Import from Global_Imports every time
+- **Use DOM event handlers** - Use centralized hit testing instead
+- **Abbreviate file names** - `Breadcrumb_Button.svelte`, not `BC_Btn.svelte`
+
+## Related Documents
+
+- [managers.md](managers.md) - Manager pattern architecture
+- [state.md](./state.md) - State management patterns
+- [hits.md](./hits.md) - Hit testing and click handling
+- [components.md](./components.md) - Components manager details

@@ -2,7 +2,7 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 # Guides
 
 - [Debugging](./debugging.md)
-- [Documentation](./documentation.md)
+- [Documentation](notes/designs/architecture/documentation.md)
 - [Gotchas](./gotchas.md)
 - [Markdown](./markdown.md)
 - [Refactoring](refactoring.md)

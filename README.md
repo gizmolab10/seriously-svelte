@@ -3,7 +3,7 @@
 
 **Webseriously** is a sophisticated Svelte-based visualization and data management application with hierarchical graph displays, interactive UI components, and multi-database support. Can be embedded as a Bubble.io plugin or run standalone.
 
-Deeper Dives, beyond the scope off this file, [can be found here](notes/designs/documentation.md).
+Deeper Dives, beyond the scope off this file, [can be found here](./notes/designs/documentation.md).
 ## Table of Contents
 - [Project Overview](#project-overview)
   - [Naming Conventions](#naming-conventions)
@@ -59,22 +59,33 @@ This document provides comprehensive guidance for anyone working on the Webserio
 
 ```
 src/lib/
-├── svelte/          # UI Components (~72 files)
-│   ├── controls/    # Sliders, buttons, inputs
-│   ├── details/     # Detail panels
-│   ├── main/        # SeriouslyApp, Panel
-│   ├── mouse/       # Mouse interaction
-│   ├── radial/      # Radial graph
-│   ├── tree/        # Tree graph
-│   └── widget/      # Widget system
-└── ts/              # TypeScript core (~88 files)
-    ├── common/      # Constants, extensions
-    ├── database/    # DB abstraction
-    ├── geometry/    # Layout algorithms
-    ├── managers/    # Singleton managers
-    ├── persistable/ # Data models
-    ├── state/       # State management
-    └── types/       # Type definitions
+├── js/              # JavaScript utilities
+├── svelte/          # UI Components (~77 files)
+│   ├── controls/    # Primary/secondary controls, breadcrumbs
+│   ├── details/     # Detail panels (actions, data, preferences, tags, traits)
+│   ├── draw/        # SVG primitives (circles, boxes, gradients, portals)
+│   ├── experimental/# WIP components
+│   ├── main/        # SeriouslyApp, Panel, Graph, Import
+│   ├── mouse/       # Mouse interaction (buttons, sliders, rubberband)
+│   ├── radial/      # Radial graph components
+│   ├── search/      # Search interface
+│   ├── text/        # Text rendering (curved, angled, tables)
+│   ├── tree/        # Tree graph components
+│   └── widget/      # Widget system (drag, reveal, title)
+└── ts/              # TypeScript core (~89 files)
+    ├── common/      # Constants, enumerations, extensions
+    ├── database/    # DB abstraction (7 databases)
+    ├── debug/       # Debug utilities, error tracing
+    ├── files/       # File operations, pivot tables
+    ├── geometry/    # Layout algorithms (tree, radial, paging)
+    ├── managers/    # Singleton managers (16 managers)
+    ├── persistable/ # Data models (Thing, Trait, Tag, etc.)
+    ├── runtime/     # Runtime objects (Ancestry, Identifiable)
+    ├── signals/     # Event system, mouse timers
+    ├── state/       # State classes (13 S_ classes)
+    ├── tests/       # Vitest test suite
+    ├── types/       # Type definitions
+    └── utilities/   # Colors, print, SVG paths, general utils
 
 bubble/              # Bubble.io plugin (JavaScript)
 notes/designs/       # Design documentation
@@ -109,73 +120,45 @@ const ancestry = h.ancestry_forThing(thing);
 
 #### 1. State Management
 
-A state class is a source of truth. It is often about what the user happens to be doing. We get excellent reactivity when the truth takes the form of svelte stores. HTML elements are individually kept up to date with respect to this truth, with insanely minimal code executed to do this.
+State objects (S_* classes) persist across component recreation and provide computed properties via getters. Svelte stores (w_* writables) provide reactivity. Stores organized by manager domain.
 
-- stores distributed across managers and state classes
-- stores are all prefixed `w_`
-- state classes persist across component recreation
-- components reactive code is self-documenting
-
-See [architecture/state.md](notes/designs/architecture/state.md) for why we use state objects vs standard Svelte patterns.
+See [architecture/core/state.md](notes/designs/architecture/core/state.md) for state objects, stores inventory, and why we use this hybrid approach.
 
 #### 2. Manager Pattern
 
-There are 16 singleton managers, each with a specific responsibility. For example,
-- `Core` (`core`) - System state (w_t_startup, w_hierarchy)
-- `Hierarchy` (`h`) - Tree data management
-- `Geometry` (`g`) - Layout coordination
-- `Hits` ( hits ) - Hit testing/hover
-- `UX` (`x`) - User interaction state
+16 singleton managers coordinate different aspects: Components, Configuration, Controls, Core (system state), Details, Elements, Features, Geometry (layout), Hierarchy (data), Hits (click/hover), Preferences, Radial, Search, Styles, UX (focus/grabs), Visibility.
+
+See [architecture/managers.md](managers.md) for complete responsibilities, access patterns, and examples.
 
 #### 3. Persistable Pattern
 
-Data models extend `Persistable`:
-- `Thing` - Hierarchical nodes
-- `Trait` - Properties
-- `Predicate` - Relationships
-- `Tag` - Categorization
+8 data models extend `Persistable`: Access, Persistable (base), Predicate, Relationship, Tag, Thing, Trait, User. Each has hash-based ID, database-agnostic CRUD, and serialization.
 
-Each has unique hash-based ID, implements `persistent_create_orUpdate()`, serializes via `fields` getter, supports all database backends.
+See [architecture/persistable.md](persistable.md) for identity, serialization, and lifecycle.
 
 #### 4. Database Abstraction
 
-`Databases` class with pluggable implementations:
-- `DB_Local` - IndexedDB (Dexie)
-- `DB_Firebase` - Firestore
-- `DB_Airtable` - Airtable API
-- `DB_Bubble` - Plugin communication
-- `DB_Test` - In-memory
+Supports 5 database backends: Local (IndexedDB), Firebase, Airtable, Bubble plugin, and Test (in-memory).
 
-#### 5. Component Organization
+See [architecture/database.md](notes/designs/architecture/database.md) for architecture, switching, and implementation.
 
-- **radial/** - Clusters, rings
-- **tree/** - Branches, lines
-- **widget/** - Drag, reveal, title
-- **mouse/** - Clicks, buttons, sliders
-- **controls/** - Breadcrumbs, preferences
+#### 5. Component Architecture
+
+11 component directories: controls/, details/, draw/ (SVG primitives), experimental/, main/ (app core), mouse/ (interactive), radial/, search/, text/, tree/, widget/. Components manager tracks S_Component state for complex interactive components.
+
+See [architecture/core/components.md](notes/designs/architecture/core/components.md) for organization, patterns, state management, and Components manager.
 
 #### 6. Hit Testing & Hover
 
-RBush spatial indexing (O(log n) queries) for efficient hit detection.
-
-- **Hits Manager** - Central hit testing with priority ordering: dots > widgets > rings > controls > rubberband
-- **S_Hit_Target** - Base class for hit-testable elements
-- **S_Element** - Visual properties (stroke, fill, cursor, border) react to `isHovering`
-
-✅ **DO**: Use `Mouse_Responder` for clicks, register via `s_element.set_html_element()`, check `s_element.isHovering`
-❌ **DON'T**: Modify `hits.w_s_hover` directly, mix with manual `on:mouseenter/leave`, forget `hits.delete_hit_target()`
+Centralized hit testing with RBush spatial indexing. Priority: dots > widgets > rings > controls > rubberband.
 
 See [architecture/hits.md](notes/designs/architecture/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
 
 #### 7. Geometry Layout
 
-Computes positions/sizes for tree and radial modes.
+Coordinates layout algorithms for tree and radial graph modes.
 
-**Flow**: Focus change → `g.layout()` → `G_TreeGraph.layout()` or `G_RadialGraph.layout()` → Each ancestry gets `G_Widget` → Computes origins, dot centers → Radial adds clusters, paging
-
-**Key Classes**: `G_Widget`, `G_TreeGraph`, `G_RadialGraph`, `G_Cluster`, `G_TreeBranches`, `G_TreeLine`, `G_Paging`
-
-See [analysis/layout-guide.md](notes/designs/refactor/layout.md) and [analysis/geometry.md](notes/designs/architecture/geometry.md).
+See [architecture/geometry.md](geometry.md) for responsibilities, layout invocation, and coordination patterns.
 
 ## Development
 
@@ -326,20 +309,21 @@ class MyThing extends Persistable {
 **Index**: [overview.md](notes/designs/documentation.md) - Complete index of all design documentation
 
 **Architecture** (notes/designs/architecture/):
-- [hits.md](notes/designs/architecture/hits.md) - Click/hover system, migration guide
-- [state.md](notes/designs/architecture/state.md) - State objects vs Svelte patterns
-- [writables.md](notes/designs/architecture/writables.md) - Store inventory by manager
 - [buttons.md](notes/designs/architecture/buttons.md) - Button hierarchy, SVG icons
+- [components.md](notes/designs/architecture/core/components.md) - Component architecture: organization and Components manager
 - [controls.md](notes/designs/architecture/controls.md) - Control components
+- [database.md](notes/designs/architecture/database.md) - Database abstraction layer
+- [details.md](notes/designs/architecture/details.md) - Details panel architecture
+- [geometry.md](notes/designs/architecture/geometry.md) - Layout coordination and positioning
+- [hits.md](notes/designs/architecture/hits.md) - Click/hover system, migration guide
+- [managers.md](notes/designs/architecture/managers.md) - Singleton manager pattern and responsibilities
+- [paging.md](notes/designs/architecture/paging.md) - Radial paging system
+- [persistable.md](notes/designs/architecture/persistable.md) - Persistable data models and serialization
 - [preferences.md](notes/designs/architecture/preferences.md) - Settings management
+- [search.md](notes/designs/architecture/search.md) - Search functionality
+- [state.md](notes/designs/architecture/core/state.md) - State objects and stores architecture
 - [styles.md](notes/designs/architecture/styles.md) - Styling system
 - [ux.md](notes/designs/architecture/ux.md) - UX manager (focus, grabs, details)
-- [database.md](notes/designs/architecture/database.md) - Database abstraction layer
-- [bubble.md](notes/designs/architecture/bubble.md) - Bubble.io plugin integration
-- [search.md](notes/designs/architecture/search.md) - Search functionality
-- [paging.md](notes/designs/architecture/paging.md) - Radial paging system
-- [components.md](notes/designs/architecture/components.md) - Components manager
-- [details.md](notes/designs/architecture/details.md) - Details panel architecture
 
 **Guides** (notes/designs/guides/):
 - [style.md](notes/designs/guides/style.md) - **CRITICAL** - Complete codebase conventions
@@ -350,4 +334,4 @@ class MyThing extends Persistable {
 
 ---
 
-**Last Updated**: 2025-12-26
+**Last Updated**: 2025-12-30
