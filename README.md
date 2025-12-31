@@ -128,19 +128,19 @@ See [architecture/core/state.md](notes/designs/architecture/core/state.md) for s
 
 16 singleton managers coordinate different aspects: Components, Configuration, Controls, Core (system state), Details, Elements, Features, Geometry (layout), Hierarchy (data), Hits (click/hover), Preferences, Radial, Search, Styles, UX (focus/grabs), Visibility.
 
-See [architecture/managers.md](managers.md) for complete responsibilities, access patterns, and examples.
+See [architecture/core/managers.md](notes/designs/architecture/core/managers.md) for complete responsibilities, access patterns, and examples.
 
 #### 3. Persistable Pattern
 
 8 data models extend `Persistable`: Access, Persistable (base), Predicate, Relationship, Tag, Thing, Trait, User. Each has hash-based ID, database-agnostic CRUD, and serialization.
 
-See [architecture/persistable.md](persistable.md) for identity, serialization, and lifecycle.
+See [architecture/core/persistable.md](notes/designs/architecture/core/persistable.md) for identity, serialization, and lifecycle.
 
 #### 4. Database Abstraction
 
 Supports 5 database backends: Local (IndexedDB), Firebase, Airtable, Bubble plugin, and Test (in-memory).
 
-See [architecture/database.md](notes/designs/architecture/database.md) for architecture, switching, and implementation.
+See [architecture/core/databases.md](notes/designs/architecture/core/databases.md) for architecture, switching, and implementation.
 
 #### 5. Component Architecture
 
@@ -152,13 +152,13 @@ See [architecture/core/components.md](notes/designs/architecture/core/components
 
 Centralized hit testing with RBush spatial indexing. Priority: dots > widgets > rings > controls > rubberband.
 
-See [architecture/hits.md](notes/designs/architecture/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
+See [architecture/core/hits.md](notes/designs/architecture/core/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
 
 #### 7. Geometry Layout
 
 Coordinates layout algorithms for tree and radial graph modes.
 
-See [architecture/geometry.md](geometry.md) for responsibilities, layout invocation, and coordination patterns.
+See [architecture/core/geometry.md](notes/designs/architecture/core/geometry.md) for responsibilities, layout invocation, and coordination patterns.
 
 ## Development
 
@@ -309,21 +309,21 @@ class MyThing extends Persistable {
 **Index**: [overview.md](notes/designs/documentation.md) - Complete index of all design documentation
 
 **Architecture** (notes/designs/architecture/):
-- [buttons.md](notes/designs/architecture/buttons.md) - Button hierarchy, SVG icons
+- [buttons.md](notes/designs/architecture/ux/buttons.md) - Button hierarchy, SVG icons
 - [components.md](notes/designs/architecture/core/components.md) - Component architecture: organization and Components manager
-- [controls.md](notes/designs/architecture/controls.md) - Control components
-- [database.md](notes/designs/architecture/database.md) - Database abstraction layer
-- [details.md](notes/designs/architecture/details.md) - Details panel architecture
-- [geometry.md](notes/designs/architecture/geometry.md) - Layout coordination and positioning
-- [hits.md](notes/designs/architecture/hits.md) - Click/hover system, migration guide
-- [managers.md](notes/designs/architecture/managers.md) - Singleton manager pattern and responsibilities
-- [paging.md](notes/designs/architecture/paging.md) - Radial paging system
-- [persistable.md](notes/designs/architecture/persistable.md) - Persistable data models and serialization
-- [preferences.md](notes/designs/architecture/preferences.md) - Settings management
-- [search.md](notes/designs/architecture/search.md) - Search functionality
+- [controls.md](notes/designs/architecture/ux/controls.md) - Control components
+- [database.md](notes/designs/architecture/core/databases.md) - Database abstraction layer
+- [details.md](notes/designs/architecture/ux/details.md) - Details panel architecture
+- [geometry.md](notes/designs/architecture/core/geometry.md) - Layout coordination and positioning
+- [hits.md](notes/designs/architecture/core/hits.md) - Click/hover system, migration guide
+- [managers.md](notes/designs/architecture/core/managers.md) - Singleton manager pattern and responsibilities
+- [paging.md](notes/designs/architecture/ux/paging.md) - Radial paging system
+- [persistable.md](notes/designs/architecture/core/persistable.md) - Persistable data models and serialization
+- [preferences.md](notes/designs/architecture/ux/preferences.md) - Settings management
+- [search.md](notes/designs/architecture/ux/search.md) - Search functionality
 - [state.md](notes/designs/architecture/core/state.md) - State objects and stores architecture
-- [styles.md](notes/designs/architecture/styles.md) - Styling system
-- [ux.md](notes/designs/architecture/ux.md) - UX manager (focus, grabs, details)
+- [styles.md](notes/designs/architecture/core/styles.md) - Styling system
+- [ux.md](notes/designs/architecture/ux/ux.md) - UX manager (focus, grabs, details)
 
 **Guides** (notes/designs/guides/):
 - [style.md](notes/designs/guides/style.md) - **CRITICAL** - Complete codebase conventions

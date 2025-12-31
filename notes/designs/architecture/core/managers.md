@@ -575,5 +575,5 @@ const theme = p.read_key(T_Preference.theme) ?? 'light';
 
 - [state.md](./state.md) - Why we use state objects
 - [hits.md](./hits.md) - Hit testing architecture
-- [writables.md](./writables.md) - Store inventory by manager
+- [state.md](./state.md) - Store inventory by manager
 - [database.md](databases.md) - Database abstraction

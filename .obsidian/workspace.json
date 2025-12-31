@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/architecture/core/state.md",
+                "file": "notes/designs/architecture/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "state"
+              "title": "index"
             }
           }
         ],
@@ -155,13 +155,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/architecture/core/state.md",
+                "file": "notes/designs/architecture/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of state"
+              "title": "Outline of index"
             }
           }
         ],
@@ -182,8 +182,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "893b07ea6a48a802",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/designs/work/index.md",
+    "notes/designs/architecture/core/state.md",
     "notes/designs/architecture/core/databases.md",
     "notes/designs/architecture/core/persistable.md",
     "notes/designs/architecture/core/writables.md.deleted",
@@ -199,7 +201,6 @@
     "notes/designs/architecture/core/writables.md",
     "notes/designs/architecture/core/managers.md",
     "manager.md",
-    "notes/designs/architecture/core/state.md",
     "README.md",
     "notes/designs/architecture/ux/preferences.md",
     "notes/designs/architecture/ux/buttons.md",

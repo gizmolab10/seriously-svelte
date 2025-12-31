@@ -24,9 +24,8 @@
 
 When i type **"update docs"** it means:
 
-- [ ] search within the project, all the .md files
-- [ ] find all broken links
-- [ ] repair them by altering the link
+- [ ] read vitepress.build.txt
+- [ ] repair each broken link mentioned, by altering it:
   - [ ] assume that either the file moved or its parent folder was renamed
   - [ ] assume that i renamed the file itself and ask me, regarding blah...
     - [ ] did you rename it

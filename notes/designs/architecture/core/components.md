@@ -916,4 +916,4 @@ components_dict_byType_andHID = {
 - [managers.md](./managers.md) - Manager pattern architecture (includes Components manager)
 - [state.md](./state.md) - State management patterns (S_Element, S_Widget, S_Component)
 - [hits.md](./hits.md) - Hit testing and click handling (S_Hit_Target base class)
-- [elements.md](./elements.md) - Elements manager (S_Element for simple interactive elements)
+
