@@ -34,11 +34,11 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "✅ TypeScript compiled successfully"
+cd ../..
 echo ""
 
 # Step 3: Run fix-links tool
 echo "Step 3: Running fix-links tool..."
-cd ../..
 node notes/tools/dist/fix-links.js
 
 FIX_LINKS_EXIT=$?
@@ -53,6 +53,28 @@ elif [ $FIX_LINKS_EXIT -eq 2 ]; then
 else
   echo ""
   echo "❌ Link fixing failed"
+  exit 1
+fi
+
+echo ""
+
+# Step 4: Run sync-sidebar tool
+echo "Step 4: Syncing sidebar..."
+node notes/tools/dist/sync-sidebar.js
+
+if [ $? -ne 0 ]; then
+  echo "❌ Sidebar sync failed"
+  exit 1
+fi
+
+echo ""
+
+# Step 5: Generate docs database structure
+echo "Step 5: Generating docs database structure..."
+bash notes/tools/create_docs_db_data.sh
+
+if [ $? -ne 0 ]; then
+  echo "❌ Docs database generation failed"
   exit 1
 fi
 

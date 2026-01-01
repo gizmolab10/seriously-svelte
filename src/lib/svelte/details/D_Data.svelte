@@ -17,7 +17,7 @@
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
-	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test];
+	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test, T_Database.docs];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	let s_element_dict_byStorageType: Dictionary<S_Element> = {};
 	let heights = [15, height_ofChoices(), 42, 28, 74, 26, 3];
@@ -129,17 +129,6 @@
 	style='
 		padding:5px;'>
 	{#if features.has_every_detail}
-		<Separator name='show-other-databases'
-			isHorizontal={true}
-			has_gull_wings={true}
-			has_both_wings={true}
-			has_thin_divider={false}
-			origin={new Point(1, 30)}
-			zindex={T_Layer.frontmost + 1}
-			length={k.width.details - 2.5}
-			thickness={k.thickness.separator.details}
-			handle_mouseUp={handle_show_other_databases}
-			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		<Separator name='show-other-databases'
 			isHorizontal={true}
 			has_gull_wings={true}

@@ -12,6 +12,7 @@ export enum T_Database {
 	dgraph   = 'dgraph',
 	local	 = 'local',
 	test	 = 'test',
+	docs     = 'docs',
 }
 
 export enum	DB_Name {
@@ -23,6 +24,7 @@ export enum	DB_Name {
 	bulks    = 'Bulks',
 	local    = 'Local',
 	test     = 'Test',
+	docs     = 'Docs',
 }
 
 // CRUD API --> for all databases

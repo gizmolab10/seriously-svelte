@@ -228,10 +228,6 @@ export default defineConfig({
               link: '/work/done/timers'
             },
             {
-              text: 'Webseriously Driven Docs',
-              link: '/work/done/webseriously-driven-docs'
-            },
-            {
               text: 'Widget Title',
               link: '/work/done/widget_title'
             },
