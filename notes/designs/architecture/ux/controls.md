@@ -40,7 +40,8 @@ The `lefts` array provides horizontal positions (x-coordinates) for controls in 
 
 The `left_widths` object in `layout_controls()` defines the width of each control segment using numeric keys:
 
-```43:55:src/lib/svelte/controls/Primary_Controls.svelte
+```typescript
+// Primary_Controls.svelte (lines 43-55)
 function layout_controls() {
 	const left_widths = {
 		0: features.has_details_button ? 18  : -7,									// details
@@ -120,7 +121,8 @@ After reordering `left_widths`, you must update all HTML references to use the n
 **Example: After swapping recents and graph type**
 
 1. **Update recents** (was `lefts[1]`, now `lefts[2]`):
-```72:72:src/lib/svelte/controls/Primary_Controls.svelte
+```typescript
+// Primary_Controls.svelte (line 72)
 origin={Point.x(lefts[1])}
 ```
 Change to:
@@ -129,7 +131,8 @@ origin={Point.x(lefts[2])}
 ```
 
 2. **Update graph type** (was `lefts[2]`, now `lefts[1]`):
-```107:107:src/lib/svelte/controls/Primary_Controls.svelte
+```typescript
+// Primary_Controls.svelte (line 107)
 origin={Point.x(lefts[2])}
 ```
 Change to:

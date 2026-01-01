@@ -3,22 +3,6 @@
 
 - building client + server bundles...
 
-The language '43:55:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '72:72:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '107:107:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '23:23:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '53:55:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '114:123:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '141:147:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '213:215:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
 The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
 The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
@@ -38,22 +22,6 @@ The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling b
 The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
 The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '43:55:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '72:72:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '107:107:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '23:23:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '53:55:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '114:123:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '141:147:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '213:215:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
 The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
@@ -80,22 +48,6 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 
-The language '43:55:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '72:72:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '107:107:src/lib/svelte/controls/primary_controls.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '23:23:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '53:55:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '114:123:src/lib/svelte/details/d_preferences.svelte' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '141:147:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '213:215:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
 The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
 The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
@@ -118,4 +70,4 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
 [32m✓[0m building client + server bundles...
 - rendering pages...
 [32m✓[0m rendering pages...
-build complete in 13.17s.
+build complete in 14.88s.

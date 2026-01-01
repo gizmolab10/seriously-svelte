@@ -21,22 +21,35 @@ export default defineConfig({
         text: 'Architecture',
         collapsed: true,
         items: [
-          { text: 'Breadcrumbs', link: '/architecture/breadcrumbs' },
-          { text: 'Bubble', link: '/architecture/bubble' },
-          { text: 'Buttons', link: '/architecture/buttons' },
-          { text: 'Components', link: '/architecture/components' },
-          { text: 'Controls', link: '/architecture/controls' },
-          { text: 'Database', link: '/architecture/database' },
-          { text: 'Details', link: '/architecture/details' },
-          { text: 'Geometry', link: '/architecture/geometry' },
-          { text: 'Hits', link: '/architecture/hits' },
-          { text: 'Paging', link: '/architecture/paging' },
-          { text: 'Preferences', link: '/architecture/preferences' },
-          { text: 'Search', link: '/architecture/search' },
-          { text: 'State', link: '/architecture/state' },
-          { text: 'Styles', link: '/architecture/styles' },
-          { text: 'UX', link: '/architecture/ux' },
-          { text: 'Writables', link: '/architecture/writables' }
+          { text: 'Bubble', link: '/architecture/other/bubble' },
+          { text: 'Documentation', link: '/architecture/other/documentation' },
+          {
+            text: 'Core',
+            collapsed: true,
+            items: [
+              { text: 'Components', link: '/architecture/core/components' },
+              { text: 'Databases', link: '/architecture/core/databases' },
+              { text: 'Geometry', link: '/architecture/core/geometry' },
+              { text: 'Hits', link: '/architecture/core/hits' },
+              { text: 'Managers', link: '/architecture/core/managers' },
+              { text: 'Persistable', link: '/architecture/core/persistable' },
+              { text: 'State', link: '/architecture/core/state' },
+              { text: 'Styles', link: '/architecture/core/styles' }
+            ]
+          },
+          {
+            text: 'UX',
+            collapsed: true,
+            items: [
+              { text: 'Buttons', link: '/architecture/ux/buttons' },
+              { text: 'Controls', link: '/architecture/ux/controls' },
+              { text: 'Details', link: '/architecture/ux/details' },
+              { text: 'Paging', link: '/architecture/ux/paging' },
+              { text: 'Preferences', link: '/architecture/ux/preferences' },
+              { text: 'Search', link: '/architecture/ux/search' },
+              { text: 'UX Manager', link: '/architecture/ux/ux' }
+            ]
+          }
         ]
       },
       {
@@ -65,12 +78,20 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Analysis',
+        text: 'Work',
         collapsed: true,
         items: [
-          { text: 'Focus', link: '/analysis/focus' },
-          { text: 'Timers', link: '/analysis/timers' },
-          { text: 'Widget Title', link: '/analysis/widget_title' }
+          {
+            text: 'Done',
+            collapsed: true,
+            items: [
+              { text: 'Breadcrumbs', link: '/work/done/breadcrumbs re-compositioon' },
+              { text: 'Focus', link: '/work/done/focus' },
+              { text: 'Tasks', link: '/work/done/tasks' },
+              { text: 'Timers', link: '/work/done/timers' },
+              { text: 'Widget Title', link: '/work/done/widget_title' }
+            ]
+          }
         ]
       }
     ],

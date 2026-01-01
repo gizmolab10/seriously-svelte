@@ -14,6 +14,9 @@
 
 ## File Management
 
+- [ ] assume i am running in Claude desktop (not the web)
+- [ ] assume nearly all md files are in `notes`
+- [ ] verify and report whether local file system access works
 - [ ] work in `/home/claude` for temporary files
 - [ ] put final outputs in` /mnt/user-data/outputs` so i can access them
 - [ ] user-uploaded files are in `/mnt/user-data/uploads`
@@ -22,15 +25,30 @@
 
 ## Special Commands
 
-When i type **"update docs"** it means:
+When i type **"**`restart`**"** it means:
 
+- [ ] read CLAUDE.MD
+
+When i type **"**`update docs`**"** it means:
+
+- [ ] run: yarn docs:build
 - [ ] read vitepress.build.txt
-- [ ] repair each broken link mentioned, by altering it:
-  - [ ] assume that either the file moved or its parent folder was renamed
-  - [ ] assume that i renamed the file itself and ask me, regarding blah...
-    - [ ] did you rename it
-    - [ ] did you delete it (if i say yes, delete the link)
-    - [ ] FIND A WAY TO GIVE ME A CHECKLIST SO I CAN BATCH ANSWER
+- [ ] repair each broken link mentioned
+  - [ ] update `.vitepress/config.mts` with the same repair
+  - [ ] assuming that:
+    - [ ] files of a folder were reorganized into subfolders
+    - [ ] file moved
+    - [ ] parent folder was renamed
+    - [ ] i renamed the file itself, tell me
+
+When i type **"**`go <filename>`**"** it means:
+
+- [ ] if `notes/designs/work<filename>` doesn’t exist
+  - [ ] create it
+  - [ ] read and execute `notes/designs/guides/chat.md`, using this file where it says “use the new md file”
+- [ ] if it does exist
+  - [ ] read it (do not execute it)
+  - [ ] resume execution of  `notes/designs/guides/chat.md`
 
 ## Context & Memory
 

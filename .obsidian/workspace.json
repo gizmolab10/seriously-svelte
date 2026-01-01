@@ -4,39 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "80744e059c216209",
+        "id": "1b978f8519632bfa",
         "type": "tabs",
         "children": [
           {
-            "id": "076811636a6e3b9a",
+            "id": "39d94b4752539b65",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/work/done/breadcrumbs re-compositioon.md",
+                "file": "notes/designs/work/redox.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "breadcrumbs re-compositioon"
-            }
-          },
-          {
-            "id": "893b07ea6a48a802",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/designs/architecture/index.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "index"
+              "title": "redox"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -155,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/architecture/index.md",
+                "file": "notes/designs/work/redox.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of redox"
             }
           }
         ],
@@ -182,8 +167,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "39d94b4752539b65",
   "lastOpenFiles": [
+    "notes/designs/guides/chat.md",
+    "notes/designs/work/redox.md",
+    "notes/designs/test-fixtures/subfolder",
+    "notes/designs/test-fixtures/test2.md",
+    "notes/designs/test-fixtures/test1.md",
+    "notes/designs/test-fixtures",
+    "notes/tools/move-doc.ts",
+    "notes/designs/work/fred.md",
+    "notes/designs/work/done/access.md",
+    "notes/designs/architecture/index.md",
+    "foo",
     "notes/designs/work/index.md",
     "notes/designs/architecture/core/state.md",
     "notes/designs/architecture/core/databases.md",
@@ -206,20 +202,8 @@
     "notes/designs/architecture/ux/buttons.md",
     "notes/designs/architecture/ux/breadcrumbs.md",
     "notes/designs/architecture/ux/paging.md",
-    "notes/designs/architecture/ux/search.md",
-    "notes/designs/architecture/ux/ux.md",
     "notes/designs/architecture/ux",
-    "notes/designs/architecture/core/styles.md",
-    "notes/designs/architecture/core/hits.md",
-    "notes/designs/architecture/other/bubble.md",
     "notes/designs/architecture/core",
-    "notes/designs/architecture/New Folder With Items/styles.md",
-    "notes/designs/architecture/New Folder With Items/writables.md",
-    "notes/designs/architecture/New Folder With Items/state.md",
-    "notes/designs/architecture/New Folder With Items",
-    "notes/designs/work/done",
-    "vitepress.build.txt",
-    "notes/tools/fix_vitepress_links.sh",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",

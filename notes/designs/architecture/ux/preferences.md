@@ -36,13 +36,15 @@ The `Visibility` class instance is exported as `show`, making the store accessib
 
 #### 1. Store Import
 The store is destructured from the `show` object:
-```23:23:src/lib/svelte/details/D_Preferences.svelte
+```typescript
+// D_Preferences.svelte (line 23)
 const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager } = show;
 ```
 
 #### 2. Handler Function
 A handler function processes user selections and updates the store:
-```53:55:src/lib/svelte/details/D_Preferences.svelte
+```typescript
+// D_Preferences.svelte (lines 53-55)
 function handle_auto_adjust(types: Array<T_Auto_Adjust_Graph | null>) {
 	$w_t_auto_adjust_graph = types.length > 0 ? types[0] : null;
 }
@@ -52,7 +54,8 @@ The `$` prefix creates a reactive binding that automatically updates the store w
 
 #### 3. UI Component Binding
 The `Segmented` component displays the preference with two-way binding:
-```114:123:src/lib/svelte/details/D_Preferences.svelte
+```svelte
+<!-- D_Preferences.svelte (lines 114-123) -->
 <Segmented name='auto-adjust'
 	left={106}
 	allow_none={true}
@@ -83,7 +86,8 @@ When a user clicks a segment:
 
 When preferences are restored, the store is initialized from localStorage:
 
-```141:147:src/lib/ts/managers/Preferences.ts
+```typescript
+// Preferences.ts (lines 141-147)
 restore_preferences() {
 	show.w_t_auto_adjust_graph  .set( this.read_key(T_Preference.auto_adjust)	 ?? null);
 	[...]
@@ -98,7 +102,8 @@ restore_preferences() {
 
 A subscription automatically writes changes to localStorage:
 
-```213:215:src/lib/ts/managers/Preferences.ts
+```typescript
+// Preferences.ts (lines 213-215)
 show.w_t_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust_Graph | null) => {
 	this.write_key(T_Preference.auto_adjust, auto_adjust);
 });
