@@ -202,32 +202,32 @@ All testing is done in a test fixture, with a **current copy** of `.vitepress/co
 
 ## Implementation
 
-**Phase 1: Build Tool 1 (Fix broken links)**
-- [ ] Set up project structure in `notes/tools/`
-- [ ] Install dependencies: `remark`, `glob`
-- [ ] Implement `lib/markdown-parser.ts`
-  - [ ] Parse markdown files
-  - [ ] Extract links (both wikilinks and markdown links)
-  - [ ] Preserve code blocks (don't parse links inside them)
-- [ ] Implement `lib/link-finder.ts`
-  - [ ] Search repo for files by filename
-  - [ ] Handle multiple matches (prompt user)
-  - [ ] Return file paths
-- [ ] Implement `lib/config-updater.ts`
-  - [ ] Parse VitePress config.mts
-  - [ ] Update sidebar link entries
-  - [ ] Remove entries for deleted files
-- [ ] Implement `fix-links.ts` main script
-  - [ ] Parse `vitepress.build.txt`
-  - [ ] Find moved files
-  - [ ] Update broken links in markdown files
-  - [ ] Update VitePress config
-  - [ ] Delete links to non-existent files
-  - [ ] Generate summary report
-  - [ ] Handle `-v` and `--help` flags
-- [ ] Create test fixtures
-- [ ] Test on fixtures
-- [ ] Update CLAUDE.MD `update docs` command
+**Phase 1: Build Tool 1 (Fix broken links)** ✅ COMPLETE & TESTED
+- [x] Set up project structure in `notes/tools/`
+- [x] Install dependencies: Using existing TypeScript setup
+- [x] Implement `lib/markdown-parser.ts`
+  - [x] Parse markdown files
+  - [x] Extract links (both wikilinks and markdown links)
+  - [x] Preserve code blocks (don't parse links inside them)
+- [x] Implement `lib/link-finder.ts`
+  - [x] Search repo for files by filename
+  - [x] Handle multiple matches (currently skips, prompts user)
+  - [x] Return file paths
+- [x] Implement `lib/config-updater.ts`
+  - [x] Parse VitePress config.mts
+  - [x] Update sidebar link entries
+  - [x] Remove entries for deleted files
+- [x] Implement `fix-links.ts` main script
+  - [x] Parse `vitepress.build.txt`
+  - [x] Find moved files
+  - [x] Update broken links in markdown files
+  - [x] Update VitePress config
+  - [x] Delete links to non-existent files (cleanly, no leftover bullets)
+  - [x] Generate summary report
+  - [x] Handle `-v` and `--help` flags
+- [x] Create test fixtures
+- [x] Test on fixtures - ALL TESTS PASSING
+- [x] Update CLAUDE.MD `update docs` command
 
 **Phase 2: Build Tool 2 (Merge files)**
 - [ ] Implement `merge-files.ts` main script

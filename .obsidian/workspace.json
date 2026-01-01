@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "1b978f8519632bfa",
+        "id": "c6452eaeeec1a98f",
         "type": "tabs",
         "children": [
           {
-            "id": "39d94b4752539b65",
+            "id": "b1ee8ac85978df67",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/work/redox.md",
+                "file": "CLAUDE.MD",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "redox"
+              "title": "CLAUDE"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/work/redox.md",
+                "file": "notes/tools/HOW-TO-TEST.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of redox"
+              "title": "Outline of HOW-TO-TEST"
             }
           }
         ],
@@ -167,44 +167,44 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "39d94b4752539b65",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
-    "notes/designs/work/test-fixtures/test2.md",
-    "notes/designs/work/test-fixtures/test1.md",
+    "notes/tools/docs/FINAL-ORGANIZATION.md",
+    "notes/tools/docs/README.md",
+    "notes/tools/docs/legacy/move-doc.ts",
+    "notes/tools/docs/legacy/generate-move-commands.ts",
+    "notes/tools/docs/legacy/fix_vitepress_links.sh",
+    "notes/tools/docs/legacy",
+    "notes/tools/docs/test.sh",
+    "notes/tools/docs/test/test-runner.mjs",
+    "notes/tools/docs/test/test-fix-links.sh",
+    "notes/tools/docs/test/run-test.sh",
+    "notes/tools/docs/test/REORGANIZATION.md",
+    "notes/tools/docs/test/README.md",
+    "notes/tools/docs/test/PHASE1-RESULTS.md",
+    "notes/tools/docs/test/PHASE1-FINAL.md",
+    "notes/tools/docs/test/PHASE1-COMPLETE.md",
+    "notes/tools/docs/test/HOW-TO-TEST.md",
+    "notes/tools/docs/test/CLAUDE-MD-UPDATED.md",
+    "notes/tools/docs/test",
+    "notes/tools/docs",
+    "notes/tools/test/REORGANIZATION.md",
+    "notes/tools/test/README.md",
+    "notes/tools/test/PHASE1-RESULTS.md",
+    "notes/tools/test/PHASE1-FINAL.md",
+    "notes/tools/test/PHASE1-COMPLETE.md",
+    "notes/tools/test/HOW-TO-TEST.md",
+    "notes/tools/test/CLAUDE-MD-UPDATED.md",
+    "notes/tools/docs/REORGANIZATION.md",
+    "notes/tools/docs/PHASE1-RESULTS.md",
+    "notes/tools/docs/PHASE1-FINAL.md",
+    "notes/tools/docs/PHASE1-COMPLETE.md",
+    "notes/tools/docs/HOW-TO-TEST.md",
+    "notes/tools/docs/CLAUDE-MD-UPDATED.md",
+    "CLAUDE.MD",
     "notes/designs/work/redox.md",
-    "notes/designs/work/redo.old.md",
-    "notes/designs/work/redox copy.md",
-    "notes/tools/generate-move-commands.ts",
-    "notes/designs/guides/chat.md",
-    "notes/designs/work/test-fixtures/subfolder",
-    "notes/designs/work/test-fixtures",
-    "notes/tools/move-doc.ts",
-    "notes/designs/work/fred.md",
-    "notes/designs/work/done/access.md",
-    "notes/designs/architecture/index.md",
-    "foo",
-    "notes/designs/work/index.md",
-    "notes/designs/architecture/core/state.md",
-    "notes/designs/architecture/core/databases.md",
-    "notes/designs/architecture/core/persistable.md",
-    "notes/designs/architecture/core/writables.md.deleted",
-    "notes/designs/architecture/other/reactivity.md",
-    "notes/designs/architecture/core/components.md",
-    "notes/designs/architecture/core/components_organization.md.deleted",
-    "notes/designs/architecture/core/components_organization.md",
-    "notes/designs/documentation.md",
-    "notes/designs/architecture/documentation.md",
-    "notes/designs/architecture/other/documentation.md",
-    "notes/designs/architecture/other",
-    "notes/designs/architecture/untitled folder",
-    "notes/designs/architecture/core/writables.md",
-    "notes/designs/architecture/core/managers.md",
-    "manager.md",
-    "README.md",
-    "notes/designs/architecture/ux/preferences.md",
-    "notes/designs/architecture/ux/buttons.md",
-    "notes/designs/architecture/ux/breadcrumbs.md",
-    "notes/designs/architecture/ux",
+    "notes/tools/CLAUDE-MD-UPDATED.md",
+    "notes/tools/PHASE1-FINAL.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",

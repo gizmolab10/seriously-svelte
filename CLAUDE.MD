@@ -31,15 +31,8 @@ When i type **"**`restart`**"** it means:
 
 When i type **"**`update docs`**"** it means:
 
-- [ ] run: yarn docs:build
-- [ ] read vitepress.build.txt
-- [ ] repair each broken link mentioned
-  - [ ] update `.vitepress/config.mts` with the same repair
-  - [ ] assuming that:
-    - [ ] files of a folder were reorganized into subfolders
-    - [ ] file moved
-    - [ ] parent folder was renamed
-    - [ ] i renamed the file itself, tell me
+- [ ] execute: `./notes/tools/update-docs.sh``
+- [ ] report the results shown in the output
 
 When i type **"**`go <filename>`**"** it means:
 
