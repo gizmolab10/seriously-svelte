@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/tools/docs/test/fixtures/advanced/test-moved.md",
+                "file": "notes/designs/work/redox.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "test-moved"
+              "title": "redox"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/tools/docs/test/fixtures/advanced/test-moved.md",
+                "file": "notes/designs/work/redox.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of test-moved"
+              "title": "Outline of redox"
             }
           }
         ],
@@ -169,23 +169,30 @@
   },
   "active": "b1ee8ac85978df67",
   "lastOpenFiles": [
+    "notes/tools/dist/merge-files.js",
+    "notes/tools/dist/fix-links.js",
+    "notes/tools/dist/lib/link-finder.js",
+    "notes/tools/dist/lib/markdown-parser.js",
+    "notes/tools/dist/lib/config-updater.js",
+    "notes/tools/dist/lib",
+    "notes/tools/dist",
+    "notes/tools/docs/run-all-tests.sh",
+    "notes/tools/docs/PHASE2-MINIMIZED.md",
+    "notes/tools/docs/test/PHASE2-FINAL.md",
+    "notes/tools/docs/test/merge-fixtures/file-b.md.original",
+    "notes/tools/docs/test/merge-fixtures/file-a.md.original",
+    "notes/tools/docs/test/PHASE2-COMPLETE.md",
+    "notes/tools/docs/test-merge.sh",
+    "notes/tools/docs/test/merge-fixtures/test-links.md",
+    "notes/tools/docs/test/merge-fixtures/file-b.md",
+    "notes/tools/docs/test/merge-fixtures/file-a.md",
+    "notes/tools/docs/test/fixtures/advanced/test-moved.md",
     "CLAUDE.MD",
     "notes/tools/HOW-TO-TEST.md",
     "notes/tools/docs/test/FIXTURES-RELOCATED.md",
-    "notes/tools/docs/test/fixtures/advanced/test-moved.md",
-    "notes/tools/docs/test/fixtures/advanced",
-    "notes/tools/docs/test/fixtures/vitepress.build.txt",
-    "notes/tools/docs/test/fixtures/config.mts",
     "notes/tools/docs/test/fixtures/index.md",
-    "notes/tools/docs/test/fixtures",
     "notes/tools/docs/FINAL-ORGANIZATION.md",
     "notes/tools/docs/README.md",
-    "notes/tools/docs/legacy/move-doc.ts",
-    "notes/tools/docs/legacy/generate-move-commands.ts",
-    "notes/tools/docs/legacy/fix_vitepress_links.sh",
-    "notes/tools/docs/legacy",
-    "notes/tools/docs/test.sh",
-    "notes/tools/docs/test/test-runner.mjs",
     "notes/tools/docs/test/REORGANIZATION.md",
     "notes/tools/docs/test/README.md",
     "notes/tools/docs/test/PHASE1-RESULTS.md",
@@ -198,13 +205,6 @@
     "notes/tools/test/PHASE1-RESULTS.md",
     "notes/tools/test/PHASE1-FINAL.md",
     "notes/tools/test/PHASE1-COMPLETE.md",
-    "notes/tools/test/HOW-TO-TEST.md",
-    "notes/tools/test/CLAUDE-MD-UPDATED.md",
-    "notes/tools/docs/REORGANIZATION.md",
-    "notes/tools/docs/PHASE1-RESULTS.md",
-    "notes/tools/docs/PHASE1-FINAL.md",
-    "notes/tools/docs/PHASE1-COMPLETE.md",
-    "notes/tools/docs/HOW-TO-TEST.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",
