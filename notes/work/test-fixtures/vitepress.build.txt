@@ -1,2 +1,0 @@
-Dead link: notes/work/test-fixtures/index.md -> guides/test-moved.md
-Dead link: notes/work/test-fixtures/index.md -> guides/test-deleted.md

@@ -31,11 +31,11 @@ class FixLinks {
     
     if (testMode) {
       // Use test fixtures
-      const testDir = path.join(this.repoRoot, 'notes', 'work', 'test-fixtures');
+      const testDir = path.join(this.repoRoot, 'notes', 'tools', 'docs', 'test', 'fixtures');
       this.buildFilePath = path.join(testDir, 'vitepress.build.txt');
       this.configPath = path.join(testDir, 'config.mts');
     } else {
-      this.buildFilePath = path.join(this.repoRoot, '.vitepress', 'vitepress.build.txt');
+      this.buildFilePath = path.join(this.repoRoot, 'vitepress.build.txt');
       this.configPath = path.join(this.repoRoot, '.vitepress', 'config.mts');
     }
   }

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "CLAUDE.MD",
+                "file": "notes/tools/docs/test/fixtures/advanced/test-moved.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "test-moved"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/tools/HOW-TO-TEST.md",
+                "file": "notes/tools/docs/test/fixtures/advanced/test-moved.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of HOW-TO-TEST"
+              "title": "Outline of test-moved"
             }
           }
         ],
@@ -167,8 +167,17 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "b1ee8ac85978df67",
   "lastOpenFiles": [
+    "CLAUDE.MD",
+    "notes/tools/HOW-TO-TEST.md",
+    "notes/tools/docs/test/FIXTURES-RELOCATED.md",
+    "notes/tools/docs/test/fixtures/advanced/test-moved.md",
+    "notes/tools/docs/test/fixtures/advanced",
+    "notes/tools/docs/test/fixtures/vitepress.build.txt",
+    "notes/tools/docs/test/fixtures/config.mts",
+    "notes/tools/docs/test/fixtures/index.md",
+    "notes/tools/docs/test/fixtures",
     "notes/tools/docs/FINAL-ORGANIZATION.md",
     "notes/tools/docs/README.md",
     "notes/tools/docs/legacy/move-doc.ts",
@@ -177,8 +186,6 @@
     "notes/tools/docs/legacy",
     "notes/tools/docs/test.sh",
     "notes/tools/docs/test/test-runner.mjs",
-    "notes/tools/docs/test/test-fix-links.sh",
-    "notes/tools/docs/test/run-test.sh",
     "notes/tools/docs/test/REORGANIZATION.md",
     "notes/tools/docs/test/README.md",
     "notes/tools/docs/test/PHASE1-RESULTS.md",
@@ -186,8 +193,6 @@
     "notes/tools/docs/test/PHASE1-COMPLETE.md",
     "notes/tools/docs/test/HOW-TO-TEST.md",
     "notes/tools/docs/test/CLAUDE-MD-UPDATED.md",
-    "notes/tools/docs/test",
-    "notes/tools/docs",
     "notes/tools/test/REORGANIZATION.md",
     "notes/tools/test/README.md",
     "notes/tools/test/PHASE1-RESULTS.md",
@@ -200,11 +205,6 @@
     "notes/tools/docs/PHASE1-FINAL.md",
     "notes/tools/docs/PHASE1-COMPLETE.md",
     "notes/tools/docs/HOW-TO-TEST.md",
-    "notes/tools/docs/CLAUDE-MD-UPDATED.md",
-    "CLAUDE.MD",
-    "notes/designs/work/redox.md",
-    "notes/tools/CLAUDE-MD-UPDATED.md",
-    "notes/tools/PHASE1-FINAL.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",
