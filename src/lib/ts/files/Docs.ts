@@ -75,7 +75,7 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Styles',
 							type: 'file',
 							path: 'architecture/core/styles'
-						}
+						},
 					]
 				},
 				{
@@ -102,7 +102,7 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Reactivity',
 							type: 'file',
 							path: 'architecture/other/reactivity'
-						}
+						},
 					]
 				},
 				{
@@ -159,7 +159,7 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Ux',
 							type: 'file',
 							path: 'architecture/ux/ux'
-						}
+						},
 					]
 				},
 			]
@@ -258,39 +258,6 @@ export function getDocsStructure(): DocNode[] {
 			path: 'readme'
 		},
 		{
-			id: 'refactor',
-			name: 'Refactor',
-			type: 'folder',
-			path: 'refactor',
-			link: 'refactor/index',
-			children: [
-				{
-					id: 'refactor_banners',
-					name: 'Banners',
-					type: 'file',
-					path: 'refactor/banners'
-				},
-				{
-					id: 'refactor_breadcrumbs',
-					name: 'Breadcrumbs',
-					type: 'file',
-					path: 'refactor/breadcrumbs'
-				},
-				{
-					id: 'refactor_clicks',
-					name: 'Clicks',
-					type: 'file',
-					path: 'refactor/clicks'
-				},
-				{
-					id: 'refactor_layout',
-					name: 'Layout',
-					type: 'file',
-					path: 'refactor/layout'
-				}
-			]
-		},
-		{
 			id: 'work',
 			name: 'Work',
 			type: 'folder',
@@ -321,6 +288,39 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Redox',
 							type: 'file',
 							path: 'work/done/redox'
+						},
+						{
+							id: 'work_done_refactor',
+							name: 'Refactor',
+							type: 'folder',
+							path: 'work/done/refactor',
+							link: 'work/done/refactor/index',
+							children: [
+								{
+									id: 'work_done_refactor_banners',
+									name: 'Banners',
+									type: 'file',
+									path: 'work/done/refactor/banners'
+								},
+								{
+									id: 'work_done_refactor_breadcrumbs',
+									name: 'Breadcrumbs',
+									type: 'file',
+									path: 'work/done/refactor/breadcrumbs'
+								},
+								{
+									id: 'work_done_refactor_clicks',
+									name: 'Clicks',
+									type: 'file',
+									path: 'work/done/refactor/clicks'
+								},
+								{
+									id: 'work_done_refactor_layout',
+									name: 'Layout',
+									type: 'file',
+									path: 'work/done/refactor/layout'
+								},
+							]
 						},
 						{
 							id: 'work_done_tasks',

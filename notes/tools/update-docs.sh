@@ -10,21 +10,8 @@ echo "UPDATE DOCS WORKFLOW"
 echo "=================================================="
 echo ""
 
-# Step 1: Build VitePress documentation
-echo "Step 1: Building VitePress documentation..."
-yarn docs:build > vitepress.build.txt 2>&1
-
-if [ $? -ne 0 ]; then
-  echo "❌ VitePress build failed"
-  cat vitepress.build.txt
-  exit 1
-fi
-
-echo "✅ VitePress build successful"
-echo ""
-
-# Step 2: Compile TypeScript tools
-echo "Step 2: Compiling TypeScript tools..."
+# Step 1: Compile TypeScript tools
+echo "Step 1: Compiling TypeScript tools..."
 cd notes/tools
 npx tsc
 
@@ -35,6 +22,19 @@ fi
 
 echo "✅ TypeScript compiled successfully"
 cd ../..
+echo ""
+
+# Step 2: Try building VitePress (may fail with broken links)
+echo "Step 2: Building VitePress documentation..."
+yarn docs:build > vitepress.build.txt 2>&1
+
+BUILD_EXIT=$?
+if [ $BUILD_EXIT -eq 0 ]; then
+  echo "✅ VitePress build successful (no broken links)"
+else
+  echo "⚠️  VitePress build found issues, attempting to fix..."
+fi
+
 echo ""
 
 # Step 3: Run fix-links tool
@@ -58,23 +58,35 @@ fi
 
 echo ""
 
-# Step 4: Run sync-sidebar tool
-echo "Step 4: Syncing sidebar..."
-node notes/tools/dist/sync-sidebar.js
-
-if [ $? -ne 0 ]; then
-  echo "❌ Sidebar sync failed"
-  exit 1
-fi
-
-echo ""
-
-# Step 5: Generate docs database structure
-echo "Step 5: Generating docs database structure..."
+# Step 4: Generate docs database structure
+echo "Step 4: Generating docs database structure..."
 bash notes/tools/create_docs_db_data.sh
 
 if [ $? -ne 0 ]; then
   echo "❌ Docs database generation failed"
+  exit 1
+fi
+echo ""
+
+# Step 5: Rebuild VitePress (should succeed now)
+echo "Step 5: Rebuilding VitePress documentation..."
+yarn docs:build > vitepress.build.txt 2>&1
+
+if [ $? -ne 0 ]; then
+  echo "❌ VitePress rebuild failed"
+  cat vitepress.build.txt
+  exit 1
+fi
+
+echo "✅ VitePress build successful"
+echo ""
+
+# Step 6: Run sync-sidebar tool
+echo "Step 6: Syncing sidebar..."
+node notes/tools/dist/sync-sidebar.js
+
+if [ $? -ne 0 ]; then
+  echo "❌ Sidebar sync failed"
   exit 1
 fi
 

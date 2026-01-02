@@ -174,28 +174,6 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Refactor',
-        collapsed: true,
-        items: [
-          {
-            text: 'Banners',
-            link: '/refactor/banners'
-          },
-          {
-            text: 'Breadcrumbs',
-            link: '/refactor/breadcrumbs'
-          },
-          {
-            text: 'Clicks',
-            link: '/refactor/clicks'
-          },
-          {
-            text: 'Layout',
-            link: '/refactor/layout'
-          },
-        ]
-      },
-      {
         text: 'Work',
         collapsed: true,
         items: [
@@ -218,6 +196,28 @@ export default defineConfig({
             {
               text: 'Redox',
               link: '/work/done/redox'
+            },
+            {
+              text: 'Refactor',
+              collapsed: true,
+              items: [
+              {
+                text: 'Banners',
+                link: '/work/done/refactor/banners'
+              },
+              {
+                text: 'Breadcrumbs',
+                link: '/work/done/refactor/breadcrumbs'
+              },
+              {
+                text: 'Clicks',
+                link: '/work/done/refactor/clicks'
+              },
+              {
+                text: 'Layout',
+                link: '/work/done/refactor/layout'
+              },
+              ]
             },
             {
               text: 'Tasks',

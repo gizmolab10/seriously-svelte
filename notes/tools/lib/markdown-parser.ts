@@ -190,15 +190,41 @@ export class MarkdownParser {
   }
 
   /**
-   * Check if two file paths refer to the same file (ignoring directory paths)
+   * Check if two file paths refer to the same file
+   * Handles relative paths, with/without .md extension, and path normalization
    */
-  private static pathsMatch(path1: string, path2: string): boolean {
-    const normalize = (p: string) => {
-      // Remove leading ./ or /
+  private static pathsMatch(linkPath: string, targetPath: string): boolean {
+    // Normalize both paths
+    const normalizePath = (p: string) => {
+      // Remove .md extension if present
+      p = p.replace(/\.md$/, '');
+      // Remove leading ./ 
       p = p.replace(/^\.?\//, '');
-      // Get just the filename
-      return path.basename(p);
+      // Normalize ../ sequences
+      const parts = p.split('/');
+      const normalized: string[] = [];
+      for (const part of parts) {
+        if (part === '..') {
+          normalized.pop();
+        } else if (part !== '.' && part !== '') {
+          normalized.push(part);
+        }
+      }
+      return normalized.join('/');
     };
-    return normalize(path1) === normalize(path2);
+    
+    const normalizedLink = normalizePath(linkPath);
+    const normalizedTarget = normalizePath(targetPath);
+    
+    // Check if they match after normalization
+    if (normalizedLink === normalizedTarget) {
+      return true;
+    }
+    
+    // Also check if just the filenames match (for simple cases)
+    const linkBasename = path.basename(normalizedLink);
+    const targetBasename = path.basename(normalizedTarget);
+    
+    return linkBasename === targetBasename;
   }
 }

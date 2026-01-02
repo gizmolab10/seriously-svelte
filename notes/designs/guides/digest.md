@@ -74,10 +74,6 @@ Tracked down why w_ancestry_focus was undefined during G_TreeGraph initializatio
 
 Quick reference for who does what in layout. Geometry.ts coordinates, the G_* helpers do the actual math. Signals trigger rebuilds, stores trigger reactivity, direct calls when you need control.
 
-### [refactor-clicks.md](../refactor/clicks.md)
-
-Each component was managing its own timers - autorepeat here, long-click there, hover-leave everywhere. Moved it all into Hits manager. Components now declare intent ("I need autorepeat"), manager handles lifecycle. State survives re-renders because it lives on the target, not the component.
-
 ### [timers.md](../work/done/timers.md)
 
 Session notes from the mouse timing centralization work. Captured patterns and principles that emerged - declaration over management, state persistence, enum-based config. Use these sections as reference for future refactoring.

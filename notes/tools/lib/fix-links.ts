@@ -64,11 +64,24 @@ class FixLinks {
     const brokenLinks: BrokenLink[] = [];
 
     for (const line of lines) {
-      const match = line.match(/Dead link:\s*(.+?)\s*->\s*(.+)/);
-      if (match) {
+      // VitePress format: (!) Found dead link ./../refactor/clicks in file guides/digest.md
+      const vitepressMatch = line.match(/Found dead link\s+(.+?)\s+in file\s+(.+)/);
+      if (vitepressMatch) {
+        const targetPath = vitepressMatch[1].trim();
+        const sourceFile = vitepressMatch[2].trim();
         brokenLinks.push({
-          sourcePath: match[1].trim(),
-          targetPath: match[2].trim(),
+          sourcePath: sourceFile,
+          targetPath: targetPath,
+        });
+        continue;
+      }
+      
+      // Old format: Dead link: path/to/file.md -> missing-file.md
+      const oldMatch = line.match(/Dead link:\s*(.+?)\s*->\s*(.+)/);
+      if (oldMatch) {
+        brokenLinks.push({
+          sourcePath: oldMatch[1].trim(),
+          targetPath: oldMatch[2].trim(),
         });
       }
     }
@@ -101,35 +114,39 @@ class FixLinks {
     const replacements = new Map<string, string | null>();
     
     for (const [targetPath, links] of linksByTarget.entries()) {
-      const filename = path.basename(targetPath);
+      // Extract just the filename from the target path
+      const filename = path.basename(targetPath).replace(/\.md$/, '') + '.md';
       
       if (this.verbose) {
-        console.log(`Searching for: ${filename}`);
+        console.log(`\nProcessing: ${targetPath}`);
+        console.log(`  Searching for filename: ${filename}`);
+        console.log(`  Referenced in ${links.length} location(s)`);
       }
 
       const notesDir = path.join(this.repoRoot, 'notes');
       const matches = LinkFinder.findFilesByName(notesDir, filename);
 
       if (matches.length === 0) {
-        if (this.verbose) {
-          console.log(`  Not found - will delete ${links.length} link(s)`);
-        }
+        console.log(`  ❌ Not found - will DELETE ${links.length} link(s) to: ${targetPath}`);
         replacements.set(targetPath, null);
         this.stats.deleted += links.length;
       } else if (matches.length === 1) {
         const newPath = path.relative(this.repoRoot, matches[0].fullPath);
-        if (this.verbose) {
-          console.log(`  Found at: ${newPath}`);
-        }
+        console.log(`  ✅ Found at: ${newPath}`);
         replacements.set(targetPath, newPath);
         this.stats.fixed += links.length;
       } else {
+        console.log(`  ⚠️  Multiple matches found:`);
+        matches.forEach((m, i) => {
+          console.log(`    ${i + 1}. ${path.relative(this.repoRoot, m.fullPath)}`);
+        });
         const choice = LinkFinder.promptUserChoice(matches, targetPath);
         if (choice) {
           const newPath = path.relative(this.repoRoot, choice);
           replacements.set(targetPath, newPath);
           this.stats.fixed += links.length;
         } else {
+          console.log(`  ⚠️  Skipped - marked as unfixable`);
           this.stats.unfixable += links.length;
         }
       }
