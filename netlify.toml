@@ -5,3 +5,6 @@
   for = "/*"
   [headers.values]
     connect-src = "https://api.airtable.com"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.airtable.com"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
