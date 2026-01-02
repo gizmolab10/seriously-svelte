@@ -39,7 +39,7 @@
 		}
 	}
 	function handle_breadcrumbs(types: Array<T_Breadcrumbs | null>) {
-		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.hierarchy;
+		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.selection;
 	}
 
 	$: {
@@ -60,8 +60,8 @@
 			3: 108,																		// search toggle
 			4: features.allow_search	   ? -32 : 6,									// easter egg
 			5: 2,																		// separator
-			6: 27,																		// breadcrumbs types
-			7: 98,																		// recents
+			6: 50,																		// breadcrumbs types
+			7: 124,																		// recents
 			8: 44,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
@@ -155,7 +155,7 @@
 				origin={Point.x(lefts[6])}
 				selected={[$w_t_breadcrumbs]}
 				handle_selection={handle_breadcrumbs}
-				titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
+				titles={[T_Breadcrumbs.focus, T_Breadcrumbs.selection, T_Breadcrumbs.recents]}/>
 			<Breadcrumbs
 				left={lefts[8]}
 				centered={true}

@@ -1,12 +1,12 @@
-# webseriously docs
+# Designs
 
 Project documentation and design notes.
 
 ## Contents
 
-* [Overview](./documentation.md)
-* [Architecture](./architecture/)
-* [Guidelines](./guides/)
-* [Work](./work/)
-
+- [Architecture](./architecture/)
+- [Guides](./guides/)
+- [Work](./work/)
+- [Documentation](./documentation.md)
+- [Readme](./readme.md)
 

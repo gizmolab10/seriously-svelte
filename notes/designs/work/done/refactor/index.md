@@ -1,10 +1,11 @@
-# Refactoring
+# Refactor
 
 Refactoring tasks and architectural improvements.
 
-## Topics
+## Contents
 
-- [Banners](./banners.md) - Banner refactoring
-- [Breadcrumbs](./breadcrumbs.md) - Breadcrumb refactoring
-- [Clicks](./clicks.md) - Click handling refactoring
-- [Layout](./layout.md) - Layout system refactoring
+- [Banners](./banners.md)
+- [Breadcrumbs](./breadcrumbs.md)
+- [Clicks](./clicks.md)
+- [Layout](./layout.md)
+

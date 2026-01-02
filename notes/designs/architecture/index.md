@@ -1,7 +1,6 @@
 # Architecture
 
 I built a surprising number of managers, 14.
-
 - [Bubble](./other/bubble.md) not really a manager
 - [Buttons](./ux/buttons.md) needs a sanity check
 - [Components](./core/components.md)
@@ -15,3 +14,10 @@ I built a surprising number of managers, 14.
 - [State](./core/state.md)
 - [Styles](./core/styles.md)
 - [UX](./ux/ux.md)
+
+## Contents
+
+- [Core](./core/)
+- [Other](./other/)
+- [Ux](./ux/)
+

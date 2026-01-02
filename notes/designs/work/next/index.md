@@ -1,5 +1,12 @@
-# Next/Future
+# Next
 
 - [Resize Optimization AI](Resize_Optimization_AI.md)
 - [AI UX Spider Guide](ai-ux-spider-guide.md)
 - [Holons API](holons.api.md)
+
+## Contents
+
+- [Ai Ux Spider Guide](./ai-ux-spider-guide.md)
+- [Holons.api](./holons.api.md)
+- [Resize_Optimization_AI](./Resize_Optimization_AI.md)
+

@@ -149,7 +149,7 @@ export class Preferences {
 		x.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
 		x.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
 		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
-		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.ancestry);
+		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.focus);
 		show.w_show_countsAs  .set( this.read_key(T_Preference.show_countsAs) ?? T_Counts_Shown.dots);
 		this.reactivity_subscribe()
 	}

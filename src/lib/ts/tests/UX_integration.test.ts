@@ -4,7 +4,7 @@
  * These tests verify end-to-end behavior of the breadcrumbs system, including:
  * - Breadcrumb navigation updates focus correctly
  * - Reactive subscriptions to w_ancestry_focus work correctly
- * - Edge cases (rapid changes, empty history, mode switching)
+ * - Edge cases (rapid changes, empty recents, mode switching)
  * - History truncation and navigation
  * 
  * Run with: yarn test UX_integration
@@ -40,7 +40,7 @@ describe('Breadcrumbs system integration tests', () => {
 		const newFocus = get(x.w_ancestry_focus);
 		expect(newFocus).toBe(ancestry);
 		
-		// Verify it was added to history
+		// Verify it was added to recents
 		expect(x.si_recents.length).toBeGreaterThan(0);
 		const recentItem = x.si_recents.item as [Ancestry, any] | null;
 		expect(recentItem).not.toBeNull();
@@ -93,7 +93,7 @@ describe('Breadcrumbs system integration tests', () => {
 		expect(recentItem![0]).toBe(root);
 	});
 
-	it('should handle empty history gracefully', () => {
+	it('should handle empty recents gracefully', () => {
 		// Clear recents
 		x.si_recents.items = [];
 		
@@ -114,7 +114,7 @@ describe('Breadcrumbs system integration tests', () => {
 			return;
 		}
 
-		// Create multiple history entries
+		// Create multiple recents entries
 		const root = h.rootAncestry;
 		root.becomeFocus();
 		
@@ -148,13 +148,13 @@ describe('Breadcrumbs system integration tests', () => {
 		expect(details).not.toBeNull();
 	});
 
-	it('should handle history truncation correctly', () => {
+	it('should handle recents truncation correctly', () => {
 		if (!h || !h.rootAncestry) {
 			console.warn('Skipping test: no rootAncestry available');
 			return;
 		}
 
-		// Create multiple history entries
+		// Create multiple recents entries
 		const root = h.rootAncestry;
 		root.becomeFocus();
 		root.becomeFocus();
@@ -162,7 +162,7 @@ describe('Breadcrumbs system integration tests', () => {
 		
 		const initialLength = x.si_recents.length;
 		
-		// Navigate through history (this may truncate if at end)
+		// Navigate through recents (this may truncate if at end)
 		x.ancestry_next_focusOn(true);
 		x.ancestry_next_focusOn(false);
 		
@@ -195,21 +195,21 @@ describe('Breadcrumbs system integration tests', () => {
 		}
 	});
 
-	it('should handle mode switching between ancestry and history', () => {
+	it('should handle mode switching between ancestry and recents', () => {
 		if (!h || !h.rootAncestry) {
 			console.warn('Skipping test: no rootAncestry available');
 			return;
 		}
 
-		// Switch to history mode
-		show.w_t_breadcrumbs.set(T_Breadcrumbs.history);
+		// Switch to recents mode
+		show.w_t_breadcrumbs.set(T_Breadcrumbs.recents);
 		
 		// Verify breadcrumbs component can read from si_recents
-		const historyItems = x.si_recents.items.map(item => item[0]);
-		expect(historyItems.length).toBeGreaterThan(0);
+		const recentsItems = x.si_recents.items.map(item => item[0]);
+		expect(recentsItems.length).toBeGreaterThan(0);
 		
 		// Switch back to ancestry mode
-		show.w_t_breadcrumbs.set(T_Breadcrumbs.ancestry);
+		show.w_t_breadcrumbs.set(T_Breadcrumbs.focus);
 		
 		// Focus should still be in sync
 		const focus = get(x.w_ancestry_focus);
@@ -244,7 +244,7 @@ describe('Breadcrumbs system integration tests', () => {
 			return;
 		}
 
-		// Navigate forward in history
+		// Navigate forward in recents
 		x.ancestry_next_focusOn(true);
 		const navigatedFocus = get(x.w_ancestry_focus);
 		

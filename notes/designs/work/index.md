@@ -4,5 +4,7 @@ Documentation of ongoing and completed work.
 
 ## Contents
 
-- [Done](./done/) - Completed tasks and analysis
-- [Next](./next/) - Upcoming tasks and plans
+- [Done](./done/)
+- [Next](./next/)
+- [Tasks](./tasks.md)
+

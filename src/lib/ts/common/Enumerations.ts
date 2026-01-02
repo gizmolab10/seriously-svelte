@@ -96,8 +96,9 @@ export enum T_Cluster_Pager {
 }
 
 export enum T_Breadcrumbs {
-	ancestry = 'ancestry',
-	history  = 'history',
+	selection = 'selection',
+	recents   = 'recents',
+	focus	  = 'focus',
 }
 
 export enum T_Focus {

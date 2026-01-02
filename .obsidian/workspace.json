@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/work/done/webseriously-driven-docs.md",
+                "file": "notes/designs/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "webseriously-driven-docs"
+              "title": "index"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/work/done/webseriously-driven-docs.md",
+                "file": "notes/designs/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of webseriously-driven-docs"
+              "title": "Outline of index"
             }
           }
         ],
@@ -167,8 +167,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "0d6205459baf7c18",
   "lastOpenFiles": [
+    "notes/designs/work/index.md",
+    "notes/designs/work/done/index.md",
+    "notes/designs/work/done/refactor/index.md",
+    "notes/tools/sync_index_files.sh",
+    "notes/designs/work/done/webseriously-driven-docs.md",
     "notes/tools/dist/sync-sidebar.js",
     "notes/tools/dist/merge-files.js",
     "notes/tools/dist/generate-sidebar.js",
@@ -178,7 +183,6 @@
     "notes/tools/dist/config-updater.js",
     "notes/tools/dist",
     "notes/designs/work/done/refactor/layout.md",
-    "notes/designs/work/done/refactor/index.md",
     "notes/designs/work/done/refactor/clicks.md",
     "notes/designs/work/done/refactor/breadcrumbs.md",
     "notes/designs/work/done/refactor/banners.md",
@@ -188,23 +192,18 @@
     "notes/designs/work/refactor/clicks.md",
     "notes/designs/work/refactor/breadcrumbs.md",
     "notes/designs/work/refactor/banners.md",
-    "notes/designs/work/refactor",
-    "netlify.toml",
     "notes/designs/refactor/index.md",
     "notes/designs/architecture/other/index.md",
     "notes/designs/architecture/ux/index.md",
     "notes/designs/architecture/core/index.md",
     "notes/designs/work/tool5-content.md",
     "notes/designs/work/done/redox.md",
-    "notes/designs/work/done/webseriously-driven-docs.md",
     "notes/designs/work/tasks.md",
     "notes/tools/docs/test/fixtures/advanced/test-moved.md",
     "notes/designs/work/redox.md",
     "notes/tools/docs/PHASE2-MINIMIZED.md",
     "notes/tools/docs/test/PHASE2-FINAL.md",
     "notes/tools/docs/test/PHASE2-COMPLETE.md",
-    "notes/tools/docs/test/merge-fixtures/test-links.md",
-    "notes/tools/docs/test/merge-fixtures/file-b.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",

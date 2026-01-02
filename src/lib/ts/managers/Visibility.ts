@@ -7,7 +7,7 @@ import { x } from '../managers/UX';
 
 export class Visibility {
 	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
-	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
+	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.focus);
 	w_show_countsAs			= writable<T_Counts_Shown>(T_Counts_Shown.dots);
 	w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(null);
 	w_t_directionals		= writable<boolean[]>([false, true]);

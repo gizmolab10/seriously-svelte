@@ -1,9 +1,10 @@
-# Other Architecture
+# Other
 
 Additional architectural documentation and patterns.
 
-## Topics
+## Contents
 
-- [Bubble](./bubble.md) - Bubble.io integration
-- [Documentation](./documentation.md) - Documentation system and tools
-- [Reactivity](./reactivity.md) - Reactivity patterns in Svelte
+- [Bubble](./bubble.md)
+- [Documentation](./documentation.md)
+- [Reactivity](./reactivity.md)
+

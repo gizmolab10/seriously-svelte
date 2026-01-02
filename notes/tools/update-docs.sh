@@ -24,8 +24,18 @@ echo "✅ TypeScript compiled successfully"
 cd ../..
 echo ""
 
-# Step 2: Try building VitePress (may fail with broken links)
-echo "Step 2: Building VitePress documentation..."
+# Step 2: Sync index.md files
+echo "Step 2: Syncing index.md files..."
+bash notes/tools/sync_index_files.sh
+
+if [ $? -ne 0 ]; then
+  echo "❌ Index sync failed"
+  exit 1
+fi
+echo ""
+
+# Step 3: Try building VitePress (may fail with broken links)
+echo "Step 3: Building VitePress documentation..."
 yarn docs:build > vitepress.build.txt 2>&1
 
 BUILD_EXIT=$?
@@ -37,8 +47,8 @@ fi
 
 echo ""
 
-# Step 3: Run fix-links tool
-echo "Step 3: Running fix-links tool..."
+# Step 4: Run fix-links tool
+echo "Step 4: Running fix-links tool..."
 node notes/tools/dist/fix-links.js
 
 FIX_LINKS_EXIT=$?
@@ -58,8 +68,8 @@ fi
 
 echo ""
 
-# Step 4: Generate docs database structure
-echo "Step 4: Generating docs database structure..."
+# Step 5: Generate docs database structure
+echo "Step 5: Generating docs database structure..."
 bash notes/tools/create_docs_db_data.sh
 
 if [ $? -ne 0 ]; then
@@ -68,8 +78,8 @@ if [ $? -ne 0 ]; then
 fi
 echo ""
 
-# Step 5: Rebuild VitePress (should succeed now)
-echo "Step 5: Rebuilding VitePress documentation..."
+# Step 6: Rebuild VitePress (should succeed now)
+echo "Step 6: Rebuilding VitePress documentation..."
 yarn docs:build > vitepress.build.txt 2>&1
 
 if [ $? -ne 0 ]; then
@@ -81,8 +91,8 @@ fi
 echo "✅ VitePress build successful"
 echo ""
 
-# Step 6: Run sync-sidebar tool
-echo "Step 6: Syncing sidebar..."
+# Step 7: Run sync-sidebar tool
+echo "Step 7: Syncing sidebar..."
 node notes/tools/dist/sync-sidebar.js
 
 if [ $? -ne 0 ]; then

@@ -1,9 +1,7 @@
-# UX Architecture
+# Ux
 
 User experience components and interaction patterns.
-
 ## Components
-
 - [Breadcrumbs](./breadcrumbs.md) - Navigation breadcrumb system
 - [Buttons](./buttons.md) - Button components and interactions
 - [Controls](./controls.md) - Primary controls layout and positioning
@@ -12,3 +10,15 @@ User experience components and interaction patterns.
 - [Preferences](./preferences.md) - User preferences system
 - [Search](./search.md) - Search functionality and UI
 - [UX Manager](./ux.md) - Overall UX coordination and state
+
+## Contents
+
+- [Breadcrumbs](./breadcrumbs.md)
+- [Buttons](./buttons.md)
+- [Controls](./controls.md)
+- [Details](./details.md)
+- [Paging](./paging.md)
+- [Preferences](./preferences.md)
+- [Search](./search.md)
+- [Ux](./ux.md)
+

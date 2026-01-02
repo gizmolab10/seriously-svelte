@@ -48,10 +48,10 @@
 	}
 
 	function ancestries_forBreadcrumbs(): Array<Ancestry> {
-		if ($w_t_breadcrumbs == T_Breadcrumbs.ancestry) {
-			return $w_ancestry_forDetails.heritage;
-		} else {
-			return x.si_recents.items.map(item => item[0]);
+		switch ($w_t_breadcrumbs) {
+			case T_Breadcrumbs.recents:	  return x.si_recents.items.map(item => item[0]);
+			case T_Breadcrumbs.selection: return $w_ancestry_forDetails.heritage;
+			case T_Breadcrumbs.focus:	  return $w_ancestry_focus.heritage;
 		}
 	}
 
