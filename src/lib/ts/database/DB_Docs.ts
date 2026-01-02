@@ -5,7 +5,7 @@ import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
 export default class DB_Docs extends DB_Common {
-	docs_hostname = 'https://webseriously-documentation.netlify.app/';
+	docs_hostname = 'http://docs.webseriously.org/';
 	t_persistence = T_Persistence.none;
 	t_database = T_Database.docs;
 	idBase = 'Docs' as DB_Name;
