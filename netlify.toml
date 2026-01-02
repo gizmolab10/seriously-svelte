@@ -4,7 +4,18 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    connect-src = "https://api.airtable.com"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.airtable.com"
+    # Allow Airtable API connection
+    connect-src = "'self' https://api.airtable.com"
+    
+    # Content Security Policy - adjust if you add external resources
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.airtable.com; frame-ancestors 'none'"
+    
+    # Prevent clickjacking
     X-Frame-Options = "DENY"
+    
+    # Prevent MIME-sniffing
     X-Content-Type-Options = "nosniff"
+    
+    # Additional recommended headers
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
