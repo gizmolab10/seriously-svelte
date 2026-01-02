@@ -7,11 +7,8 @@
     # Allow Airtable API connection
     connect-src = "'self' https://api.airtable.com"
     
-    # Content Security Policy - adjust if you add external resources
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.airtable.com; frame-ancestors 'none'"
-    
-    # Prevent clickjacking
-    X-Frame-Options = "DENY"
+    # Content Security Policy - allows iframe embedding
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.airtable.com"
     
     # Prevent MIME-sniffing
     X-Content-Type-Options = "nosniff"
