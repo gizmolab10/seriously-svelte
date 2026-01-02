@@ -169,6 +169,7 @@
   },
   "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "netlify.toml",
     "notes/designs/refactor/index.md",
     "notes/designs/architecture/other/index.md",
     "notes/designs/architecture/ux/index.md",
@@ -204,7 +205,6 @@
     "notes/tools/docs/test/REORGANIZATION.md",
     "notes/tools/docs/test/README.md",
     "notes/tools/docs/test/PHASE1-RESULTS.md",
-    "notes/tools/docs/test/PHASE1-FINAL.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",

@@ -1,6 +1,6 @@
 [build]
-  command = "yarn docs:build"
-  publish = ".vitepress/dist"
+  command = "yarn build"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20.19.0"
