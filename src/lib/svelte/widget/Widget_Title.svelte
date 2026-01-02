@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { T_Edit, T_Layer, T_Timer, T_Trait, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { e, g, h, k, core, u, x, hits, debug, colors, search, signals } from '../../ts/common/Global_Imports';
 	import { controls, elements, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Hit_Target, T_Edit, T_Mouse_Detection, T_Timer } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	export let s_title!: S_Element;
@@ -156,10 +156,10 @@
 								ancestry.startEdit();
 								thing_setSelectionRange_fromMouseLocation();
 								// Focus directly - reactive statement will also try, but this ensures it happens
-								if (input && !hasHTMLFocus()) {
-									input.focus({ preventScroll: true });
-								}
-								applyRange_fromThing_toInput();
+							if (input && !hasHTMLFocus()) {
+								input.focus({ preventScroll: true });
+							}
+							applyRange_fromThing_toInput();
 							}, 1);
 						}
 					}

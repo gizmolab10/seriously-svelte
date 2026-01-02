@@ -26,6 +26,7 @@ export function getDocsStructure(): DocNode[] {
 					name: 'Core',
 					type: 'folder',
 					path: 'architecture/core',
+					link: 'architecture/core/index',
 					children: [
 						{
 							id: 'architecture_core_components',
@@ -82,6 +83,7 @@ export function getDocsStructure(): DocNode[] {
 					name: 'Other',
 					type: 'folder',
 					path: 'architecture/other',
+					link: 'architecture/other/index',
 					children: [
 						{
 							id: 'architecture_other_bubble',
@@ -108,6 +110,7 @@ export function getDocsStructure(): DocNode[] {
 					name: 'Ux',
 					type: 'folder',
 					path: 'architecture/ux',
+					link: 'architecture/ux/index',
 					children: [
 						{
 							id: 'architecture_ux_breadcrumbs',
@@ -259,6 +262,7 @@ export function getDocsStructure(): DocNode[] {
 			name: 'Refactor',
 			type: 'folder',
 			path: 'refactor',
+			link: 'refactor/index',
 			children: [
 				{
 					id: 'refactor_banners',

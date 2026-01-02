@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Timer, T_Signal, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Timer, T_Trait, T_Signal, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { e, g, k, u, x, hits, show, debug, colors } from '../../ts/common/Global_Imports';
 	import { controls, signals, elements, components } from '../../ts/common/Global_Imports';
@@ -67,7 +67,13 @@
 		// Set up double-click detection on s_widget
 		s_widget.mouse_detection = T_Mouse_Detection.double;
 		s_widget.doubleClick_callback = (s_mouse: S_Mouse) => {
-			$w_show_catalist_details = true;
+			const trait = ancestry.thing?.trait_forType(T_Trait.link);
+			const link = trait?.text;
+			if (!!link) {		// Thing has a link trait - open it instead of editing
+				window.open(link, '_blank');
+			} else {
+				$w_show_catalist_details = true;
+			}
 		};
 		return () => {
 			debug.log_style('Widget unmounting for:', ancestry?.title);

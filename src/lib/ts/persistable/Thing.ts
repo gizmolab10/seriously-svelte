@@ -1,6 +1,6 @@
-import { e, h, k, core, u, x, debug, colors, S_Items, databases, Seriously_Range } from '../common/Global_Imports';
+import { e, h, k, u, x, debug, colors, S_Items, databases, Seriously_Range } from '../common/Global_Imports';
 import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
-import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
@@ -67,6 +67,7 @@ export default class Thing extends Persistable {
 	}
 
 	debugLog(message: string) { this.log(T_Debug.things, message); }
+	trait_forType(type: T_Trait) { return this.si_traits?.item as Trait; }
 	hasParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 0; }
 	hasMultipleParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 1; }
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }

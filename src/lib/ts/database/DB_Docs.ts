@@ -1,10 +1,11 @@
 import { h, T_Thing, T_Trait, T_Predicate } from '../common/Global_Imports';
+import { getDocsStructure, type DocNode } from '../files/Docs';
 import { T_Persistence } from '../common/Enumerations';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
-import { getDocsStructure, type DocNode } from '../files/Docs';
 
 export default class DB_Docs extends DB_Common {
+	docs_hostname = 'https://webseriously-documentation.netlify.app/';
 	t_persistence = T_Persistence.none;
 	t_database = T_Database.docs;
 	idBase = 'Docs' as DB_Name;
@@ -28,7 +29,13 @@ export default class DB_Docs extends DB_Common {
 		// Build the hierarchy from imported docs structure
 		const docsStructure = getDocsStructure();
 		this.buildHierarchy(docsStructure, idRoot, 0);
-
+		h.trait_remember_runtimeCreateUnique(
+			this.idBase,
+			`trait_link_${idRoot}`,
+			idRoot,
+			T_Trait.link,
+			this.docs_hostname
+		);
 		return true;
 	}
 
@@ -54,7 +61,7 @@ export default class DB_Docs extends DB_Common {
 					`trait_link_${nodeId}`,
 					nodeId,
 					T_Trait.link,
-					`http://localhost:5176/${linkPath}`
+					`${this.docs_hostname}${linkPath}`
 				);
 			}
 

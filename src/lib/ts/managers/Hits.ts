@@ -74,7 +74,7 @@ export default class Hits {
 					} else if (target.respondsTo_longClick) {							// Long-click detection
 						this.start_longClick(target, s_mouse.event);
 					} else if (target.respondsTo_doubleClick) {
-						if (target.clicks == 2 && this.click_timer.hasTimer_forID(T_Timer.double) && this.pending_singleClick_target === target) {
+						if (target.clicks == 2) { // && this.click_timer.hasTimer_forID(T_Timer.double) && this.pending_singleClick_target === target) {
 							target.clicks = 0;
 							this.click_timer.reset();									// Second click within threshold — fire double-click
 							this.doubleClick_fired = true;
