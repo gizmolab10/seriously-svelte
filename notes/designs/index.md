@@ -7,6 +7,6 @@ Project documentation and design notes.
 - [Architecture](./architecture/)
 - [Guides](./guides/)
 - [Work](./work/)
-- [Documentation](./documentation.md)
-- [Readme](./readme.md)
+- [Digest](./digest.md)
+- [Project](./project.md)
 

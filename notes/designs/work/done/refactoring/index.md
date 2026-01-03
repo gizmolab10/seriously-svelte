@@ -1,11 +1,11 @@
-# Refactor
+# Refactoring
 
 Refactoring tasks and architectural improvements.
 
 ## Contents
 
 - [Banners](./banners.md)
+- [Breadcrumbs Re Compositioon](./breadcrumbs re-compositioon.md)
 - [Breadcrumbs](./breadcrumbs.md)
-- [Clicks](./clicks.md)
 - [Layout](./layout.md)
 

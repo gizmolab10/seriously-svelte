@@ -82,6 +82,18 @@ export function getDocsStructure(): DocNode[] {
 							type: 'file',
 							path: 'architecture/core/styles'
 						},
+						{
+							id: 'architecture_core_timers',
+							name: 'Timers',
+							type: 'file',
+							path: 'architecture/core/timers'
+						},
+						{
+							id: 'architecture_core_titles',
+							name: 'Titles',
+							type: 'file',
+							path: 'architecture/core/titles'
+						},
 					]
 				},
 				{
@@ -159,10 +171,10 @@ export function getDocsStructure(): DocNode[] {
 			]
 		},
 		{
-			id: 'documentation',
-			name: 'Documentation',
+			id: 'digest',
+			name: 'Digest',
 			type: 'file',
-			path: 'documentation'
+			path: 'digest'
 		},
 		{
 			id: 'guides',
@@ -171,6 +183,12 @@ export function getDocsStructure(): DocNode[] {
 			path: 'guides',
 			link: 'guides/index',
 			children: [
+				{
+					id: 'guides_access',
+					name: 'Access',
+					type: 'file',
+					path: 'guides/access'
+				},
 				{
 					id: 'guides_chat',
 					name: 'Chat',
@@ -188,12 +206,6 @@ export function getDocsStructure(): DocNode[] {
 					name: 'Debugging',
 					type: 'file',
 					path: 'guides/debugging'
-				},
-				{
-					id: 'guides_digest',
-					name: 'Digest',
-					type: 'file',
-					path: 'guides/digest'
 				},
 				{
 					id: 'guides_gotchas',
@@ -246,10 +258,10 @@ export function getDocsStructure(): DocNode[] {
 			]
 		},
 		{
-			id: 'readme',
-			name: 'Readme',
+			id: 'project',
+			name: 'Project',
 			type: 'file',
-			path: 'readme'
+			path: 'project'
 		},
 		{
 			id: 'work',
@@ -259,6 +271,12 @@ export function getDocsStructure(): DocNode[] {
 			link: 'work/index',
 			children: [
 				{
+					id: 'work_book',
+					name: 'Book',
+					type: 'file',
+					path: 'work/book'
+				},
+				{
 					id: 'work_done',
 					name: 'Done',
 					type: 'folder',
@@ -266,79 +284,58 @@ export function getDocsStructure(): DocNode[] {
 					link: 'work/done/index',
 					children: [
 						{
-							id: 'work_done_access',
-							name: 'Access',
-							type: 'file',
-							path: 'work/done/access'
-						},
-						{
 							id: 'work_done_focus',
 							name: 'Focus',
 							type: 'file',
 							path: 'work/done/focus'
 						},
 						{
-							id: 'work_done_redox',
-							name: 'Redox',
-							type: 'file',
-							path: 'work/done/redox'
-						},
-						{
-							id: 'work_done_refactor',
-							name: 'Refactor',
+							id: 'work_done_refactoring',
+							name: 'Refactoring',
 							type: 'folder',
-							path: 'work/done/refactor',
-							link: 'work/done/refactor/index',
+							path: 'work/done/refactoring',
+							link: 'work/done/refactoring/index',
 							children: [
 								{
-									id: 'work_done_refactor_banners',
+									id: 'work_done_refactoring_banners',
 									name: 'Banners',
 									type: 'file',
-									path: 'work/done/refactor/banners'
+									path: 'work/done/refactoring/banners'
 								},
 								{
-									id: 'work_done_refactor_breadcrumbs',
+									id: 'work_done_refactoring_breadcrumbs',
 									name: 'Breadcrumbs',
 									type: 'file',
-									path: 'work/done/refactor/breadcrumbs'
+									path: 'work/done/refactoring/breadcrumbs'
 								},
 								{
-									id: 'work_done_refactor_clicks',
-									name: 'Clicks',
-									type: 'file',
-									path: 'work/done/refactor/clicks'
-								},
-								{
-									id: 'work_done_refactor_layout',
+									id: 'work_done_refactoring_layout',
 									name: 'Layout',
 									type: 'file',
-									path: 'work/done/refactor/layout'
+									path: 'work/done/refactoring/layout'
 								},
 							]
 						},
 						{
-							id: 'work_done_tasks',
-							name: 'Tasks',
-							type: 'file',
-							path: 'work/done/tasks'
-						},
-						{
-							id: 'work_done_timers',
-							name: 'Timers',
-							type: 'file',
-							path: 'work/done/timers'
-						},
-						{
-							id: 'work_done_webseriously_driven_docs',
-							name: 'Webseriously Driven Docs',
-							type: 'file',
-							path: 'work/done/webseriously-driven-docs'
-						},
-						{
-							id: 'work_done_widget_title',
-							name: 'Widget Title',
-							type: 'file',
-							path: 'work/done/widget_title'
+							id: 'work_done_vitepress',
+							name: 'Vitepress',
+							type: 'folder',
+							path: 'work/done/vitepress',
+							link: 'work/done/vitepress/index',
+							children: [
+								{
+									id: 'work_done_vitepress_redox',
+									name: 'Redox',
+									type: 'file',
+									path: 'work/done/vitepress/redox'
+								},
+								{
+									id: 'work_done_vitepress_webseriously_driven_docs',
+									name: 'Webseriously Driven Docs',
+									type: 'file',
+									path: 'work/done/vitepress/webseriously-driven-docs'
+								},
+							]
 						},
 					]
 				},
@@ -368,12 +365,6 @@ export function getDocsStructure(): DocNode[] {
 							path: 'work/next/Resize_Optimization_AI'
 						},
 					]
-				},
-				{
-					id: 'work_tasks',
-					name: 'Tasks',
-					type: 'file',
-					path: 'work/tasks'
 				},
 			]
 		},

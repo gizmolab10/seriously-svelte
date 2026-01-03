@@ -6,5 +6,5 @@ Documentation of ongoing and completed work.
 
 - [Done](./done/)
 - [Next](./next/)
-- [Tasks](./tasks.md)
+- [Book](./book.md)
 

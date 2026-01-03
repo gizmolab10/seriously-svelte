@@ -4,10 +4,10 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 
 ## Contents
 
+- [Access](./access.md)
 - [Chat](./chat.md)
 - [Composition](./composition.md)
 - [Debugging](./debugging.md)
-- [Digest](./digest.md)
 - [Gotchas](./gotchas.md)
 - [Markdown](./markdown.md)
 - [Migration](./migration.md)

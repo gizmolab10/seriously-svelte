@@ -3,7 +3,7 @@
 
 **Webseriously** is a sophisticated Svelte-based visualization and data management application with hierarchical graph displays, interactive UI components, and multi-database support. Can be embedded as a Bubble.io plugin or run standalone.
 
-Deeper Dives, beyond the scope off this file, [can be found here](./notes/designs/documentation.md).
+Deeper Dives, beyond the scope off this file, [can be found here](./notes/designs/index.md).
 ## Table of Contents
 - [Project Overview](#project-overview)
   - [Naming Conventions](#naming-conventions)
@@ -306,7 +306,7 @@ class MyThing extends Persistable {
 
 **Internal Documentation**:
 
-**Index**: [overview.md](notes/designs/documentation.md) - Complete index of all design documentation
+**Index**: [index.md](notes/designs/index.md) - Complete index of all design documentation
 
 **Architecture** (notes/designs/architecture/):
 - [buttons.md](notes/designs/architecture/ux/buttons.md) - Button hierarchy, SVG icons

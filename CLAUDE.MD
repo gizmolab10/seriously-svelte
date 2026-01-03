@@ -1,53 +1,19 @@
-# Instructions for all AI tasks:
+# CLAUDE.MD
 
-## Repository & Workspace
+ENV: Claude Desktop (not web)
+NO worktrees/workspaces
+REPO: /Users/sand/GitHub/webseriously (only this)
+NEVER change code without permission + consent
+FS: Verify local filesystem access works (you CAN write to my repo—don't claim otherwise)
 
-- [ ] do not use claude worktrees (workspace feature)
-- [ ] only use my local webseriously github repo at `/Users/sand/GitHub/webseriously`
-- [ ] NEVER change code unless (a) you ask permission and (b) i consent
+Docs style: voice.md | Keep TOC updated
+Temp: /home/claude | Outputs: /mnt/user-data/outputs
 
-## Documentation & Style
+COMMANDS:
 
-- [ ] follow `voice.md` for all documentation writing (casual, first-person, problem-first)
-- [ ] read appropriate `<SKILL>.md` files ONLY when creating documents (`docx`, `pptx`, `xlsx`, `pdf`)
-- [ ] always keep the TOC up to date
+* "read claude" → reread CLAUDE.MD
+* "update docs" → run ./notes/tools/update-docs.sh, report output
+* "begin work <file>" → if notes/designs/work/<file> missing, create it + run notes/designs/guides/chat.md; else read + resume
 
-## File Management
-
-- [ ] assume i am running in Claude desktop (not the web)
-- [ ] assume nearly all md files are in `notes`
-- [ ] verify and report whether local file system access works
-- [ ] work in `/home/claude` for temporary files
-- [ ] put final outputs in` /mnt/user-data/outputs` so i can access them
-- [ ] user-uploaded files are in `/mnt/user-data/uploads`
-
-**Two separate filesystems:** Claude has access to two different computers - Claude's computer (the remote AI environment) and your computer (your local machine). The `/home/claude` and `/mnt` paths are on Claude's computer. Your webseriously repo at `/Users/sand/GitHub/webseriously` is on your computer. Use Filesystem tools to read/write files in your repo. Use computer tools (`bash`, `create_file`, etc.) for Claude's filesystem. When you upload files, they appear both in Claude's `/mnt/user-data/uploads` AND may be in Claude's conversation log.
-
-## Special Commands
-
-When i type **"**`restart`**"** it means:
-
-- [ ] read CLAUDE.MD
-
-When i type **"**`update docs`**"** it means:
-
-- [ ] execute: `./notes/tools/update-docs.sh``
-- [ ] report the results shown in the output
-
-When i type **"**`go <filename>`**"** it means:
-
-- [ ] if `notes/designs/work<filename>` doesn’t exist
-  - [ ] create it
-  - [ ] read and execute `notes/designs/guides/chat.md`, using this file where it says “use the new md file”
-- [ ] if it does exist
-  - [ ] read it (do not execute it)
-  - [ ] resume execution of  `notes/designs/guides/chat.md`
-
-## Context & Memory
-
-- [ ] use `conversation_search` when i reference past discussions
-- [ ] use `recent_chats` when i ask about recent conversations
-- [ ] check past conversations before saying you don't have context
-- [ ] ALWAYS work from the current version of files BEFORE pursuing a change to them (abandon ALL previous versions)
-
-
+MEMORY: Use conversation_search/recent_chats before claiming no context
+FILES: Always read current version before editing

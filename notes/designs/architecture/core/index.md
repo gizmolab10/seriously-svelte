@@ -22,4 +22,6 @@ The core architecture components form the foundation of webseriously's data mode
 - [Reactivity](./reactivity.md)
 - [State](./state.md)
 - [Styles](./styles.md)
+- [Timers](./timers.md)
+- [Titles](./titles.md)
 

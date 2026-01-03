@@ -1,3 +1,0 @@
-**goal:** imlement...
-
-  - [ ] funny business

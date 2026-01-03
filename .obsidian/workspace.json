@@ -13,28 +13,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/guides/debugging.md",
+                "file": "notes/designs/digest.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "debugging"
-            }
-          },
-          {
-            "id": "daab691e42d1c6a5",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.10.6"
-              },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.10.6"
+              "title": "digest"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -91,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 428.5024719238281
+    "width": 200
   },
   "right": {
     "id": "3a2b7a363fc7d49c",
@@ -153,12 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "notes/designs/digest.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of digest"
             }
           }
         ],
@@ -179,44 +167,44 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "0d6205459baf7c18",
   "lastOpenFiles": [
+    "notes/designs/work/book.md",
+    "notes/designs/architecture/core/hits.md",
+    "notes/designs/digest.md",
+    "notes/designs/architecture/core/hits copy.md",
+    "notes/designs/work/done/vitepress/index.md",
+    "notes/designs/guides/index.md",
+    "notes/designs/guides/debugging.md",
+    "notes/designs/architecture/core/timers copy.md",
+    "notes/designs/architecture/core/titles.md",
+    "notes/designs/architecture/core/widget_title.md",
+    "notes/designs/architecture/core/timers.md",
+    "notes/designs/guides/access.md",
+    "notes/designs/work/done/refactoring/breadcrumbs re-compositioon.md",
+    "notes/designs/work/done/refactoring/layout.md",
+    "notes/designs/work/done/refactoring/index.md",
+    "notes/designs/work/done/refactoring/clicks.md",
+    "notes/designs/work/done/refactoring/breadcrumbs.md",
+    "notes/designs/work/done/refactoring/banners.md",
+    "notes/designs/work/done/refactoring",
+    "notes/designs/work/done/vitepress/redox.md",
+    "notes/designs/work/done/vitepress/webseriously-driven-docs.md",
+    "notes/designs/work/done/vitepress/redox.md.original",
+    "notes/designs/work/done/vitepress",
+    "notes/designs/introduction.md",
     "notes/designs/architecture/core/reactivity.md",
     "notes/designs/architecture/other/vitepress.md",
     "vite.config.js.timestamp-1767427350787-38303a0436cb7.mjs",
     "notes/designs/work/search-details-bug.md",
     "notes/designs/index.md",
     "notes/designs/work/segmented-disable.md",
-    "notes/designs/work/search-trait-linked-text.md",
-    "notes/designs/worksegmented-disable.md",
-    "notes/designs/work/worksegmented-disable.md",
-    "notes/designs/work/worksearch-trait-linked-text.md",
-    "notes/designs/worksearch-trait-linked-text.md",
-    "notes/designs/work/index.md",
-    "notes/designs/work/done/index.md",
-    "notes/designs/work/done/refactor/index.md",
     "notes/tools/sync_index_files.sh",
-    "notes/designs/work/done/webseriously-driven-docs.md",
     "notes/tools/dist/sync-sidebar.js",
     "notes/tools/dist/merge-files.js",
     "notes/tools/dist/generate-sidebar.js",
     "notes/tools/dist/fix-links.js",
     "notes/tools/dist/markdown-parser.js",
-    "notes/tools/dist/link-finder.js",
-    "notes/tools/dist/config-updater.js",
-    "notes/tools/dist",
-    "notes/designs/work/done/refactor/layout.md",
-    "notes/designs/work/done/refactor/clicks.md",
-    "notes/designs/work/done/refactor/breadcrumbs.md",
-    "notes/designs/work/done/refactor/banners.md",
-    "notes/designs/work/refactor/layout.md",
-    "notes/designs/work/refactor/index.md",
-    "notes/designs/work/refactor/clicks.md",
-    "notes/designs/work/refactor/breadcrumbs.md",
-    "notes/designs/work/refactor/banners.md",
-    "notes/designs/refactor/index.md",
-    "notes/designs/architecture/other/index.md",
-    "notes/designs/architecture/ux/index.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",

@@ -63,6 +63,14 @@ export default defineConfig({
               text: 'Styles',
               link: '/architecture/core/styles'
             },
+            {
+              text: 'Timers',
+              link: '/architecture/core/timers'
+            },
+            {
+              text: 'Titles',
+              link: '/architecture/core/titles'
+            },
             ]
           },
           {
@@ -116,13 +124,17 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Documentation',
-        link: '/documentation'
+        text: 'Digest',
+        link: '/digest'
       },
       {
         text: 'Guides',
         collapsed: true,
         items: [
+          {
+            text: 'Access',
+            link: '/guides/access'
+          },
           {
             text: 'Chat',
             link: '/guides/chat'
@@ -134,10 +146,6 @@ export default defineConfig({
           {
             text: 'Debugging',
             link: '/guides/debugging'
-          },
-          {
-            text: 'Digest',
-            link: '/guides/digest'
           },
           {
             text: 'Gotchas',
@@ -178,68 +186,54 @@ export default defineConfig({
         collapsed: true,
         items: [
           {
+            text: 'Book',
+            link: '/work/book'
+          },
+          {
             text: 'Done',
             collapsed: true,
             items: [
-            {
-              text: 'Access',
-              link: '/work/done/access'
-            },
-            {
-              text: 'Breadcrumbs Re Compositioon',
-              link: '/work/done/breadcrumbs re-compositioon'
-            },
             {
               text: 'Focus',
               link: '/work/done/focus'
             },
             {
-              text: 'Redox',
-              link: '/work/done/redox'
-            },
-            {
-              text: 'Refactor',
+              text: 'Refactoring',
               collapsed: true,
               items: [
               {
                 text: 'Banners',
-                link: '/work/done/refactor/banners'
+                link: '/work/done/refactoring/banners'
+              },
+              {
+                text: 'Breadcrumbs Re Compositioon',
+                link: '/work/done/refactoring/breadcrumbs re-compositioon'
               },
               {
                 text: 'Breadcrumbs',
-                link: '/work/done/refactor/breadcrumbs'
-              },
-              {
-                text: 'Clicks',
-                link: '/work/done/refactor/clicks'
+                link: '/work/done/refactoring/breadcrumbs'
               },
               {
                 text: 'Layout',
-                link: '/work/done/refactor/layout'
+                link: '/work/done/refactoring/layout'
               },
               ]
             },
             {
-              text: 'Tasks',
-              link: '/work/done/tasks'
-            },
-            {
-              text: 'Timers',
-              link: '/work/done/timers'
-            },
-            {
-              text: 'Webseriously Driven Docs',
-              link: '/work/done/webseriously-driven-docs'
-            },
-            {
-              text: 'Widget Title',
-              link: '/work/done/widget_title'
+              text: 'VitePress',
+              collapsed: true,
+              items: [
+              {
+                text: 'Redox',
+                link: '/work/done/vitepress/redox'
+              },
+              {
+                text: 'Webseriously Driven Docs',
+                link: '/work/done/vitepress/webseriously-driven-docs'
+              },
+              ]
             },
             ]
-          },
-          {
-            text: 'Tasks',
-            link: '/work/tasks'
           },
         ]
       }
