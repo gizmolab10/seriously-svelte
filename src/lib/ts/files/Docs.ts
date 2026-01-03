@@ -59,40 +59,49 @@ export function getDocsStructure(): DocNode[] {
 							path: 'architecture/core/managers'
 						},
 						{
-							id: 'architecture_core_persistable',
-							name: 'Persistable',
-							type: 'file',
-							path: 'architecture/core/persistable'
-						},
-						{
-							id: 'architecture_core_reactivity',
-							name: 'Reactivity',
-							type: 'file',
-							path: 'architecture/core/reactivity'
-						},
-						{
 							id: 'architecture_core_state',
 							name: 'State',
 							type: 'file',
 							path: 'architecture/core/state'
 						},
 						{
-							id: 'architecture_core_styles',
+							id: 'architecture_core_ux',
+							name: 'Ux',
+							type: 'file',
+							path: 'architecture/core/ux'
+						},
+					]
+				},
+				{
+					id: 'architecture_more',
+					name: 'More',
+					type: 'folder',
+					path: 'architecture/more',
+					link: 'architecture/more/index',
+					children: [
+						{
+							id: 'architecture_more_persistable',
+							name: 'Persistable',
+							type: 'file',
+							path: 'architecture/more/persistable'
+						},
+						{
+							id: 'architecture_more_reactivity',
+							name: 'Reactivity',
+							type: 'file',
+							path: 'architecture/more/reactivity'
+						},
+						{
+							id: 'architecture_more_styles',
 							name: 'Styles',
 							type: 'file',
-							path: 'architecture/core/styles'
+							path: 'architecture/more/styles'
 						},
 						{
-							id: 'architecture_core_timers',
+							id: 'architecture_more_timers',
 							name: 'Timers',
 							type: 'file',
-							path: 'architecture/core/timers'
-						},
-						{
-							id: 'architecture_core_titles',
-							name: 'Titles',
-							type: 'file',
-							path: 'architecture/core/titles'
+							path: 'architecture/more/timers'
 						},
 					]
 				},
@@ -110,12 +119,6 @@ export function getDocsStructure(): DocNode[] {
 							path: 'architecture/other/bubble'
 						},
 					]
-				},
-				{
-					id: 'architecture_overview',
-					name: 'Overview',
-					type: 'file',
-					path: 'architecture/overview'
 				},
 				{
 					id: 'architecture_ux',
@@ -167,10 +170,10 @@ export function getDocsStructure(): DocNode[] {
 							path: 'architecture/ux/search'
 						},
 						{
-							id: 'architecture_ux_ux',
-							name: 'Ux',
+							id: 'architecture_ux_titles',
+							name: 'Titles',
 							type: 'file',
-							path: 'architecture/ux/ux'
+							path: 'architecture/ux/titles'
 						},
 					]
 				},
@@ -262,6 +265,12 @@ export function getDocsStructure(): DocNode[] {
 					path: 'guides/voice'
 				},
 			]
+		},
+		{
+			id: 'overview',
+			name: 'Overview',
+			type: 'file',
+			path: 'overview'
 		},
 		{
 			id: 'project',

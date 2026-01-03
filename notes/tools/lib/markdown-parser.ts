@@ -86,15 +86,19 @@ export class MarkdownParser {
 
   /**
    * Update links in a markdown file
-   * @param filePath Path to the markdown file
-   * @param replacements Map of old target -> new target
+   * @param filePath Path to the markdown file (absolute or relative to cwd)
+   * @param replacements Map of old target -> new target (paths relative to repo root)
+   * @param repoRoot Optional repo root path for computing relative links
    * @returns Number of links updated
    */
-  static updateLinks(filePath: string, replacements: Map<string, string | null>): number {
+  static updateLinks(filePath: string, replacements: Map<string, string | null>, repoRoot?: string): number {
     let content = fs.readFileSync(filePath, 'utf-8');
     const lines = content.split('\n');
     let inCodeBlock = false;
     let updatedCount = 0;
+
+    // Determine the directory of the source file for computing relative paths
+    const sourceDir = path.dirname(filePath);
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
@@ -126,8 +130,10 @@ export class MarkdownParser {
               shouldDeleteLine = true;
               return '';
             }
+            // Compute relative path from source file to new target
+            const relativePath = this.computeRelativePath(sourceDir, newPath, repoRoot);
             // Update the link, preserving anchor
-            const newTarget = anchor ? `${newPath}#${anchor}` : newPath;
+            const newTarget = anchor ? `${relativePath}#${anchor}` : relativePath;
             return `[[${newTarget.replace('.md', '')}]]`;
           }
         }
@@ -152,8 +158,10 @@ export class MarkdownParser {
               shouldDeleteLine = true;
               return '';
             }
+            // Compute relative path from source file to new target
+            const relativePath = this.computeRelativePath(sourceDir, newPath, repoRoot);
             // Update the link, preserving anchor
-            const newTarget = anchor ? `${newPath}#${anchor}` : newPath;
+            const newTarget = anchor ? `${relativePath}#${anchor}` : relativePath;
             return `[${text}](${newTarget})`;
           }
         }
@@ -187,6 +195,41 @@ export class MarkdownParser {
     }
 
     return updatedCount;
+  }
+
+  /**
+   * Compute relative path from source directory to target file
+   * @param sourceDir Directory containing the source markdown file
+   * @param targetPath Path to target file (relative to repo root)
+   * @param repoRoot Optional repo root for absolute path computation
+   * @returns Relative path with ./ prefix
+   */
+  private static computeRelativePath(sourceDir: string, targetPath: string, repoRoot?: string): string {
+    // If targetPath is already relative (starts with ./ or ../), use as-is
+    if (targetPath.startsWith('./') || targetPath.startsWith('../')) {
+      return targetPath;
+    }
+
+    // Make targetPath absolute if we have repoRoot
+    let absoluteTarget: string;
+    if (repoRoot) {
+      absoluteTarget = path.join(repoRoot, targetPath);
+    } else if (path.isAbsolute(targetPath)) {
+      absoluteTarget = targetPath;
+    } else {
+      // Assume targetPath is relative to current working directory
+      absoluteTarget = path.resolve(targetPath);
+    }
+
+    // Compute relative path from sourceDir to target
+    let relativePath = path.relative(sourceDir, absoluteTarget);
+    
+    // Ensure it starts with ./ for same-directory or child paths
+    if (!relativePath.startsWith('.')) {
+      relativePath = './' + relativePath;
+    }
+
+    return relativePath;
   }
 
   /**

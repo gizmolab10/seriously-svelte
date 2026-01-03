@@ -433,4 +433,4 @@ Platform config
 - [components.md](./components.md) - Component organization and Components manager
 - [managers.md](./managers.md) - Manager pattern architecture
 - [hits.md](./hits.md) - Centralized hit testing with S_Hit_Target
-- [styles.md](./styles.md) - Centralized color computation with state objects
+- [styles.md](../more/styles.md) - Centralized color computation with state objects

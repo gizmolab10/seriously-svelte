@@ -61,10 +61,10 @@ flowchart TB
 
 ## Reading Order
 
-1. [state.md](./core/state.md) — understand S_* objects and w_* stores
-2. [managers.md](./core/managers.md) — the 16 singletons
-3. [hits.md](./core/hits.md) — how mouse events flow
-4. [ux.md](./ux/ux.md) — focus, grabs, editing
-5. [geometry.md](./core/geometry.md) — layout coordination
+1. [state.md](./architecture/core/state.md) — understand S_* objects and w_* stores
+2. [managers.md](./architecture/core/managers.md) — the 16 singletons
+3. [hits.md](./architecture/core/hits.md) — how mouse events flow
+4. [ux.md](./architecture/core/ux.md) — focus, grabs, editing
+5. [geometry.md](./architecture/core/geometry.md) — layout coordination
 
 After that, pick what interests you.

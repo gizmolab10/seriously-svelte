@@ -126,7 +126,7 @@ const { w_item: w_trait } = x.si_thing_traits;  // Current trait
 2. Current grab (if grabs exist)
 3. Current focus
 
-See [UX Manager documentation](ux.md) for details.
+See [UX Manager documentation](../core/ux.md) for details.
 
 ## Banner System
 

@@ -156,7 +156,7 @@ class FixLinks {
     const markdownFiles = this.findMarkdownFiles(path.join(this.repoRoot, 'notes'));
     
     for (const mdFile of markdownFiles) {
-      const updated = MarkdownParser.updateLinks(mdFile, replacements);
+      const updated = MarkdownParser.updateLinks(mdFile, replacements, this.repoRoot);
       if (updated > 0 && this.verbose) {
         console.log(`  Updated ${updated} link(s) in ${path.relative(this.repoRoot, mdFile)}`);
       }

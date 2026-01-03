@@ -9,7 +9,9 @@ User experience components and interaction patterns.
 - [Paging](./paging.md) - Pagination controls and navigation
 - [Preferences](./preferences.md) - User preferences system
 - [Search](./search.md) - Search functionality and UI
-- [UX Manager](./ux.md) - Overall UX coordination and state
+- [Titles](./titles.md) - Widget title component
+## See Also
+- [UX Manager](../core/ux.md) - Overall UX coordination and state
 
 ## Contents
 
@@ -20,5 +22,5 @@ User experience components and interaction patterns.
 - [Paging](./paging.md)
 - [Preferences](./preferences.md)
 - [Search](./search.md)
-- [Ux](./ux.md)
+- [Titles](./titles.md)
 

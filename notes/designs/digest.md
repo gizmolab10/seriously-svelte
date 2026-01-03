@@ -30,29 +30,35 @@ Only one element in the app can react to the mouse. The Hits spatial index knows
 
 Webseriously uses 16 singleton managers to coordinate different aspects of the application. Each manager has a specific responsibility and provides a centralized API for its domain.
 
-#### [persistable.md](./architecture/core/persistable.md)
-
-All persistent data entities extend the Persistable base class. Provides unified interface for database operations, serialization, and identity management.
-
-#### [reactivity.md](./architecture/core/reactivity.md)
-
-How reactivity works in Svelte 4. Not about stores, not about Svelte 5 runes. Just plain old component state and the weirdness i kept seeing in the codebase.
-
 #### [state.md](./architecture/core/state.md)
 
 Each state object is a single source of truth. Hybrid approach: state objects (S_* classes) for persistent state that survives component recreation, plus Svelte stores (w_* writables) for reactivity. Specialized approach for a tightly integrated reactive system.
 
-#### [styles.md](./architecture/core/styles.md)
+#### [ux.md](./architecture/core/ux.md)
+
+What's focused, what's grabbed, what's being edited, what to show in details. Stores and derived stores. Fast!
+
+---
+
+### More
+
+Additional architecture topics.
+
+#### [persistable.md](./architecture/more/persistable.md)
+
+All persistent data entities extend the Persistable base class. Provides unified interface for database operations, serialization, and identity management.
+
+#### [reactivity.md](./architecture/more/reactivity.md)
+
+How reactivity works in Svelte 4. Not about stores, not about Svelte 5 runes. Just plain old component state and the weirdness i kept seeing in the codebase.
+
+#### [styles.md](./architecture/more/styles.md)
 
 i admit it, my early code was a nightmare to tweak because i designed it as i went along. With AI, i crafted a centralized system. One place to confine the mess. Styles computes all colors from state snapshots. Remarkably simple code.
 
-#### [timers.md](./architecture/core/timers.md)
+#### [timers.md](./architecture/more/timers.md)
 
 Mouse timing logic centralized in Hits manager. Components declare intent ("I need autorepeat"), manager handles lifecycle. State survives re-renders because it lives on the target, not the component.
-
-#### [titles.md](./architecture/core/titles.md)
-
-Documented the editable title component before replacing it. Captures what it does (display, selection, inline editing, width measurement, hit detection) and how it coordinates with other systems.
 
 ---
 
@@ -88,9 +94,9 @@ Okay, so i like to give people choices about looks and what have you. Of course 
 
 Instant search. Type a single letter and the matches appear instantly. Type more or choose one and done. Economical use of screen real estate.
 
-#### [ux.md](./architecture/ux/ux.md)
+#### [titles.md](./architecture/ux/titles.md)
 
-What's focused, what's grabbed, what's being edited, what to show in details. Stores and derived stores. Fast!
+Documented the editable title component before replacing it. Captures what it does (display, selection, inline editing, width measurement, hit detection) and how it coordinates with other systems.
 
 ---
 

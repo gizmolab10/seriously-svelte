@@ -8,5 +8,6 @@ Project documentation and design notes.
 - [Guides](./guides/)
 - [Work](./work/)
 - [Digest](./digest.md)
+- [Overview](./overview.md)
 - [Project](./project.md)
 

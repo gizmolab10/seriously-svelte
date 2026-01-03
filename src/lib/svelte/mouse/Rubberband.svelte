@@ -102,18 +102,18 @@
         }
     }
 
-    private function ancestries_intersecting_rubberband(): Array<Ancestry> {
+    function ancestries_intersecting_rubberband(): Array<Ancestry> {
         return rbush_forRubberband.search(rect.asBBox).map(b => b.target.ancestry);
     }
 
-    private function constrainToRect(point: Point): Point {
+    function constrainToRect(point: Point): Point {
         return new Point(
             point.x.force_between(bounds.x, bounds.right),
             point.y.force_between(bounds.y, bounds.bottom)
         );
     }
 
-    private function blockEvent(e: Event) {
+    function blockEvent(e: Event) {
         const target = e.target;
         // Only block events when rubberband is active and target is not an interactive element
         if ($w_dragging === T_Drag.rubberband && target instanceof HTMLElement) {
@@ -126,7 +126,7 @@
         }
     }
 
-    private function detect_and_grab() {
+    function detect_and_grab() {
         if ($w_dragging === T_Drag.rubberband) {
             const ancestries = ancestries_intersecting_rubberband();
             if (ancestries.length != 0) {
@@ -140,7 +140,7 @@
 
     // Handle clicks on empty graph space
     // This only gets called if no higher-priority target (dot/widget/ring) handled the click
-    private function handle_s_mouse(s_mouse: S_Mouse): boolean {
+    function handle_s_mouse(s_mouse: S_Mouse): boolean {
         if (s_mouse.isDown && s_mouse.event) {
             const event = s_mouse.event;
             startPoint = new Point(event.clientX, event.clientY);

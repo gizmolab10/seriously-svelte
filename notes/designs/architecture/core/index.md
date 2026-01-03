@@ -7,9 +7,13 @@ The core architecture components form the foundation of webseriously's data mode
 - [Geometry](./geometry.md) - Geometric calculations and positioning
 - [Hits](./hits.md) - Mouse interaction and hit detection system
 - [Managers](./managers.md) - Manager pattern architecture
-- [Persistable](./persistable.md) - Base class for all persistent entities
 - [State](./state.md) - State management patterns
-- [Styles](./styles.md) - Styling system and conventions
+- [UX](./ux.md) - User interaction state (focus, grabs, details)
+## See Also
+- [Persistable](../more/persistable.md) - Base class for all persistent entities
+- [Styles](../more/styles.md) - Styling system and conventions
+- [Timers](../more/timers.md) - Mouse timing (autorepeat, long-click, double-click)
+- [Reactivity](../more/reactivity.md) - Svelte 4 reactivity patterns
 
 ## Contents
 
@@ -18,10 +22,6 @@ The core architecture components form the foundation of webseriously's data mode
 - [Geometry](./geometry.md)
 - [Hits](./hits.md)
 - [Managers](./managers.md)
-- [Persistable](./persistable.md)
-- [Reactivity](./reactivity.md)
 - [State](./state.md)
-- [Styles](./styles.md)
-- [Timers](./timers.md)
-- [Titles](./titles.md)
+- [Ux](./ux.md)
 

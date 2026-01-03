@@ -564,6 +564,6 @@ class CustomModel extends Persistable {
 
 ## Related Documents
 
-- [database.md](databases.md) - Database abstraction layer
-- [state.md](./state.md) - State management patterns
-- [managers.md](managers.md) - Manager pattern architecture
+- [databases.md](../core/databases.md) - Database abstraction layer
+- [state.md](../core/state.md) - State management patterns
+- [managers.md](../core/managers.md) - Manager pattern architecture
