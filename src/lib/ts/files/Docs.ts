@@ -65,6 +65,12 @@ export function getDocsStructure(): DocNode[] {
 							path: 'architecture/core/persistable'
 						},
 						{
+							id: 'architecture_core_reactivity',
+							name: 'Reactivity',
+							type: 'file',
+							path: 'architecture/core/reactivity'
+						},
+						{
 							id: 'architecture_core_state',
 							name: 'State',
 							type: 'file',
@@ -90,18 +96,6 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Bubble',
 							type: 'file',
 							path: 'architecture/other/bubble'
-						},
-						{
-							id: 'architecture_other_documentation',
-							name: 'Documentation',
-							type: 'file',
-							path: 'architecture/other/documentation'
-						},
-						{
-							id: 'architecture_other_reactivity',
-							name: 'Reactivity',
-							type: 'file',
-							path: 'architecture/other/reactivity'
 						},
 					]
 				},

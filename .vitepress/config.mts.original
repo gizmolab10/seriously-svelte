@@ -73,6 +73,10 @@ export default defineConfig({
               text: 'Bubble',
               link: '/architecture/other/bubble'
             },
+            {
+              text: 'VitePress',
+              link: '/architecture/other/vitepress'
+            },
             ]
           },
           {

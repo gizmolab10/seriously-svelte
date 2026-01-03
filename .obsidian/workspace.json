@@ -13,15 +13,28 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/index.md",
+                "file": "notes/designs/guides/debugging.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "debugging"
+            }
+          },
+          {
+            "id": "daab691e42d1c6a5",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.10.6"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.10.6"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -140,13 +153,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline"
             }
           }
         ],
@@ -167,8 +179,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0d6205459baf7c18",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/designs/architecture/core/reactivity.md",
+    "notes/designs/architecture/other/vitepress.md",
+    "vite.config.js.timestamp-1767427350787-38303a0436cb7.mjs",
+    "notes/designs/work/search-details-bug.md",
+    "notes/designs/index.md",
+    "notes/designs/work/segmented-disable.md",
+    "notes/designs/work/search-trait-linked-text.md",
+    "notes/designs/worksegmented-disable.md",
+    "notes/designs/work/worksegmented-disable.md",
+    "notes/designs/work/worksearch-trait-linked-text.md",
+    "notes/designs/worksearch-trait-linked-text.md",
     "notes/designs/work/index.md",
     "notes/designs/work/done/index.md",
     "notes/designs/work/done/refactor/index.md",
@@ -186,7 +209,6 @@
     "notes/designs/work/done/refactor/clicks.md",
     "notes/designs/work/done/refactor/breadcrumbs.md",
     "notes/designs/work/done/refactor/banners.md",
-    "notes/designs/work/done/refactor",
     "notes/designs/work/refactor/layout.md",
     "notes/designs/work/refactor/index.md",
     "notes/designs/work/refactor/clicks.md",
@@ -195,15 +217,6 @@
     "notes/designs/refactor/index.md",
     "notes/designs/architecture/other/index.md",
     "notes/designs/architecture/ux/index.md",
-    "notes/designs/architecture/core/index.md",
-    "notes/designs/work/tool5-content.md",
-    "notes/designs/work/done/redox.md",
-    "notes/designs/work/tasks.md",
-    "notes/tools/docs/test/fixtures/advanced/test-moved.md",
-    "notes/designs/work/redox.md",
-    "notes/tools/docs/PHASE2-MINIMIZED.md",
-    "notes/tools/docs/test/PHASE2-FINAL.md",
-    "notes/tools/docs/test/PHASE2-COMPLETE.md",
     "node_modules/@vitest/ui/dist/client/bg.png",
     "node_modules/@vitest/ui/dist/client/favicon.svg",
     "dist/assets/seriously-icon.png",
