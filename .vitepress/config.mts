@@ -12,6 +12,10 @@ export default defineConfig({
     }
   },
 
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/seriously-icon.png' }]
+  ],
+
   themeConfig: {
 
     sidebar: [

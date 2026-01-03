@@ -13,23 +13,23 @@
     },
     "scripts": {
         "dev": "vite",
+        "test": "vitest",
         "docs": "typedoc",
-        "docs:dev": "vitepress dev",
-        "docs:build": "vitepress build > vitepress.build.txt 2>&1",
-        "docs:preview": "vitepress preview",
         "build": "vite build",
         "rollup": "rollup -c",
-        "test": "vitest",
         "test:ui": "vitest --ui",
         "test:run": "vitest run",
+        "docs:dev": "vitepress dev",
         "serve": "parcel ./index.html",
         "swc": "swc src -d swc.package",
+        "docs:preview": "vitepress preview",
         "preview": "vite preview --port 8080",
         "parcel": "parcel build ./index.html",
         "esbuild": "node config/esbuild.config.cjs",
         "package": "rm -rf package; svelte-package -o package",
         "docs:watch": "nodemon --watch src --ext md,js,json,ts,tsx,svelte --exec \"yarn typedoc\"",
-        "eesbuild": "esbuild src/lib/js/index.ts --bundle --outfile=esbuild/webseriously.bundle.js --watch"
+        "eesbuild": "esbuild src/lib/js/index.ts --bundle --outfile=esbuild/webseriously.bundle.js --watch",
+        "docs:build": "vitepress build > vitepress.build.txt 2>&1 && cp .vitepress/public/seriously-icon.png .vitepress/dist/"
     },
     "devDependencies": {
         "@smui/button": "^7.0.0",
