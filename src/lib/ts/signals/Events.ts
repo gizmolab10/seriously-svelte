@@ -255,7 +255,7 @@ export class Events {
 						case 'enter':	
 						case 'escape':
 						case 'arrowright':	    search.deactivate_focus_and_grab(); break;	// stop searching		
-						case 'arrowleft':		u.consume_event(event); search.w_s_search.set(T_Search.enter); break;
+						case 'arrowleft':		u.consume_event(event); search.activate(); break;
 						case 'arrowup':			u.consume_event(event); search.next_row(false); break;
 						case 'arrowdown':		u.consume_event(event); search.next_row(true); break;
 						case 'tab':				search.selected_row = 0; break;
@@ -294,7 +294,7 @@ export class Events {
 						case '>':				g_graph_tree.increase_depth_limit_by(1); break;
 						case '<':				g_graph_tree.increase_depth_limit_by(-1); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
-						case 'f':				search.w_s_search.set(T_Search.enter); break;
+						case 'f':				search.activate(); break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;
 						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;
 						case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;

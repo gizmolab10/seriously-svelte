@@ -30,11 +30,13 @@ class Search {
 	}
 
 	activate() {
-		this.w_s_search.set(T_Search.enter);
+		x.save_grabs();
 		show.w_show_search_controls.set(true);
+		this.search_for(this.search_text);
 	}
 
 	deactivate() {
+		x.save_grabs(false);
 		this.w_search_results_found.set(0);
 		this.w_s_search.set(T_Search.off);
 		show.w_show_search_controls.set(false);
@@ -43,17 +45,11 @@ class Search {
 
 	private setup() {
 		if (features && features.allow_search && p) {
-			this.search_text = p.readDB_key(T_Preference.search_text);
 			core.w_t_startup.subscribe((startup: T_Startup) => {
 				if (startup == T_Startup.ready) {
+					this.search_text = p.readDB_key(T_Preference.search_text);
 					this.buildIndex(h.things);
 					this.w_search_results_changed.set(Date.now());
-					this.w_s_search.subscribe((state) => {
-						const text = this.search_text?.toLowerCase();
-						if (!!text && state !== T_Search.off) {
-							this.search_for(text);
-						}
-					});
 				}
 			});
 		}
@@ -64,7 +60,6 @@ class Search {
 	set selected_row(row: number) {
 		x.si_found.index = row;
 		this.w_s_search.set(T_Search.selected);
-		// w_ancestry_forDetails is now automatically updated via derived store
 	}
 
 	get selected_ancestry(): Ancestry | null {
@@ -77,7 +72,7 @@ class Search {
 	}
 
 	update_search() {
-		const text = this.search_text?.toLowerCase();
+		const text = this.search_text?.toLowerCase()?.trim();
 		if (!!text) {
 			this.buildIndex(h.things);
 			this.update_search_for(text);
@@ -102,29 +97,27 @@ class Search {
 		this.deactivate();
 	}
 
-	search_for(query: string) {
-		this.search_text = query;
+	search_for(query: string | null | undefined) {
+		this.search_text = query?.toLowerCase()?.trim() ?? null;
 		const before = this.results_fingerprint;
-		if (query.length > 0) {
+		if (!this.search_text || this.search_text.length == 0) {
+			this.search_words = [];
+			x.si_found.reset();
+			this.w_search_results_found.set(0);
+			this.w_s_search.set(T_Search.enter);
+		} else {
 			// Split once here
-			const lowercase = query.toLowerCase().trim();
-			this.search_words = lowercase.split(/\s+/).filter(w => w.length > 0);
+			this.search_words = this.search_text.split(/\s+/).filter(w => w.length > 0);
 			
 			// Pass the words array and the intersect flag
 			x.si_found.items = this.root_node.search_for(this.search_words, this.use_AND_logic);
 			const show_results = x.si_found.items.length > 0;
 			this.w_search_results_found.set(x.si_found.items.length);
 			this.w_s_search.set(show_results ? T_Search.results : T_Search.enter);
-		} else {
-			this.search_words = [];
-			x.si_found.reset();
-			this.w_search_results_found.set(0);
-			this.w_s_search.set(T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {
 			x.si_found.index = -1;
 		}
-		show.w_show_search_controls.set(T_Search.off != get(this.w_s_search));
 		this.w_search_results_changed.set(Date.now());
 	}
 	

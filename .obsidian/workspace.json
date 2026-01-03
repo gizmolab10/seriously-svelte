@@ -169,6 +169,7 @@
   },
   "active": "0d6205459baf7c18",
   "lastOpenFiles": [
+    "notes/designs/work/done/search.md",
     "vite.config.js.timestamp-1767474356560-b7ad150143177.mjs",
     "vite.config.js.timestamp-1767468111294-4a5837a27b5c2.mjs",
     "vite.config.js.timestamp-1767467927397-f2f576c72b423.mjs",
@@ -191,7 +192,6 @@
     "node_modules/langium/node_modules",
     "node_modules/mermaid/dist/diagrams/xychart/chartBuilder/components/axis/linearAxis.d.ts",
     "node_modules/mermaid/dist/diagrams/xychart/chartBuilder/components/axis/index.d.ts",
-    "node_modules/mermaid/dist/diagrams/xychart/chartBuilder/components/axis/baseAxis.d.ts",
     "node_modules/katex/src/metrics/README.md",
     "node_modules/katex/contrib/mathtex-script-type/README.md",
     "node_modules/katex/contrib/mhchem/README.md",

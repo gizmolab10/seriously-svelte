@@ -8,7 +8,6 @@ import { x } from '../managers/UX';
 export class Visibility {
 	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
 	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.focus);
-	w_show_countsAs			= writable<T_Counts_Shown>(T_Counts_Shown.dots);
 	w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(null);
 	w_t_directionals		= writable<boolean[]>([false, true]);
 	w_t_focus				= writable<T_Focus>(T_Focus.static);
@@ -16,13 +15,16 @@ export class Visibility {
 	w_t_details				= writable<Array<T_Detail>>([]);
 	w_t_trees				= writable<Array<T_Kinship>>();
 	w_t_countDots			= writable<Array<T_Kinship>>();
-	w_id_popupView			= writable<string | null>();
+
+	w_show_countsAs			= writable<T_Counts_Shown>(T_Counts_Shown.dots);
 	w_show_save_data_button	= writable<boolean>(false);
 	w_show_catalist_details = writable<boolean>(false);
 	w_show_search_controls	= writable<boolean>(false);
 	w_show_related			= writable<boolean>(false);
 	w_show_details			= writable<boolean>(true);
 	w_show_other_databases	= writable<boolean>(true);
+
+	w_id_popupView			= writable<string | null>();
 	debug_cursor			= false;
 
 	constructor() {
@@ -89,7 +91,6 @@ export class Visibility {
 	reactivity_subscribe() {
 		function writeAnd_reactTo(t_preference: T_Preference, flag: any) {
 			p.write_key(t_preference, flag);
-			g.restore_preferences();
 			g.layout();
 		}
 		this.w_show_details.subscribe((flag: any) => {
@@ -103,9 +104,6 @@ export class Visibility {
 		});
 		this.w_t_focus.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.focus, flag);
-		});
-		this.w_show_search_controls.subscribe((flag: any) => {
-			writeAnd_reactTo(T_Preference.show_related, flag);
 		});
     }
 }

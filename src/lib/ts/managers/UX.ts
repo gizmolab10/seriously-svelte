@@ -16,12 +16,14 @@ export default class S_UX {
 	w_relationship_order = writable<number>(0);
 	w_thing_fontFamily	 = writable<string>();
 	
-	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
+	si_recents			 = new S_Items<Identifiable_S_Items_Pair>([]);
+	si_expanded			 = new S_Items<Ancestry>([]);
+	si_grabs			 = new S_Items<Ancestry>([]);
+	si_found			 = new S_Items<Thing>([]);
+	private si_saved_grabs = new S_Items<Ancestry>([]);
+
 	w_ancestry_forDetails!: Readable<Ancestry | null>;
-	w_ancestry_focus!: Readable<Ancestry | null>;
-	si_expanded = new S_Items<Ancestry>([]);
-	si_grabs = new S_Items<Ancestry>([]);
-	si_found = new S_Items<Thing>([]);
+	w_ancestry_focus!:		Readable<Ancestry | null>;
 
 	parents_focus!: Ancestry;
 	prior_focus!: Ancestry;
@@ -167,6 +169,17 @@ export default class S_UX {
 	}
 	
 	static readonly _____GRABS: unique symbol;
+
+	save_grabs(save: boolean = true) {
+		if (save) {
+			this.si_saved_grabs.items = [...this.si_grabs.items];
+			this.si_saved_grabs.index = this.si_grabs.index;
+		} else if (this.si_saved_grabs.length > 0) {
+			this.si_grabs.items = this.si_saved_grabs.items;
+			this.si_grabs.index = this.si_saved_grabs.index;
+			this.si_saved_grabs.reset();
+		}
+	}
 
 	grabOnly(ancestry: Ancestry) {
 		if (!radial.isDragging) {
