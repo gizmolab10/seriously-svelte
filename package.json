@@ -63,6 +63,8 @@
         "vite": "^4.3.2",
         "vite-plugin-singlefile": "^2.1.0",
         "vitepress": "^1.6.4",
+        "vitepress-plugin-mermaid": "^2.0.16",
+        "mermaid": "^11.4.0",
         "vitest": "^4.0.16"
     },
     "dependencies": {

@@ -112,6 +112,12 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
+					id: 'architecture_overview',
+					name: 'Overview',
+					type: 'file',
+					path: 'architecture/overview'
+				},
+				{
 					id: 'architecture_ux',
 					name: 'Ux',
 					type: 'folder',

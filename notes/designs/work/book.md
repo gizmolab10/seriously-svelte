@@ -104,7 +104,7 @@ Document what makes great technical writing feel great, how to achieve it, and w
 
 *Visual overview exists?*
 
-- [ ] Architecture diagram
+- [x] Architecture diagram — `architecture/overview.md`
 - [ ] Data flow diagram
 - [ ] Component relationship map
 

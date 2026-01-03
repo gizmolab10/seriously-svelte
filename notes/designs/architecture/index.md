@@ -1,5 +1,7 @@
 # Architecture
 
+**[Start here → Overview](./overview.md)** — big picture diagram and reading order.
+---
 I built a surprising number of managers, 14.
 - [Bubble](./other/bubble.md) not really a manager
 - [Buttons](./ux/buttons.md) needs a sanity check
@@ -20,4 +22,5 @@ I built a surprising number of managers, 14.
 - [Core](./core/)
 - [Other](./other/)
 - [Ux](./ux/)
+- [Overview](./overview.md)
 
