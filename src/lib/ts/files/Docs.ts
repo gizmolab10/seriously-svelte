@@ -305,6 +305,27 @@ export function getDocsStructure(): DocNode[] {
 							path: 'work/done/focus'
 						},
 						{
+							id: 'work_done_migration',
+							name: 'Migration',
+							type: 'folder',
+							path: 'work/done/migration',
+							link: 'work/done/migration/index',
+							children: [
+								{
+									id: 'work_done_migration_focus',
+									name: 'Focus',
+									type: 'file',
+									path: 'work/done/migration/focus'
+								},
+								{
+									id: 'work_done_migration_grow_shrink',
+									name: 'Grow Shrink',
+									type: 'file',
+									path: 'work/done/migration/grow-shrink'
+								},
+							]
+						},
+						{
 							id: 'work_done_refactoring',
 							name: 'Refactoring',
 							type: 'folder',

@@ -34,10 +34,6 @@ export default withMermaid(
           link: '/digest'
         },
         {
-          text: 'Overview',
-          link: '/overview'
-        },
-        {
           text: 'Architecture >',
           link: '/architecture/',
           collapsed: true,
@@ -228,6 +224,21 @@ export default withMermaid(
                 {
                   text: 'Focus',
                   link: '/work/done/focus'
+                },
+                {
+                  text: 'Migration >',
+                  link: '/work/done/migration/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Focus',
+                      link: '/work/done/migration/focus'
+                    },
+                    {
+                      text: 'Grow Shrink',
+                      link: '/work/done/migration/grow-shrink'
+                    }
+                  ]
                 },
                 {
                   text: 'Refactoring >',

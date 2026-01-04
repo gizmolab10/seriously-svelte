@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/digest.md",
+                "file": "notes/designs/work/book.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "digest"
+              "title": "book"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 306.50390243530273
   },
   "right": {
     "id": "3a2b7a363fc7d49c",
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/digest.md",
+                "file": "notes/designs/work/book.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of digest"
+              "title": "Outline of book"
             }
           }
         ],
@@ -167,8 +167,18 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0d6205459baf7c18",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/designs/work/done/migration/index.md",
+    "notes/designs/work/done/migration/focus.md",
+    "notes/designs/work/done/migration/grow-shrink.md",
+    "notes/designs/work/done/migration/ancestry-focus.md",
+    "notes/designs/work/done/migration/grow-shrink-migration.md",
+    "notes/designs/work/done/migration/ancestry-focus-migration.md",
+    "notes/designs/work/done/migration",
+    "notes/designs/work/grow-shrink-migration.md",
+    "notes/designs/work/ancestry-focus-migration.md",
+    "notes/designs/digest.md",
     "vite.config.js.timestamp-1767502067267-3736538ab84e8.mjs",
     "vite.config.js.timestamp-1767502063949-e9b9722c597ed.mjs",
     "notes/designs/architecture/further/vitepress.md",
@@ -184,8 +194,6 @@
     "notes/tools/create-docs-db-data.sh",
     "notes/tools/delete-netlify-deploys.sh",
     "notes/tools/reset-docs-log.txt",
-    "notes/tools/reset-docs.sh",
-    "notes/tools/update-docs.sh",
     "notes/designs/work/next-previous.md",
     "notes/designs/work/search-links.md",
     "notes/designs/work/done/search.md",
@@ -197,14 +205,6 @@
     "notes/designs/architecture/more/persistable.md",
     "notes/designs/architecture/managers/styles.md",
     "notes/designs/architecture/managers/timers.md",
-    "notes/designs/architecture/managers/reactivity.md",
-    "notes/designs/architecture/managers/persistable.md",
-    "notes/designs/architecture/core/ux.md",
-    "notes/designs/architecture/ux/titles.md",
-    "node_modules/katex/src/metrics/README.md",
-    "node_modules/katex/contrib/mathtex-script-type/README.md",
-    "node_modules/katex/contrib/mhchem/README.md",
-    "node_modules/katex/contrib/copy-tex/README.md",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",

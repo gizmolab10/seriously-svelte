@@ -226,6 +226,21 @@ export default withMermaid(
                   link: '/work/done/focus'
                 },
                 {
+                  text: 'Migration >',
+                  link: '/work/done/migration/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Focus',
+                      link: '/work/done/migration/focus'
+                    },
+                    {
+                      text: 'Grow Shrink',
+                      link: '/work/done/migration/grow-shrink'
+                    }
+                  ]
+                },
+                {
                   text: 'Refactoring >',
                   link: '/work/done/refactoring/',
                   collapsed: true,

@@ -4,12 +4,11 @@ For this project, I decided to use Svelte. Once my first component was working, 
 
 ## Contents
 
-* [Components](./components.md)
-* [Databases](./databases.md)
-* [Geometry](./geometry.md)
-* [Hits](./hits.md)
-* [Managers](./managers.md)
-* [State](./state.md)
-* [Ux](./ux.md)
-
+- [Components](./components.md)
+- [Databases](./databases.md)
+- [Geometry](./geometry.md)
+- [Hits](./hits.md)
+- [Managers](./managers.md)
+- [State](./state.md)
+- [Ux](./ux.md)
 

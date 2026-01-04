@@ -64,7 +64,7 @@ Moved prev/next navigation from bottom of page to top navbar (before the light/d
 
 VitePress has a `watchPostEffect` that auto-expands sections containing the active page. Can't fight Vue reactivity directly. Solution: CSS layer on top.
 
-**==The trick==:** `data-user-collapsed` and `data-user-expanded` attributes. CSS uses `!important` to override VitePress styles. JS manages the attributes, localStorage persists state.
+**The trick:** `data-user-collapsed` and `data-user-expanded` attributes. CSS uses `!important` to override VitePress styles. JS manages the attributes, localStorage persists state.
 
 When user clicks a heading:
 
@@ -88,7 +88,7 @@ Also hides the carets entirely since headings now toggle on click.
 2. Add to config: `head: [['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]]`
 3. Fix build: `"docs:build": "vitepress build && cp .vitepress/public/favicon.png .vitepress/dist/"`
 
-**==Note==**: favicon only works in build mode, not dev. VitePress bug.
+**Note:** favicon only works in build mode, not dev. VitePress bug.
 
 
 ## Annotations
@@ -136,6 +136,19 @@ The sync-sidebar script will:
 4. Report: `Preserved: N @keep item(s)`
 
 Use this for links to files outside `srcDir` or custom entries that don't map to the filesystem.
+
+## Gotchas
+
+### Anchors Starting with Numbers
+
+VitePress prepends an underscore to anchor IDs that start with a number. So:
+
+| Heading | Generated anchor |
+|---------|------------------|
+| `#### 1. Organization` | `#_1-organization` |
+| `#### 3. Voice Consistency` | `#_3-voice-consistency` |
+
+If your in-page links don't work, check the actual `id` attribute in dev tools.
 
 ## To Have Claude Set This Up
 

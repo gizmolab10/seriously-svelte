@@ -4,6 +4,7 @@
 
 ## Contents
 
+- [Migration](./migration/)
 - [Refactoring](./refactoring/)
 - [Vitepress](./vitepress/)
 - [Focus](./focus.md)

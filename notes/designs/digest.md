@@ -108,6 +108,14 @@ Additional architectural bits that don't fit elsewhere.
 
 Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage to synchronize with Bubble. Ugly stuff here, but it works.
 
+#### [svelte.5.md](./architecture/further/svelte.5.md)
+
+How to upgrade from Svelte 4 to 5. The runes are coming. Reactivity works completely differently. Decision: not upgrading for now.
+
+#### [vitepress.md](./architecture/further/vitepress.md)
+
+Publishing web documentation. Instructions for installing, configuring and running VitePress in a way that i could understand it and Claude could read it and do it.
+
 ---
 
 ## Guides
@@ -149,14 +157,6 @@ Code debt. Snarly, ad-hoc, organically fussed with, temperamental. Man crawling 
 #### [style.md](./guides/style.md)
 
 Codebase idiosyncrasies. All the naming conventions, formatting rules, and ordering patterns. Follow these strictly to maintain consistency.
-
-#### [svelte.5.md](./architecture/further/svelte.5.md)
-
-How to upgrade from Svelte 4 to 5. The runes are coming. Reactivity works completely differently. Decision: not upgrading for now.
-
-#### [vitepress.md](./architecture/further/vitepress.md)
-
-Publishing web documentation. Instructions for installing, configuring and running VitePress in a way that i could understand it and Claude could read it and do it.
 
 #### [voice.md](./guides/voice.md)
 
