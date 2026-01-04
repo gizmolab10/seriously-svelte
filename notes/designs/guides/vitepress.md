@@ -1,149 +1,78 @@
-# VitePress: Publishing Web Documentation
+# VitePress
 
-I asked the AI to write instructions for installing, configuring and running vitepress in a way that I could understand it and it could read it and do it.
+i asked the AI to write instructions for installing, configuring and running vitepress in a way that i could understand it and it could read it and do it.
 
-## Viewing Markdown Files in Browser
-
-This project uses VitePress to provide a documentation website for browsing all markdown files in a web browser.
-
-### Starting the Documentation Server
-
-To start the docs server, just run:
+## Quick Start
 
 ```bash
-yarn docs:dev
+yarn docs:dev    # start server on port 5176
+yarn docs:build  # build static site
+yarn docs:preview # preview built site
 ```
 
-That's it! Yarn will handle everything. The server will start on port 5176 (or another port if 5176 is busy).
+No NVM needed - yarn handles Node version.
 
-### Other Commands
+### Tool Scripts
 
-* `yarn docs:build` - Build the static site
-* `yarn docs:preview` - Preview the built site
+Run from `/notes/tools`:
 
-No need for any NVM commands - yarn takes care of using the correct Node version automatically.
-
-### What's Included
-
-The documentation site includes:
-
-* A home page with links to all major documentation sections
-* Sidebar navigation organized by:
-  * Guides
-  * Architecture
-  * Analysis
-  * Next/Future
-  * Archives
-* Local search functionality
-* Hot-reload support (changes to markdown files appear immediately)
-
-### Configuration
-
-The VitePress configuration is located at `.vitepress/config.mts` and can be customized to add more navigation items, change the theme, or adjust other settings.
-
-
----
-
-# VitePress Setup Guide
-
-## What is VitePress?
-
-VitePress is a documentation site generator that turns markdown files into a browsable website with search, navigation, and hot-reloading.
-
-## Installation
-
-
-1. Add VitePress to package.json dependencies:
-   * Add `"vitepress": "^1.6.4"` to devDependencies
-   * Add scripts:
-     * `"docs:dev": "vitepress dev"`
-     * `"docs:build": "vitepress build"`
-     * `"docs:preview": "vitepress preview"`
-2. Run `yarn install` to install VitePress
-
-## Configuration
-
-
-3. Create `.vitepress/config.mts` in the project root with this content:
-
-```typescript
-import { defineConfig } from 'vitepress'
-
-export default defineConfig({
-  title: "webseriously docs",
-  description: "Project documentation and design notes",
-  srcDir: './notes/designs',
-  srcExclude: [],
-
-  themeConfig: {
-    nav: [
-      { text: 'Home', link: '/' }
-    ],
-
-    sidebar: [],
-
-    search: {
-      provider: 'local'
-    }
-  }
-})
+```bash
+./update-docs.sh  # full workflow: compile TS, sync indexes, build, fix links, gen db, sync sidebar
+./reset-docs.sh   # rebuild and restart dev server (logs to reset-docs-log.txt)
 ```
 
-Key settings:
-
-* `srcDir: './notes/designs'` - Only look in notes/designs directory (ignores archives automatically)
-* `srcExclude: []` - No additional exclusions needed
-* `search: { provider: 'local' }` - Enables search
-
-## Running
+## Setup
 
 
-4. Start the dev server: `yarn docs:dev`
-5. Open browser to the URL shown (usually on port 5176)
-6. Edit markdown files in notes/designs - changes appear instantly
+1. Add to package.json devDependencies: `"vitepress": "^1.6.4"`
+2. Add scripts: `docs:dev`, `docs:build`, `docs:preview`
+3. Create `.vitepress/config.mts` - see actual file for config
+4. `yarn install`
 
-## How It Works
+Config lives at `.vitepress/config.mts`. Key settings:
 
-* VitePress reads all `.md` files in `notes/designs`
-* File paths become URLs (e.g., `guides/debugging.md` → `/guides/debugging`)
-* The sidebar and nav can be configured in config.mts
-* Search indexes all markdown content automatically
+* `srcDir: './notes/designs'` - markdown source
+* `srcExclude: ['obsolete/**', 'next/**']` - skip these
+* `search: { provider: 'local' }` - enables search
 
-## Adding a Favicon
+## Customizations
 
-To add a favicon (icon in browser tab) to your VitePress site:
+### Prev/Next in Navbar
+
+Moved prev/next navigation from bottom of page to top navbar (before the light/dark toggle). Files involved:
+
+* `Layout.vue` - wraps default, injects PrevNext into `nav-bar-content-after` slot
+* `PrevNext.vue` - renders ← → arrows using VitePress's `usePrevNext` composable
+* `custom.css` - hides original footer pager, reorders navbar elements via flex order
+
+### Sidebar Toggle
+
+VitePress has a `watchPostEffect` that auto-expands sections containing the active page. Can't fight Vue reactivity directly. Solution: CSS layer on top.
+
+**The trick:** `data-user-collapsed` and `data-user-expanded` attributes. CSS uses `!important` to override VitePress styles. JS manages the attributes, localStorage persists state.
+
+When user clicks a heading:
+
+* Expanded → add `data-user-collapsed`, visually collapse
+* Collapsed → add `data-user-expanded`, visually expand
+
+VitePress still thinks it controls state. We just override the visuals.
+
+Files:
+
+* `index.ts` - click handler, localStorage read/write, applies state on load/route change
+* `custom.css` - `[data-user-collapsed] > .items { display: none !important }` etc.
+
+Also hid the carets entirely since headings now toggle on click.
+
+## Favicon
 
 
-1. **Add the icon file** to `.vitepress/public/`
-   * Example: `.vitepress/public/favicon.png`
-   * Recommended size: 32x32 or 16x16 pixels
-2. **Update config** to reference the icon in `.vitepress/config.mts`:
+1. Put icon in `.vitepress/public/favicon.png`
+2. Add to config: `head: [['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]]`
+3. Fix build: `"docs:build": "vitepress build && cp .vitepress/public/favicon.png .vitepress/dist/"`
 
-   ```typescript
-   export default defineConfig({
-     title: "webseriously docs",
-     description: "Project documentation and design notes",
-     
-     head: [
-       ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]
-     ],
-     
-     // ... rest of config
-   })
-   ```
-3. **Fix VitePress bug** - VitePress doesn't copy files from public to dist during build
-
-   Update your build script in `package.json`:
-
-   ```json
-   "docs:build": "vitepress build > vitepress.build.txt 2>&1 && cp .vitepress/public/favicon.png .vitepress/dist/"
-   ```
-4. **Important notes**:
-   * The `head` config works in **build mode only**, not dev mode
-   * Dev server (`docs:dev`) won't show the favicon due to a VitePress config loading bug
-   * To test locally: run `npm run docs:build && npm run docs:preview`
-   * Production deployments work fine since they use the build
-   * Browsers aggressively cache favicons - use incognito/private mode to test
+Note: favicon only works in build mode, not dev. VitePress bug.
 
 ## To Have Claude Set This Up
 

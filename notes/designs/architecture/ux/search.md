@@ -13,6 +13,7 @@ Instant search. Type a single letter and the matches appear instantly. Type more
 - [Activation/Deactivation](#activationdeactivation)
 - [Persistence](#persistence)
 - [Performance](#performance)
+- [Design Notes](#design-notes)
 - [Related Components](#related-components)
 - [Usage](#usage)
 
@@ -119,17 +120,21 @@ When search is active, UX manager:
 
 ```typescript
 activate() {
-    this.w_s_search.set(T_Search.enter);
+    x.save_grabs();                          // Save current selection
     show.w_show_search_controls.set(true);
+    this.search_for(this.search_text);       // Direct call, not via subscription
 }
 
 deactivate() {
+    x.save_grabs(false);                     // Restore saved selection
     this.w_search_results_found.set(0);
     this.w_s_search.set(T_Search.off);
     show.w_show_search_controls.set(false);
     details.redraw();
 }
 ```
+
+**Grabs save/restore**: Search temporarily overwrites `si_grabs` with matched ancestries. On deactivate, the original selection (items and index) is restored from `si_saved_grabs`.
 
 ## Persistence
 
@@ -145,6 +150,29 @@ Restored on page load.
 - **Indexed search**: Pre-built tree structure for O(log n) lookup
 - **Lazy rebuild**: Only on database changes or startup
 - **Incremental updates**: Can add/remove individual things
+
+## Design Notes
+
+**Direct causation over subscription indirection**: When an action needs to trigger behavior, call it directly rather than through store subscriptions.
+
+*Anti-pattern*:
+```typescript
+// In setup():
+this.w_s_search.subscribe((state) => {
+    if (state !== T_Search.off) this.search_for(text);  // Reactive trigger
+});
+
+// In activate():
+this.w_s_search.set(T_Search.enter);  // Indirect: relies on subscription
+```
+
+*Correct pattern*:
+```typescript
+// In activate():
+this.search_for(this.search_text);  // Direct call
+```
+
+Subscriptions are for *reacting* to external changes, not for triggering side effects from your own actions. The anti-pattern causes infinite loops when `search_for()` sets store values that re-trigger the subscription.
 
 ## Related Components
 

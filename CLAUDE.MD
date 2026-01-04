@@ -11,6 +11,9 @@ Temp: /home/claude | Outputs: /mnt/user-data/outputs
 
 COMMANDS:
 
+* "n" → no
+* "y" → yes
+* "ni" → no improvement
 * "read claude" → reread CLAUDE.MD
 * "update docs" → run ./notes/tools/update-docs.sh, report output
 * "begin work <file>" → if notes/designs/work/<file> missing, create it + run notes/designs/guides/chat.md; else read + resume

@@ -23,7 +23,7 @@ export default withMermaid(
       sidebar: [
         {
           text: 'Overview',
-          link: './overview'
+          link: '/overview'
         },
         {
           text: 'Digest',

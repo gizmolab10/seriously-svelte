@@ -332,12 +332,6 @@ export function getDocsStructure(): DocNode[] {
 							]
 						},
 						{
-							id: 'work_done_search',
-							name: 'Search',
-							type: 'file',
-							path: 'work/done/search'
-						},
-						{
 							id: 'work_done_vitepress',
 							name: 'Vitepress',
 							type: 'folder',
@@ -386,6 +380,18 @@ export function getDocsStructure(): DocNode[] {
 							path: 'work/next/Resize_Optimization_AI'
 						},
 					]
+				},
+				{
+					id: 'work_next_previous',
+					name: 'Next Previous',
+					type: 'file',
+					path: 'work/next-previous'
+				},
+				{
+					id: 'work_search_links',
+					name: 'Search Links',
+					type: 'file',
+					path: 'work/search-links'
 				},
 			]
 		},

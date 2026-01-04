@@ -26,7 +26,7 @@ echo ""
 
 # Step 2: Sync index.md files
 echo "Step 2: Syncing index.md files..."
-bash notes/tools/sync_index_files.sh
+bash notes/tools/sync-index-files.sh
 
 if [ $? -ne 0 ]; then
   echo "❌ Index sync failed"
@@ -70,7 +70,7 @@ echo ""
 
 # Step 5: Generate docs database structure
 echo "Step 5: Generating docs database structure..."
-bash notes/tools/create_docs_db_data.sh
+bash notes/tools/create-docs-db-data.sh
 
 if [ $? -ne 0 ]; then
   echo "❌ Docs database generation failed"

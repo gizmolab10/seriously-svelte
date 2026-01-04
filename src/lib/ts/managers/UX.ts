@@ -10,20 +10,20 @@ import { search } from '../managers/Search';
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
 export default class S_UX {
-	w_s_title_edit		 = writable<S_Title_Edit | null>(null);
-	w_s_alteration		 = writable<S_Alteration | null>();
-	w_thing_title		 = writable<string | null>();
-	w_relationship_order = writable<number>(0);
-	w_thing_fontFamily	 = writable<string>();
-	
-	si_recents			 = new S_Items<Identifiable_S_Items_Pair>([]);
-	si_expanded			 = new S_Items<Ancestry>([]);
-	si_grabs			 = new S_Items<Ancestry>([]);
-	si_found			 = new S_Items<Thing>([]);
-	private si_saved_grabs = new S_Items<Ancestry>([]);
+	w_ancestry_forDetails! : Readable<Ancestry | null>;
+	w_ancestry_focus!	   : Readable<Ancestry | null>;
 
-	w_ancestry_forDetails!: Readable<Ancestry | null>;
-	w_ancestry_focus!:		Readable<Ancestry | null>;
+	w_s_title_edit		   = writable<S_Title_Edit | null>(null);
+	w_s_alteration		   = writable<S_Alteration | null>();
+	w_thing_title		   = writable<string | null>();
+	w_relationship_order   = writable<number>(0);
+	w_thing_fontFamily	   = writable<string>();
+
+	si_recents			   = new S_Items<Identifiable_S_Items_Pair>([]);
+	si_expanded			   = new S_Items<Ancestry>([]);
+	si_grabs			   = new S_Items<Ancestry>([]);
+	si_found			   = new S_Items<Thing>([]);
+	private si_saved_grabs = new S_Items<Ancestry>([]);
 
 	parents_focus!: Ancestry;
 	prior_focus!: Ancestry;
