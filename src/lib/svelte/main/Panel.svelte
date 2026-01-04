@@ -11,6 +11,7 @@
 	import Search from '../search/Search.svelte';
 	import Details from './Details.svelte';
 	import Import from './Import.svelte';
+	import Preview from './Preview.svelte';
 	import Box from '../draw/Box.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
@@ -72,6 +73,8 @@
 				<BuildNotes/>
 			{:else if $w_id_popupView == T_Control.import}
 				<Import/>
+			{:else if $w_id_popupView == T_Control.preview}
+				<Preview/>
 			{:else}
 				<Primary_Controls/>
 				{#if $w_show_details}

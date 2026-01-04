@@ -243,6 +243,7 @@ export enum T_Predicate {
 export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
+	preview	 = 'preview',
 	recents	 = 'recents',
 	import	 = 'import',
 	search	 = 'search',

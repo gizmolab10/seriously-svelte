@@ -10,6 +10,7 @@ import DB_Bubble from './DB_Bubble';
 import DB_Local from './DB_Local';
 import DB_Test from './DB_Test';
 import DB_Docs from './DB_Docs';
+import DB_Filesystem from './DB_Filesystem';
 // import DB_DGraph from './DB_DGraph';
 
 // each db has its own hierarchy
@@ -71,12 +72,14 @@ export default class Databases {
 
 	db_next_get(forward: boolean): T_Database {
 		switch (this.db_now.t_database) {
-			case T_Database.local:    return forward ? T_Database.firebase : T_Database.docs;
-			case T_Database.firebase: return forward ? T_Database.airtable : T_Database.local;
-			case T_Database.airtable: return forward ? T_Database.dgraph   : T_Database.firebase;
-			case T_Database.dgraph:   return forward ? T_Database.test     : T_Database.airtable;
-			case T_Database.test:     return forward ? T_Database.docs     : T_Database.dgraph;
-			default:                  return forward ? T_Database.local    : T_Database.test;
+			case T_Database.local:      return forward ? T_Database.firebase   : T_Database.filesystem;
+			case T_Database.firebase:   return forward ? T_Database.airtable   : T_Database.local;
+			case T_Database.airtable:   return forward ? T_Database.dgraph     : T_Database.firebase;
+			case T_Database.dgraph:     return forward ? T_Database.test       : T_Database.airtable;
+			case T_Database.test:       return forward ? T_Database.docs       : T_Database.dgraph;
+			case T_Database.docs:       return forward ? T_Database.filesystem : T_Database.test;
+			case T_Database.filesystem: return forward ? T_Database.local      : T_Database.docs;
+			default:                    return forward ? T_Database.local      : T_Database.test;
 		}
 	}
 
@@ -88,7 +91,8 @@ export default class Databases {
 				case T_Database.bubble:   this.dbCache[t_database] = new DB_Bubble(); break;
 				case T_Database.local:    this.dbCache[t_database] = new DB_Local(); break;
 				case T_Database.test:     this.dbCache[t_database] = new DB_Test(); break;
-				case T_Database.docs:     this.dbCache[t_database] = new DB_Docs(); break;
+				case T_Database.docs:       this.dbCache[t_database] = new DB_Docs(); break;
+				case T_Database.filesystem: this.dbCache[t_database] = new DB_Filesystem(); break;
 				// default:   this.dbCache[t_database] = new DB_DGraph(); break;
 			}
 		}

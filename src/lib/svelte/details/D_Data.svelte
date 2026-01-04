@@ -4,6 +4,7 @@
 	import { T_Layer, T_Hit_Target, T_Request, T_Preference } from '../../ts/common/Global_Imports';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Database } from '../../ts/database/DB_Common';
+	import DB_Filesystem from '../../ts/database/DB_Filesystem';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Dictionary } from '../../ts/types/Types';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
@@ -16,8 +17,9 @@
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
+	const s_selectFolder = elements.s_element_for(new Identifiable('select-folder'), T_Hit_Target.button, 'select-folder');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
-	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test, T_Database.docs];
+	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test, T_Database.docs, T_Database.filesystem];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	let s_element_dict_byStorageType: Dictionary<S_Element> = {};
 	let heights = [15, height_ofChoices(), 42, 28, 74, 26, 3];
@@ -30,6 +32,8 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
+	s_selectFolder.set_forHovering('black', 'pointer');
+	$: isFilesystemDB = $w_t_database === T_Database.filesystem;
 	function height_ofChoices() { return features.has_every_detail ? $w_show_other_databases ? 18 : -5 : -16; }
 
 	$:{
@@ -54,6 +58,13 @@
 	async function handle_save(s_mouse) {
 		if (!!h && h.hasRoot && s_mouse.isUp) {
 			await h.db.persist_all(true);
+		}
+	}
+
+	async function handle_selectFolder(s_mouse) {
+		if (s_mouse.isUp && h.db instanceof DB_Filesystem) {
+			await h.db.selectFolder();
+			databases.w_data_updated.set(Date.now());
 		}
 	}
 
@@ -171,6 +182,16 @@
 					zindex={T_Layer.frontmost}
 					origin={new Point(120, tops[3])}>
 					save to db
+				</Button>
+			{/if}
+			{#if isFilesystemDB}
+				<Button name='select-folder'
+					width=85
+					s_button={s_selectFolder}
+					handle_s_mouse={handle_selectFolder}
+					zindex={T_Layer.frontmost}
+					origin={new Point(110, tops[3])}>
+					select folder
 				</Button>
 			{/if}
 		{/key}

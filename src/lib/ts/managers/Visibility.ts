@@ -25,6 +25,9 @@ export class Visibility {
 	w_show_other_databases	= writable<boolean>(true);
 
 	w_id_popupView			= writable<string | null>();
+	w_preview_content		= writable<string | null>(null);
+	w_preview_type			= writable<'text' | 'image' | 'unsupported'>('text');
+	w_preview_filename		= writable<string>('');
 	debug_cursor			= false;
 
 	constructor() {

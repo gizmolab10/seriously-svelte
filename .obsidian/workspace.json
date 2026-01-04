@@ -167,8 +167,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0d6205459baf7c18",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "src/lib/svelte/main/Preview.svelte",
+    "src/lib/ts/database/DB_Filesystem.ts",
+    "notes/designs/work/filesystem",
     "notes/designs/architecture/platforms/index.md",
     "notes/designs/work/book.md",
     "notes/designs/work/done/migration/index.md",
@@ -193,8 +196,6 @@
     "notes/tools/sync-index-files.sh",
     "notes/tools/analyze-counts.sh",
     "notes/tools/create-docs-db-data.sh",
-    "notes/tools/delete-netlify-deploys.sh",
-    "notes/tools/reset-docs-log.txt",
     "notes/designs/work/next-previous.md",
     "notes/designs/work/search-links.md",
     "notes/designs/work/done/search.md",
@@ -204,7 +205,6 @@
     "notes/designs/architecture/more/styles.md",
     "notes/designs/architecture/more/reactivity.md",
     "notes/designs/architecture/more/persistable.md",
-    "notes/designs/architecture/managers/styles.md",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",

@@ -5,26 +5,28 @@ import { c, h, p, core, x, busy, debug, features, databases } from '../common/Gl
 import type { Dictionary } from '../types/Types';
 
 export enum T_Database {
-	firebase = 'firebase',
-	airtable = 'airtable',
-	unknown	 = 'unknown',
-	bubble	 = 'bubble',
-	dgraph   = 'dgraph',
-	local	 = 'local',
-	test	 = 'test',
-	docs     = 'docs',
+	filesystem = 'filesystem',
+	firebase   = 'firebase',
+	airtable   = 'airtable',
+	unknown	   = 'unknown',
+	bubble	   = 'bubble',
+	dgraph     = 'dgraph',
+	local	   = 'local',
+	test	   = 'test',
+	docs       = 'docs',
 }
 
 export enum	DB_Name {
-	airtable = 'Airtable',
-	unknown  = 'Unknown',
-	firebase = 'Public',
-	bubble   = 'Bubble',
-	dgraph   = 'DGraph',
-	bulks    = 'Bulks',
-	local    = 'Local',
-	test     = 'Test',
-	docs     = 'Docs',
+	filesystem = 'Filesystem',
+	airtable   = 'Airtable',
+	unknown    = 'Unknown',
+	firebase   = 'Public',
+	bubble     = 'Bubble',
+	dgraph     = 'DGraph',
+	bulks      = 'Bulks',
+	local      = 'Local',
+	test       = 'Test',
+	docs       = 'Docs',
 }
 
 // CRUD API --> for all databases

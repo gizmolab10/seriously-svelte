@@ -1,6 +1,8 @@
 <script lang='ts'>
-	import { h, k, x, Size, colors, details, elements } from '../../ts/common/Global_Imports';
-	import { T_Detail, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { h, k, x, Size, colors, details, elements, databases, show } from '../../ts/common/Global_Imports';
+	import { T_Detail, T_Hit_Target, T_Control } from '../../ts/common/Global_Imports';
+	import { T_Database } from '../../ts/database/DB_Common';
+	import DB_Filesystem from '../../ts/database/DB_Filesystem';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Text_Editor from '../text/Text_Editor.svelte';
 	const { w_item: w_trait } = x.si_thing_traits;
@@ -9,6 +11,40 @@
 	s_button.set_forHovering(colors.default, 'pointer');
 	x.update_grabs_forSearch();
 
+	const { w_t_database } = databases;
+	const { w_id_popupView, w_preview_content, w_preview_type, w_preview_filename } = show;
+	$: isFilesystemDB = $w_t_database === T_Database.filesystem;
+
+	async function handleLinkClick(event: MouseEvent) {
+		if (!$w_trait) return;
+		
+		if (isFilesystemDB && h.db instanceof DB_Filesystem) {
+			const thing = $w_trait.owner;
+			if (thing) {
+				const entry = h.db.getFileEntry(thing.id);
+				if (entry && !entry.isDirectory) {
+					const ext = entry.name.split('.').pop()?.toLowerCase() || '';
+					const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
+					const textExts = ['txt', 'md', 'json', 'js', 'ts', 'svelte', 'html', 'css', 'csv'];
+					
+					if (imageExts.includes(ext)) {
+						$w_preview_content = await h.db.readFileAsDataURL(thing.id);
+						$w_preview_type = 'image';
+					} else if (textExts.includes(ext)) {
+						$w_preview_content = await h.db.readFileAsText(thing.id);
+						$w_preview_type = 'text';
+					} else {
+						$w_preview_content = `Cannot preview .${ext} files. Use download button.`;
+						$w_preview_type = 'unsupported';
+					}
+					$w_preview_filename = entry.name;
+					$w_id_popupView = T_Control.preview;
+				}
+			}
+		} else {
+			window.open($w_trait.text, '_blank');
+		}
+	}
 </script>
 
 {#if !$w_trait}
@@ -38,6 +74,6 @@
 			label_underline={$w_trait.t_trait == 'link'}
 			label_color={$w_trait.t_trait == 'link' ? 'blue' : 'black'}
 			handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, $w_trait)}
-			handleClick_onLabel={$w_trait.t_trait == 'link' ? (event) => window.open($w_trait.text, '_blank') : null}/>
+			handleClick_onLabel={$w_trait.t_trait == 'link' ? handleLinkClick : null}/>
 	</div>
 {/if}
