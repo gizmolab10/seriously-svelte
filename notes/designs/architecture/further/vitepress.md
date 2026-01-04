@@ -14,12 +14,26 @@ No NVM needed - yarn handles Node version.
 
 ### Tool Scripts
 
-Run from `/notes/tools`:
+Go to `/notes/tools`:
 
 ```bash
-./update-docs.sh  # full workflow: compile TS, sync indexes, build, fix links, gen db, sync sidebar
-./reset-docs.sh   # rebuild and restart dev server (logs to reset-docs-log.txt)
+./update-docs.sh  # full workflow: build, fix links, sync sidebar
+./reset-docs.sh   # rebuild and restart dev server
 ```
+
+### TypeScript Tools
+
+Go to `/notes/tools`. Source in `lib/`, compiled to `dist/`. Run `npx tsc`, then run the compiled js in `dist` using the `node` command. The first two can be passed a `-v` option for verbose information.
+
+| File | Options | Purpose |
+|----|----|----|
+| `fix-links` | Fixes broken links by examining build errors | `-v` `--test` |
+| `sync-sidebar` | Regenerates sidebar from filesystem | `-v` |
+| `generate-sidebar` | Helper: walks srcDir, adds sidebar items |    |
+| `markdown-parser` | Extracts and updates links in markdown |    |
+| `link-finder` | Searches repo for files by name |    |
+| `config-updater` | Updates sidebar links in config.mts |    |
+| `merge-files` | Merges markdown by section | `-v` `A B` |
 
 ## Setup
 
@@ -29,7 +43,8 @@ Run from `/notes/tools`:
 3. Create `.vitepress/config.mts` - see actual file for config
 4. `yarn install`
 
-Config lives at `.vitepress/config.mts`. Key settings:
+
+Configuration file is `.vitepress/config.mts`. Key settings:
 
 * `srcDir: './notes/designs'` - markdown source
 * `srcExclude: ['obsolete/**', 'next/**']` - skip these
@@ -49,7 +64,7 @@ Moved prev/next navigation from bottom of page to top navbar (before the light/d
 
 VitePress has a `watchPostEffect` that auto-expands sections containing the active page. Can't fight Vue reactivity directly. Solution: CSS layer on top.
 
-**The trick:** `data-user-collapsed` and `data-user-expanded` attributes. CSS uses `!important` to override VitePress styles. JS manages the attributes, localStorage persists state.
+**==The trick==:** `data-user-collapsed` and `data-user-expanded` attributes. CSS uses `!important` to override VitePress styles. JS manages the attributes, localStorage persists state.
 
 When user clicks a heading:
 
@@ -63,16 +78,18 @@ Files:
 * `index.ts` - click handler, localStorage read/write, applies state on load/route change
 * `custom.css` - `[data-user-collapsed] > .items { display: none !important }` etc.
 
-Also hid the carets entirely since headings now toggle on click.
+Also hides the carets entirely since headings now toggle on click.
 
-## Favicon
+### Favicon
+
 
 
 1. Put icon in `.vitepress/public/favicon.png`
 2. Add to config: `head: [['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]]`
 3. Fix build: `"docs:build": "vitepress build && cp .vitepress/public/favicon.png .vitepress/dist/"`
 
-Note: favicon only works in build mode, not dev. VitePress bug.
+**==Note==**: favicon only works in build mode, not dev. VitePress bug.
+
 
 ## Annotations
 
@@ -80,17 +97,19 @@ Two special comments control how `update-docs.sh` handles files:
 
 ### `<!-- @manual -->` — Protect index.md from overwriting
 
-Add anywhere in an index.md file:
+Add ***anywhere*** in an index.md file:
 
 ```markdown
 <!-- @manual -->
 
-# My Custom Index
+### My Custom Index
 
 This content won't be touched by sync-index-files.sh
 ```
 
-The script will skip the file and print: `Skipping index.md in: folder_name (marked @manual)`
+The script will skip the file and (in ***verbose*** mode) enter into the log:
+
+`Skipping index.md in: folder_name (marked @manual)`
 
 ### `// @keep` — Preserve sidebar items
 
@@ -107,6 +126,10 @@ sidebar: [
 ```
 
 The sync-sidebar script will:
+
+
+
+
 1. Extract all `@keep` items before regenerating
 2. Place them at the top of the sidebar
 3. Add auto-generated items below

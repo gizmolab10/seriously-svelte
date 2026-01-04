@@ -1,14 +1,15 @@
 # Core
 
-In my early work, once my first Svelte component was working, i used it as a template for others. Gradually, I found it difficult to coordinate them all. The app presented lots of inconsistent stuff, very unprofessional and confusing. I eventually gathered related bits of logic into small tightly related clumps and called them managers. I want to introduce them. The seven items here are responsible for most of the basic capabilities.
+For this project, I decided to use Svelte. Once my first component was working, i assumed it would make a good template for my next one. Unfortunately, by the time I built most of them, they became difficult to coordinate. Hovering acted oddly, cats were sleeping with dogs, very unreliable, unprofessional. The solution? I eventually gathered related bits of logic into small tightly related clumps and called them managers. Uniform and reliable behavior. These are they. The seven items here are responsible for the basic capabilities upon which everything relies.
 
 ## Contents
 
-- [Components](./components.md)
-- [Databases](./databases.md)
-- [Geometry](./geometry.md)
-- [Hits](./hits.md)
-- [Managers](./managers.md)
-- [State](./state.md)
-- [Ux](./ux.md)
+* [Components](./components.md)
+* [Databases](./databases.md)
+* [Geometry](./geometry.md)
+* [Hits](./hits.md)
+* [Managers](./managers.md)
+* [State](./state.md)
+* [Ux](./ux.md)
+
 

@@ -54,3 +54,27 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
   ➜  Local:   http://localhost:5176/
   ➜  Network: use --host to expose
   ➜  press h to show help
+9:56:31 PM [vitepress] hmr update /architecture/core/index.md
+10:00:58 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:02:04 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:03:04 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:03:25 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:03:37 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:04:24 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:04:43 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:04:56 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:08:21 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:14:58 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:19:44 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:21:19 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:23:34 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:24:04 PM [vitepress] hmr update /architecture/further/vitepress.md
+10:25:44 PM [vitepress] hmr update /architecture/further/vitepress.md
+4:12:20 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:14:03 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:14:51 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:15:48 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:15:53 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:16:20 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:17:23 AM [vitepress] hmr update /architecture/further/vitepress.md
+4:20:10 AM [vitepress] hmr update /architecture/further/vitepress.md
