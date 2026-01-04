@@ -26,10 +26,7 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
   ➜  Local:   http://localhost:5176/
   ➜  Network: use --host to expose
   ➜  press h to show help
-7:53:15 PM [vitepress] page reload /Users/sand/GitHub/webseriously/.vitepress/theme/index.ts
-7:55:24 PM [vitepress] hmr update /guides/vitepress.md
-7:55:40 PM [vitepress] page reload /Users/sand/GitHub/webseriously/.vitepress/theme/index.ts
-7:58:42 PM [vitepress] .vitepress/config.mts changed, restarting server...
+9:39:34 PM [vitepress] .vitepress/config.mts changed, restarting server...
 
 
 The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
@@ -57,5 +54,3 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
   ➜  Local:   http://localhost:5176/
   ➜  Network: use --host to expose
   ➜  press h to show help
-8:02:22 PM [vitepress] hmr update /guides/vitepress.md
-8:06:00 PM [vitepress] hmr update /guides/vitepress.md

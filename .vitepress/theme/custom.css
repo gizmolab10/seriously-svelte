@@ -49,9 +49,21 @@
 /* User-expanded override: show items even when VitePress has collapsed */
 .VPSidebarItem[data-user-expanded="true"] > .items {
   display: block !important;
+  border-left: 1px solid var(--vp-c-divider);
+  padding-left: 16px;
 }
 
 /* User-expanded override: restore padding */
 .VPSidebarItem.level-0[data-user-expanded="true"] {
   padding-bottom: 24px;
+}
+
+/* Make items with children bold */
+.VPSidebarItem.collapsible > .item .text {
+  font-weight: 700;
+}
+
+/* Always show scrollbar to prevent layout jump and flickering */
+html {
+  overflow-y: scroll;
 }

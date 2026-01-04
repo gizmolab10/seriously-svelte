@@ -13,7 +13,5 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 - [Migration](./migration.md)
 - [Refactoring](./refactoring.md)
 - [Style](./style.md)
-- [Svelte.5](./svelte.5.md)
-- [Vitepress](./vitepress.md)
 - [Voice](./voice.md)
 

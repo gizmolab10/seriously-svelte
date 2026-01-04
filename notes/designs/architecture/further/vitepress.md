@@ -74,6 +74,46 @@ Also hid the carets entirely since headings now toggle on click.
 
 Note: favicon only works in build mode, not dev. VitePress bug.
 
+## Annotations
+
+Two special comments control how `update-docs.sh` handles files:
+
+### `<!-- @manual -->` — Protect index.md from overwriting
+
+Add anywhere in an index.md file:
+
+```markdown
+<!-- @manual -->
+
+# My Custom Index
+
+This content won't be touched by sync-index-files.sh
+```
+
+The script will skip the file and print: `Skipping index.md in: folder_name (marked @manual)`
+
+### `// @keep` — Preserve sidebar items
+
+Add after any sidebar item in `.vitepress/config.mts`:
+
+```typescript
+sidebar: [
+  {
+    text: 'Project',
+    link: '/project'
+  }, // @keep
+  // ... auto-generated items below
+]
+```
+
+The sync-sidebar script will:
+1. Extract all `@keep` items before regenerating
+2. Place them at the top of the sidebar
+3. Add auto-generated items below
+4. Report: `Preserved: N @keep item(s)`
+
+Use this for links to files outside `srcDir` or custom entries that don't map to the filesystem.
+
 ## To Have Claude Set This Up
 
 Say: "Read vitepress.md and set it up"

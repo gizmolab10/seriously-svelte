@@ -1,8 +1,6 @@
 # Next
 
-- [Resize Optimization AI](Resize_Optimization_AI.md)
-- [AI UX Spider Guide](ai-ux-spider-guide.md)
-- [Holons API](holons.api.md)
+I may find enough time and will to pursue some crazy or not-so-crazy ideas:
 
 ## Contents
 

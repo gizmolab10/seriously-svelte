@@ -26,17 +26,24 @@ export class SidebarGenerator {
     // Get all top-level items
     const entries = fs.readdirSync(this.srcDir, { withFileTypes: true });
     
-    for (const entry of entries) {
+    // Sort: files first, then directories
+    const sorted = entries.sort((a, b) => {
+      if (a.isFile() && b.isDirectory()) return -1;
+      if (a.isDirectory() && b.isFile()) return 1;
+      return a.name.localeCompare(b.name);
+    });
+    
+    for (const entry of sorted) {
       if (this.shouldSkip(entry.name)) continue;
       
       const fullPath = path.join(this.srcDir, entry.name);
       
       if (entry.isDirectory()) {
-        const dirItem = this.processDirectory(entry.name, fullPath);
+        const dirItem = this.processDirectory(entry.name, fullPath, '');
         if (dirItem) {
           sidebar.push(dirItem);
         }
-      } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'index.md') {
         const fileItem = this.processFile(entry.name, fullPath);
         if (fileItem) {
           sidebar.push(fileItem);
@@ -47,21 +54,34 @@ export class SidebarGenerator {
     return sidebar;
   }
 
-  private processDirectory(dirName: string, dirPath: string): SidebarItem | null {
+  private processDirectory(dirName: string, dirPath: string, parentPath: string): SidebarItem | null {
     const items: SidebarItem[] = [];
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     
-    for (const entry of entries) {
+    // Check if this directory has an index.md
+    const hasIndex = entries.some(e => e.isFile() && e.name === 'index.md');
+    
+    // Sort: files first (except index.md), then directories
+    const sorted = entries.sort((a, b) => {
+      if (a.name === 'index.md') return 1; // index.md goes last (skip it anyway)
+      if (b.name === 'index.md') return -1;
+      if (a.isFile() && b.isDirectory()) return -1;
+      if (a.isDirectory() && b.isFile()) return 1;
+      return a.name.localeCompare(b.name);
+    });
+    
+    for (const entry of sorted) {
       if (this.shouldSkip(entry.name)) continue;
       
       const fullPath = path.join(dirPath, entry.name);
+      const currentPath = parentPath + '/' + dirName;
       
       if (entry.isDirectory()) {
-        const subDir = this.processDirectory(entry.name, fullPath);
+        const subDir = this.processDirectory(entry.name, fullPath, currentPath);
         if (subDir) {
           items.push(subDir);
         }
-      } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'index.md') {
         const fileItem = this.processFile(entry.name, fullPath);
         if (fileItem) {
           items.push(fileItem);
@@ -69,19 +89,30 @@ export class SidebarGenerator {
       }
     }
     
-    if (items.length === 0) {
+    // Skip empty directories
+    if (items.length === 0 && !hasIndex) {
       return null;
     }
     
-    return {
+    const result: SidebarItem = {
       text: this.formatTitle(dirName),
       collapsed: true,
-      items
     };
+    
+    // Add link if directory has index.md
+    if (hasIndex) {
+      result.link = parentPath + '/' + dirName + '/';
+    }
+    
+    if (items.length > 0) {
+      result.items = items;
+    }
+    
+    return result;
   }
 
   private processFile(fileName: string, filePath: string): SidebarItem | null {
-    // Skip index files
+    // Skip index files (handled at directory level)
     if (fileName === 'index.md') {
       return null;
     }
@@ -119,11 +150,6 @@ export class SidebarGenerator {
 
   private formatTitle(name: string): string {
     // Convert filename to title
-    // Examples:
-    // "getting-started" -> "Getting Started"
-    // "vitepress" -> "VitePress"
-    // "ux" -> "UX"
-    
     // Special cases
     const specialCases: Record<string, string> = {
       'vitepress': 'VitePress',

@@ -1,13 +1,17 @@
-# Designs
+# Project Documentation and Design Notes
 
-Project documentation and design notes.
+Gathered here are what I hope will bring you up to speed, or once at speed, provide comprehensive reference material.
 
 ## Contents
 
-- [Architecture](./architecture/)
-- [Guides](./guides/)
-- [Work](./work/)
-- [Digest](./digest.md)
-- [Overview](./overview.md)
-- [Project](./project.md)
+* Introduction
+  * [Project](./project.md)
+  * [Overview](./overview.md)
+  * [Digest](./digest.md)
+* Three Main Aspects of the Project
+  * [Architecture](./architecture/)
+  * [Guides](./guides/)
+  * [Work](./work/)
 
+
+<!-- @manual -->

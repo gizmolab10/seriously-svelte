@@ -2,8 +2,17 @@
 
 # Sync Index Files
 # Creates/updates index.md files to list all subdirectories and files
+#
+# To prevent an index.md from being overwritten, add this comment:
+#   <!-- @manual -->
 
 DESIGNS_DIR="/Users/sand/GitHub/webseriously/notes/designs"
+
+# Function to check if index.md is manually maintained
+is_manual() {
+    local file="$1"
+    [ -f "$file" ] && grep -q '<!-- *@manual *-->' "$file" 2>/dev/null
+}
 
 # Function to convert kebab-case to Title Case
 to_title_case() {
@@ -98,14 +107,18 @@ sync_index() {
 process_directory() {
     local dir="$1"
     local dir_name=$(basename "$dir")
+    local index_file="${dir}/index.md"
     
-    # Sync index.md (create or update)
-    if [ -f "${dir}/index.md" ]; then
+    # Check if manually maintained
+    if is_manual "$index_file"; then
+        echo "Skipping index.md in: $dir_name (marked @manual)"
+    elif [ -f "$index_file" ]; then
         echo "Updating index.md in: $dir_name"
+        sync_index "$dir"
     else
         echo "Creating index.md in: $dir_name"
+        sync_index "$dir"
     fi
-    sync_index "$dir"
     
     # Process subdirectories
     for subdir in "$dir"/*/ ; do

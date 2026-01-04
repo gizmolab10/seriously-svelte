@@ -73,6 +73,33 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
+					id: 'architecture_further',
+					name: 'Further',
+					type: 'folder',
+					path: 'architecture/further',
+					link: 'architecture/further/index',
+					children: [
+						{
+							id: 'architecture_further_bubble',
+							name: 'Bubble',
+							type: 'file',
+							path: 'architecture/further/bubble'
+						},
+						{
+							id: 'architecture_further_svelte_5',
+							name: 'Svelte.5',
+							type: 'file',
+							path: 'architecture/further/svelte.5'
+						},
+						{
+							id: 'architecture_further_vitepress',
+							name: 'Vitepress',
+							type: 'file',
+							path: 'architecture/further/vitepress'
+						},
+					]
+				},
+				{
 					id: 'architecture_more',
 					name: 'More',
 					type: 'folder',
@@ -102,21 +129,6 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Timers',
 							type: 'file',
 							path: 'architecture/more/timers'
-						},
-					]
-				},
-				{
-					id: 'architecture_other',
-					name: 'Other',
-					type: 'folder',
-					path: 'architecture/other',
-					link: 'architecture/other/index',
-					children: [
-						{
-							id: 'architecture_other_bubble',
-							name: 'Bubble',
-							type: 'file',
-							path: 'architecture/other/bubble'
 						},
 					]
 				},
@@ -247,18 +259,6 @@ export function getDocsStructure(): DocNode[] {
 					path: 'guides/style'
 				},
 				{
-					id: 'guides_svelte_5',
-					name: 'Svelte.5',
-					type: 'file',
-					path: 'guides/svelte.5'
-				},
-				{
-					id: 'guides_vitepress',
-					name: 'Vitepress',
-					type: 'file',
-					path: 'guides/vitepress'
-				},
-				{
 					id: 'guides_voice',
 					name: 'Voice',
 					type: 'file',
@@ -380,12 +380,6 @@ export function getDocsStructure(): DocNode[] {
 							path: 'work/next/Resize_Optimization_AI'
 						},
 					]
-				},
-				{
-					id: 'work_next_previous',
-					name: 'Next Previous',
-					type: 'file',
-					path: 'work/next-previous'
 				},
 				{
 					id: 'work_search_links',

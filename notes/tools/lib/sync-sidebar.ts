@@ -7,6 +7,11 @@ import { SidebarGenerator } from './generate-sidebar.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+interface KeptItem {
+  text: string;
+  content: string;  // Full item text including braces
+}
+
 class SyncSidebar {
   private verbose: boolean = false;
   private repoRoot: string;
@@ -29,6 +34,35 @@ class SyncSidebar {
     }
     
     return process.cwd();
+  }
+
+  /**
+   * Extract items marked with // @keep from the sidebar
+   */
+  private extractKeptItems(sidebarStr: string): KeptItem[] {
+    const kept: KeptItem[] = [];
+    
+    // Find items followed by // @keep
+    // Match: { ... }, // @keep or { ... } // @keep
+    const regex = /(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})\s*,?\s*\/\/\s*@keep/g;
+    let match;
+    
+    while ((match = regex.exec(sidebarStr)) !== null) {
+      const itemContent = match[1];
+      // Extract the text property
+      const textMatch = itemContent.match(/text:\s*['"]([^'"]+)['"]/);
+      if (textMatch) {
+        kept.push({
+          text: textMatch[1],
+          content: itemContent
+        });
+        if (this.verbose) {
+          console.log(`  Found @keep item: ${textMatch[1]}`);
+        }
+      }
+    }
+    
+    return kept;
   }
 
   async sync(): Promise<void> {
@@ -56,106 +90,174 @@ class SyncSidebar {
       console.log(`  Excluded: ${srcExclude.join(', ')}`);
     }
 
+    // Find sidebar in config using bracket matching
+    const sidebarStart = configContent.indexOf('sidebar:');
+    if (sidebarStart === -1) {
+      console.error('Error: Could not find sidebar in config');
+      process.exit(1);
+    }
+
+    // Find the opening bracket
+    const openBracket = configContent.indexOf('[', sidebarStart);
+    if (openBracket === -1) {
+      console.error('Error: Could not find sidebar array start');
+      process.exit(1);
+    }
+
+    // Find matching closing bracket by counting depth
+    let depth = 0;
+    let closeBracket = -1;
+    for (let i = openBracket; i < configContent.length; i++) {
+      if (configContent[i] === '[') {
+        depth++;
+      } else if (configContent[i] === ']') {
+        depth--;
+        if (depth === 0) {
+          closeBracket = i;
+          break;
+        }
+      }
+    }
+
+    if (closeBracket === -1) {
+      console.error('Error: Could not find sidebar array end');
+      process.exit(1);
+    }
+
+    const oldSidebarStr = configContent.substring(openBracket, closeBracket + 1);
+    
+    // Extract @keep items before regenerating
+    const keptItems = this.extractKeptItems(oldSidebarStr);
+    
+    // Count items for stats
+    const oldCount = (oldSidebarStr.match(/text:/g) || []).length;
+
     // Generate new sidebar
     const generator = new SidebarGenerator(srcDir, srcExclude);
-    const newSidebar = generator.generateSidebar();
-
-    // Extract old sidebar for comparison
-    const sidebarMatch = configContent.match(/sidebar:\s*(\[[\s\S]*?\n\s{4}\])/);
-    const oldSidebarStr = sidebarMatch ? sidebarMatch[1] : '[]';
+    let newSidebar = generator.generateSidebar();
     
-    // Count changes
-    const stats = this.compareStructures(oldSidebarStr, newSidebar);
+    // Filter out items that duplicate @keep items (by text or link)
+    const keptTexts = new Set(keptItems.map(k => k.text.toLowerCase()));
+    const keptLinks = new Set<string>();
+    for (const kept of keptItems) {
+      const linkMatch = kept.content.match(/link:\s*['"]([^'"]+)['"]/);
+      if (linkMatch) {
+        keptLinks.add(linkMatch[1]);
+      }
+    }
+    
+    newSidebar = newSidebar.filter(item => {
+      const textDupe = keptTexts.has(item.text.toLowerCase());
+      const linkDupe = item.link && keptLinks.has(item.link);
+      if (textDupe || linkDupe) {
+        if (this.verbose) {
+          console.log(`  Skipping duplicate: ${item.text}`);
+        }
+        return false;
+      }
+      return true;
+    });
+    
+    const newCount = this.countItems(newSidebar);
 
-    // Build new config content
-    const newSidebarStr = this.formatSidebar(newSidebar);
-    const newConfigContent = configContent.replace(
-      /sidebar:\s*\[[\s\S]*?\n\s{4}\]/,
-      `sidebar: ${newSidebarStr}`
-    );
+    // Build new sidebar string with kept items at the top
+    const newSidebarStr = this.formatSidebarWithKept(newSidebar, keptItems, 8);
+
+    // Replace sidebar in config
+    const newConfigContent = 
+      configContent.substring(0, openBracket) +
+      newSidebarStr +
+      configContent.substring(closeBracket + 1);
 
     // Create backup
-    const backupPath = this.configPath + '.original';
+    const backupDir = path.join(this.repoRoot, '.vitepress', 'backups');
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+    const backupPath = path.join(backupDir, 'config.mts.backup');
     fs.copyFileSync(this.configPath, backupPath);
 
     // Write new config
     fs.writeFileSync(this.configPath, newConfigContent);
 
+    const totalNew = newCount + keptItems.length;
+    const diff = totalNew - oldCount;
     console.log(`✅ Complete`);
-    if (stats.added > 0 || stats.removed > 0 || stats.updated > 0) {
-      console.log(`Added ${stats.added}, removed ${stats.removed}, updated ${stats.updated}`);
+    console.log(`  Items: ${oldCount} → ${totalNew} (${diff >= 0 ? '+' : ''}${diff})`);
+    if (keptItems.length > 0) {
+      console.log(`  Preserved: ${keptItems.length} @keep item(s)`);
     }
     if (this.verbose) {
-      console.log(`Backup: ${backupPath}`);
+      console.log(`  Backup: ${backupPath}`);
     }
   }
 
-  private compareStructures(oldStr: string, newSidebar: any[]): { added: number, removed: number, updated: number } {
-    // Simple counting based on structure
-    // This is approximate - just count items
-    const oldCount = (oldStr.match(/text:/g) || []).length;
-    const newCount = JSON.stringify(newSidebar).match(/text/g)?.length || 0;
-    
-    const diff = newCount - oldCount;
-    return {
-      added: diff > 0 ? diff : 0,
-      removed: diff < 0 ? Math.abs(diff) : 0,
-      updated: 0
-    };
+  private countItems(sidebar: any[]): number {
+    let count = 0;
+    for (const item of sidebar) {
+      count++;
+      if (item.items) {
+        count += this.countItems(item.items);
+      }
+    }
+    return count;
   }
 
-  private formatSidebar(sidebar: any[], indent: number = 6): string {
-    const indentStr = ' '.repeat(indent);
+  private formatSidebarWithKept(sidebar: any[], keptItems: KeptItem[], indent: number = 8): string {
     const lines: string[] = ['['];
     
-    for (let i = 0; i < sidebar.length; i++) {
-      const item = sidebar[i];
-      lines.push(indentStr + '{');
-      lines.push(indentStr + `  text: '${item.text}',`);
-      
-      if (item.link) {
-        lines.push(indentStr + `  link: '${item.link}'`);
-      }
-      
-      if (item.items) {
-        if (item.collapsed !== undefined) {
-          lines.push(indentStr + `  collapsed: ${item.collapsed},`);
-        }
-        lines.push(indentStr + `  items: [`);
-        for (const subItem of item.items) {
-          this.formatSidebarItem(subItem, indent + 4, lines);
-        }
-        lines.push(indentStr + `  ]`);
-      }
-      
-      lines.push(indentStr + '}' + (i < sidebar.length - 1 ? ',' : ''));
+    // Add kept items first
+    for (const kept of keptItems) {
+      // Indent the kept content
+      const indentedContent = kept.content
+        .split('\n')
+        .map((line, i) => i === 0 ? ' '.repeat(indent) + line.trim() : ' '.repeat(indent) + line.trim())
+        .join('\n');
+      lines.push(indentedContent + ', // @keep');
     }
     
-    lines.push('    ]');
+    // Add generated items
+    for (let i = 0; i < sidebar.length; i++) {
+      const item = sidebar[i];
+      const isLast = i === sidebar.length - 1;
+      this.formatItem(item, indent, lines, isLast);
+    }
+    
+    lines.push(' '.repeat(indent - 2) + ']');
     return lines.join('\n');
   }
 
-  private formatSidebarItem(item: any, indent: number, lines: string[]): void {
-    const indentStr = ' '.repeat(indent);
-    lines.push(indentStr + '{');
-    lines.push(indentStr + `  text: '${item.text}',`);
+  private formatItem(item: any, indent: number, lines: string[], isLast: boolean): void {
+    const pad = ' '.repeat(indent);
+    const hasChildren = item.items && item.items.length > 0;
+    const displayText = hasChildren ? `${item.text} >` : item.text;
+    
+    lines.push(pad + '{');
+    lines.push(pad + `  text: '${displayText}',`);
     
     if (item.link) {
-      lines.push(indentStr + `  link: '${item.link}'`);
+      if (item.items) {
+        lines.push(pad + `  link: '${item.link}',`);
+      } else {
+        lines.push(pad + `  link: '${item.link}'`);
+      }
     }
     
-    if (item.items) {
-      if (item.collapsed !== undefined) {
-        lines.push(indentStr + `  collapsed: ${item.collapsed},`);
-      }
-      lines.push(indentStr + `  items: [`);
-      for (const subItem of item.items) {
-        this.formatSidebarItem(subItem, indent + 2, lines);
-      }
-      lines.push(indentStr + `  ]`);
+    if (item.collapsed !== undefined) {
+      lines.push(pad + `  collapsed: ${item.collapsed},`);
     }
     
-    lines.push(indentStr + '},');
+    if (item.items && item.items.length > 0) {
+      lines.push(pad + `  items: [`);
+      for (let i = 0; i < item.items.length; i++) {
+        const subItem = item.items[i];
+        const subIsLast = i === item.items.length - 1;
+        this.formatItem(subItem, indent + 4, lines, subIsLast);
+      }
+      lines.push(pad + `  ]`);
+    }
+    
+    lines.push(pad + '}' + (isLast ? '' : ','));
   }
 }
 
@@ -176,10 +278,18 @@ Description:
   to match the actual filesystem structure.
 
   The tool:
-  - Preserves existing group names and collapsed states
-  - Skips index.md files and system files
+  - Adds links to directories with index.md files
+  - Skips index.md files in the item list
   - Respects srcExclude directories from config
-  - Creates backup (.vitepress/config.mts.original)
+  - Preserves items marked with // @keep
+  - Creates backup (.vitepress/config.mts.backup)
+
+To keep a sidebar item from being removed, add // @keep after it:
+
+    {
+      text: 'Project',
+      link: '/project'
+    }, // @keep
 
 Exit codes:
   0 - Success
