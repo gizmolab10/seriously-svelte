@@ -74,21 +74,21 @@ export default withMermaid(
               ]
             },
             {
-              text: 'Further >',
-              link: '/architecture/further/',
+              text: 'Platform >',
+              link: '/architecture/platforms/',
               collapsed: true,
               items: [
                 {
                   text: 'Bubble',
-                  link: '/architecture/further/bubble'
+                  link: '/architecture/platforms/bubble'
                 },
                 {
                   text: 'Svelte 5',
-                  link: '/architecture/further/svelte.5'
+                  link: '/architecture/platforms/svelte.5'
                 },
                 {
                   text: 'VitePress',
-                  link: '/architecture/further/vitepress'
+                  link: '/architecture/platforms/vitepress'
                 }
               ]
             },

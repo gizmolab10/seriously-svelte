@@ -233,3 +233,87 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
   ➜  Local:   http://localhost:5176/
   ➜  Network: use --host to expose
   ➜  press h to show help
+1:42:42 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+1:43:22 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+1:44:24 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+  ➜  press h to show help

@@ -100,19 +100,19 @@ Documented the editable title component before replacing it. Captures what it do
 
 ---
 
-### Other
+### Platforms
 
-Additional architectural bits that don't fit elsewhere.
+External platforms and tooling.
 
-#### [bubble.md](./architecture/further/bubble.md)
+#### [bubble.md](./architecture/platforms/bubble.md)
 
 Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage to synchronize with Bubble. Ugly stuff here, but it works.
 
-#### [svelte.5.md](./architecture/further/svelte.5.md)
+#### [svelte.5.md](./architecture/platforms/svelte.5.md)
 
 How to upgrade from Svelte 4 to 5. The runes are coming. Reactivity works completely differently. Decision: not upgrading for now.
 
-#### [vitepress.md](./architecture/further/vitepress.md)
+#### [vitepress.md](./architecture/platforms/vitepress.md)
 
 Publishing web documentation. Instructions for installing, configuring and running VitePress in a way that i could understand it and Claude could read it and do it.
 

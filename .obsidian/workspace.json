@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/work/book.md",
+                "file": "notes/designs/architecture/more/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "book"
+              "title": "index"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/work/book.md",
+                "file": "notes/designs/architecture/more/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of book"
+              "title": "Outline of index"
             }
           }
         ],
@@ -167,8 +167,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "0d6205459baf7c18",
   "lastOpenFiles": [
+    "notes/designs/architecture/platforms/index.md",
+    "notes/designs/work/book.md",
     "notes/designs/work/done/migration/index.md",
     "notes/designs/work/done/migration/focus.md",
     "notes/designs/work/done/migration/grow-shrink.md",
@@ -181,11 +183,10 @@
     "notes/designs/digest.md",
     "vite.config.js.timestamp-1767502067267-3736538ab84e8.mjs",
     "vite.config.js.timestamp-1767502063949-e9b9722c597ed.mjs",
-    "notes/designs/architecture/further/vitepress.md",
-    "notes/designs/architecture/further/svelte.5.md",
-    "notes/designs/architecture/further/index.md",
-    "notes/designs/architecture/further/bubble.md",
-    "notes/designs/architecture/further",
+    "notes/designs/architecture/platforms/vitepress.md",
+    "notes/designs/architecture/platforms/svelte.5.md",
+    "notes/designs/architecture/platforms/bubble.md",
+    "notes/designs/architecture/platforms",
     "notes/designs/architecture/other/svelte.5.md",
     "notes/designs/architecture/other/vitepress.md",
     "notes/designs/work/next-previous",
@@ -204,7 +205,6 @@
     "notes/designs/architecture/more/reactivity.md",
     "notes/designs/architecture/more/persistable.md",
     "notes/designs/architecture/managers/styles.md",
-    "notes/designs/architecture/managers/timers.md",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",

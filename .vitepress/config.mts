@@ -74,25 +74,6 @@ export default withMermaid(
               ]
             },
             {
-              text: 'Further >',
-              link: '/architecture/further/',
-              collapsed: true,
-              items: [
-                {
-                  text: 'Bubble',
-                  link: '/architecture/further/bubble'
-                },
-                {
-                  text: 'Svelte 5',
-                  link: '/architecture/further/svelte.5'
-                },
-                {
-                  text: 'VitePress',
-                  link: '/architecture/further/vitepress'
-                }
-              ]
-            },
-            {
               text: 'More >',
               link: '/architecture/more/',
               collapsed: true,
@@ -112,6 +93,25 @@ export default withMermaid(
                 {
                   text: 'Timers',
                   link: '/architecture/more/timers'
+                }
+              ]
+            },
+            {
+              text: 'Platforms >',
+              link: '/architecture/platforms/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Bubble',
+                  link: '/architecture/platforms/bubble'
+                },
+                {
+                  text: 'Svelte 5',
+                  link: '/architecture/platforms/svelte.5'
+                },
+                {
+                  text: 'VitePress',
+                  link: '/architecture/platforms/vitepress'
                 }
               ]
             },

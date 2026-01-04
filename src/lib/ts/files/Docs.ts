@@ -73,33 +73,6 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
-					id: 'architecture_further',
-					name: 'Further',
-					type: 'folder',
-					path: 'architecture/further',
-					link: 'architecture/further/index',
-					children: [
-						{
-							id: 'architecture_further_bubble',
-							name: 'Bubble',
-							type: 'file',
-							path: 'architecture/further/bubble'
-						},
-						{
-							id: 'architecture_further_svelte_5',
-							name: 'Svelte.5',
-							type: 'file',
-							path: 'architecture/further/svelte.5'
-						},
-						{
-							id: 'architecture_further_vitepress',
-							name: 'Vitepress',
-							type: 'file',
-							path: 'architecture/further/vitepress'
-						},
-					]
-				},
-				{
 					id: 'architecture_more',
 					name: 'More',
 					type: 'folder',
@@ -129,6 +102,33 @@ export function getDocsStructure(): DocNode[] {
 							name: 'Timers',
 							type: 'file',
 							path: 'architecture/more/timers'
+						},
+					]
+				},
+				{
+					id: 'architecture_platforms',
+					name: 'Platforms',
+					type: 'folder',
+					path: 'architecture/platforms',
+					link: 'architecture/platforms/index',
+					children: [
+						{
+							id: 'architecture_platforms_bubble',
+							name: 'Bubble',
+							type: 'file',
+							path: 'architecture/platforms/bubble'
+						},
+						{
+							id: 'architecture_platforms_svelte_5',
+							name: 'Svelte.5',
+							type: 'file',
+							path: 'architecture/platforms/svelte.5'
+						},
+						{
+							id: 'architecture_platforms_vitepress',
+							name: 'Vitepress',
+							type: 'file',
+							path: 'architecture/platforms/vitepress'
 						},
 					]
 				},
