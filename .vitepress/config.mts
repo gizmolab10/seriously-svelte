@@ -213,6 +213,10 @@ export default withMermaid(
               link: '/work/book'
             },
             {
+              text: 'Ethernet',
+              link: '/work/ethernet'
+            },
+            {
               text: 'Search Links',
               link: '/work/search-links'
             },

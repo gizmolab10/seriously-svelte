@@ -68,3 +68,6 @@ flowchart TB
 5. [geometry.md](./architecture/core/geometry.md) — layout coordination
 
 After that, pick what interests you.
+
+## WRONG!
+hierarchy is in the manager layer

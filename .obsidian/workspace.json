@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "d07714e79fc78708",
+        "id": "ddf4cc4e4f8af1d3",
         "type": "tabs",
         "children": [
           {
-            "id": "6d9f2b174dff242e",
+            "id": "a31db9146ba0cdfb",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "notes/designs/work/claude.write.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "claude.write"
             }
           }
         ]
@@ -136,12 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "notes/designs/work/claude.write.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of claude.write"
             }
           }
         ],
@@ -162,15 +167,30 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "6d9f2b174dff242e",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/designs/work/quaternions.md",
+    "notes/designs/work/claude.write.md",
+    "node_modules/gl-matrix/vec3/package.json",
+    "node_modules/gl-matrix/vec2/package.json",
+    "node_modules/gl-matrix/types.d.ts/package.json",
+    "node_modules/gl-matrix/esm/quat.js",
+    "node_modules/gl-matrix/quat2/package.json",
+    "node_modules/gl-matrix/quat/package.json",
+    "node_modules/gl-matrix/esm/common.js",
+    "node_modules/gl-matrix/esm/vec4.js",
+    "node_modules/gl-matrix/mat2/package.json",
+    "node_modules/gl-matrix/mat4/package.json",
+    "node_modules/gl-matrix/README.md",
+    "node_modules/gl-matrix/LICENSE.md",
+    "notes/designs/overview.md",
+    "notes/designs/work/done/ethernet.md",
     "notes/designs/architecture/ux/filesystem.md",
     "notes/designs/architecture/internals/timers.md",
     "notes/designs/architecture/internals/styles.md",
     "notes/designs/architecture/internals/reactivity.md",
     "notes/designs/architecture/internals/persistable.md",
     "notes/designs/architecture/internals/index.md",
-    "notes/designs/architecture/internals",
     "notes/designs/work/done/filesystem.md",
     "notes/designs/work/book.md",
     "notes/designs/work/filesystem.md",
@@ -179,27 +199,12 @@
     "CLAUDE.MD",
     "notes/designs/architecture/platforms/index.md",
     "notes/designs/architecture/more/index.md",
-    "src/lib/svelte/main/Preview.svelte",
-    "src/lib/ts/database/DB_Filesystem.ts",
-    "notes/designs/work/filesystem",
     "notes/designs/work/done/migration/index.md",
     "notes/designs/work/done/migration/focus.md",
     "notes/designs/work/done/migration/grow-shrink.md",
     "notes/designs/work/done/migration/ancestry-focus.md",
     "notes/designs/work/done/migration/grow-shrink-migration.md",
     "notes/designs/work/done/migration/ancestry-focus-migration.md",
-    "notes/designs/work/done/migration",
-    "notes/designs/work/grow-shrink-migration.md",
-    "notes/designs/work/ancestry-focus-migration.md",
-    "notes/designs/digest.md",
-    "vite.config.js.timestamp-1767502067267-3736538ab84e8.mjs",
-    "vite.config.js.timestamp-1767502063949-e9b9722c597ed.mjs",
-    "notes/designs/architecture/platforms/vitepress.md",
-    "notes/designs/architecture/platforms/svelte.5.md",
-    "notes/designs/architecture/platforms/bubble.md",
-    "notes/designs/architecture/platforms",
-    "notes/designs/work/next-previous",
-    "notes/tools/sync-index-files.sh",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",

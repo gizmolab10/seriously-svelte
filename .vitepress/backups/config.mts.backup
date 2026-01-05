@@ -74,25 +74,25 @@ export default withMermaid(
               ]
             },
             {
-              text: 'More >',
-              link: '/architecture/more/',
+              text: 'Internals >',
+              link: '/architecture/internals/',
               collapsed: true,
               items: [
                 {
                   text: 'Persistable',
-                  link: '/notes/designs/architecture/internals/persistable'
+                  link: '/architecture/internals/persistable'
                 },
                 {
                   text: 'Reactivity',
-                  link: '/notes/designs/architecture/internals/reactivity'
+                  link: '/architecture/internals/reactivity'
                 },
                 {
                   text: 'Styles',
-                  link: '/notes/designs/architecture/internals/styles'
+                  link: '/architecture/internals/styles'
                 },
                 {
                   text: 'Timers',
-                  link: '/notes/designs/architecture/internals/timers'
+                  link: '/architecture/internals/timers'
                 }
               ]
             },

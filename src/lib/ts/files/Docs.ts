@@ -382,6 +382,12 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
+					id: 'work_ethernet',
+					name: 'Ethernet',
+					type: 'file',
+					path: 'work/ethernet'
+				},
+				{
 					id: 'work_next',
 					name: 'Next',
 					type: 'folder',

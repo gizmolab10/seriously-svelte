@@ -7,5 +7,6 @@ Documentation of ongoing and completed work.
 - [Done](./done/)
 - [Next](./next/)
 - [Book](./book.md)
+- [Ethernet](ethernet.md)
 - [Search Links](./search-links.md)
 
