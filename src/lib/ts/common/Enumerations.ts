@@ -173,13 +173,6 @@ export enum T_Drag {
 	none	   = 'none',
 }
 
-export enum T_File_Format {
-	seriously = 'seriously',
-	cancel	  = 'cancel',
-	json	  = 'json',
-	csv		  = 'csv',
-}
-
 export enum T_Radial_Zone {
 	resize = 'resize',
 	paging = 'paging',
@@ -262,26 +255,33 @@ export enum T_Browser  {
 	orion	 = 'orion',
 }
 
+export enum T_File_Extension {
+	seriously = 'seriously',
+	cancel	  = 'cancel',
+	json	  = 'json',
+	csv		  = 'csv',
+}
+
 export enum T_Image_Extension {
-	jpg    = 'jpg',
 	jpeg   = 'jpeg',
-	png    = 'png',
-	gif    = 'gif',
-	svg    = 'svg',
 	webp   = 'webp',
+	jpg    = 'jpg',
+	gif    = 'gif',
+	png    = 'png',
+	svg    = 'svg',
 }
 
 export enum T_Text_Extension {
-	txt    = 'txt',
-	md     = 'md',
-	json   = 'json',
-	js     = 'js',
-	ts     = 'ts',
 	svelte = 'svelte',
 	html   = 'html',
+	json   = 'json',
 	css    = 'css',
 	csv    = 'csv',
+	txt    = 'txt',
+	js     = 'js',
+	md     = 'md',
 	sh     = 'sh',
+	ts     = 'ts',
 }
 
 export enum T_Thing {

@@ -1,4 +1,4 @@
-import { T_Create, T_Startup, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
+import { T_Create, T_Startup, T_Alteration, T_File_Extension, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { g, k, p, u, x, busy, show, debug, controls, features, databases } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
@@ -1445,25 +1445,25 @@ export class Hierarchy {
 
 	static readonly _____FILES: unique symbol;
 
-	persistRoot_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.rootAncestry, format); }
-	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.ancestry_forFile, format); }
+	persistRoot_toFile(format: T_File_Extension) { this.persist_fromAncestry_toFile(this.rootAncestry, format); }
+	persist_toFile(format: T_File_Extension) { this.persist_fromAncestry_toFile(this.ancestry_forFile, format); }
 
 	data_fromAncestry_toSave(ancestry: Ancestry): Dictionary {
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
 	}
 
-	select_file_toUpload(format: T_File_Format, SHIFT: boolean) {
+	select_file_toUpload(format: T_File_Extension, SHIFT: boolean) {
 		this.replace_rootID = SHIFT ? k.empty : null;		// to replace (or not) the root id extracted from file
 		files.format_preference = format;
 		show.w_id_popupView.set(T_Control.import);
 	}
 
-	persist_fromAncestry_toFile(ancestry: Ancestry, format: T_File_Format) {
+	persist_fromAncestry_toFile(ancestry: Ancestry, format: T_File_Extension) {
 		switch (format) {
-			case T_File_Format.csv:
+			case T_File_Extension.csv:
 				alert('saving as CSV is not yet implemented');
 				break;
-			case T_File_Format.json:
+			case T_File_Extension.json:
 				const data = this.data_fromAncestry_toSave(ancestry);
 				const filename = `${data.title.toLowerCase()}.${format}`;
 				files.persist_json_object_toFile(data, filename);
@@ -1507,17 +1507,17 @@ export class Hierarchy {
 			const result = await files.fetch_fromFile(file);
 			const dict = result as Dictionary;
 			switch (format) {
-				case T_File_Format.csv:
+				case T_File_Extension.csv:
 					const subdicts = result as Array<Dictionary>;
 					for (const subdict of subdicts) {
 						pivot.extract_fromDict(subdict);
 					}
 					await pivot.create_relationships_fromAllTraits();
 					break;
-				case T_File_Format.json:
+				case T_File_Extension.json:
 					await this.extractJSON_fromDict(dict);
 					break;
-				case T_File_Format.seriously:
+				case T_File_Extension.seriously:
 					this.extractSeriously_fromDict(dict, x.ancestry_forDetails ?? this.rootAncestry);
 					break;
 			}

@@ -44,19 +44,19 @@ What's focused, what's grabbed, what's being edited, what to show in details. St
 
 Additional architecture topics.
 
-#### [persistable.md](./architecture/more/persistable.md)
+#### [persistable.md](./architecture/internals/persistable.md)
 
 All persistent data entities extend the Persistable base class. Provides unified interface for database operations, serialization, and identity management.
 
-#### [reactivity.md](./architecture/more/reactivity.md)
+#### [reactivity.md](./architecture/internals/reactivity.md)
 
 How reactivity works in Svelte 4. Not about stores, not about Svelte 5 runes. Just plain old component state and the weirdness i kept seeing in the codebase.
 
-#### [styles.md](./architecture/more/styles.md)
+#### [styles.md](./architecture/internals/styles.md)
 
 i admit it, my early code was a nightmare to tweak because i designed it as i went along. With AI, i crafted a centralized system. One place to confine the mess. Styles computes all colors from state snapshots. Remarkably simple code.
 
-#### [timers.md](./architecture/more/timers.md)
+#### [timers.md](./architecture/internals/timers.md)
 
 Mouse timing logic centralized in Hits manager. Components declare intent ("I need autorepeat"), manager handles lifecycle. State survives re-renders because it lives on the target, not the component.
 

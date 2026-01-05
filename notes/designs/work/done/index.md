@@ -7,5 +7,6 @@
 - [Migration](./migration/)
 - [Refactoring](./refactoring/)
 - [Vitepress](./vitepress/)
+- [Filesystem](./filesystem.md)
 - [Focus](./focus.md)
 

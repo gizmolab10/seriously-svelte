@@ -134,7 +134,7 @@ See [architecture/core/managers.md](notes/designs/architecture/core/managers.md)
 
 8 data models extend `Persistable`: Access, Persistable (base), Predicate, Relationship, Tag, Thing, Trait, User. Each has hash-based ID, database-agnostic CRUD, and serialization.
 
-See [architecture/more/persistable.md](notes/designs/architecture/more/persistable.md) for identity, serialization, and lifecycle.
+See [architecture/internals/persistable.md](notes/designs/architecture/internals/persistable.md) for identity, serialization, and lifecycle.
 
 #### 4. Database Abstraction
 
@@ -318,11 +318,11 @@ class MyThing extends Persistable {
 - [hits.md](notes/designs/architecture/core/hits.md) - Click/hover system, migration guide
 - [managers.md](notes/designs/architecture/core/managers.md) - Singleton manager pattern and responsibilities
 - [paging.md](notes/designs/architecture/ux/paging.md) - Radial paging system
-- [persistable.md](notes/designs/architecture/more/persistable.md) - Persistable data models and serialization
+- [persistable.md](notes/designs/architecture/internals/persistable.md) - Persistable data models and serialization
 - [preferences.md](notes/designs/architecture/ux/preferences.md) - Settings management
 - [search.md](notes/designs/architecture/ux/search.md) - Search functionality
 - [state.md](notes/designs/architecture/core/state.md) - State objects and stores architecture
-- [styles.md](notes/designs/architecture/more/styles.md) - Styling system
+- [styles.md](notes/designs/architecture/internals/styles.md) - Styling system
 - [ux.md](notes/designs/architecture/core/ux.md) - UX manager (focus, grabs, details)
 
 **Guides** (notes/designs/guides/):

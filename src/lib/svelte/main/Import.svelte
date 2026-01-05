@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { g, h, k, core, x, show, Point, details, elements } from '../../ts/common/Global_Imports';
-	import { T_Storage_Need } from '../../ts/common/Enumerations';
-	import { files } from '../../ts/files/Files';
+	import { g, h, k, x, core, files, show, details, elements } from '../../ts/common/Global_Imports';
+	import { Point, T_Storage_Need } from '../../ts/common/Enumerations';
 	import { onMount } from 'svelte';
 	export let accept: string = '.' + files.format_preference;
 	export let multiple = k.empty;		// can be set to 'multiple'

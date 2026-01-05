@@ -1,4 +1,4 @@
-import { T_File_Format, T_Text_Extension, T_Image_Extension, T_Control } from '../common/Enumerations';
+import { T_File_Extension, T_Text_Extension, T_Image_Extension, T_Control } from '../common/Enumerations';
 import { tu } from '../utilities/Testworthy_Utilities';
 import DB_Filesystem from '../database/DB_Filesystem';
 import { T_Preview_Type } from '../types/Types';
@@ -12,40 +12,12 @@ interface File_System_Directory_Handle {
 }
 
 export default class Files {
-	format_preference: T_File_Format = T_File_Format.json;
+	format_preference: T_File_Extension = T_File_Extension.json;
 
 	w_preview_filename	= writable<string>('');
 	w_preview_content	= writable<string | null>(null);
 	w_preview_type		= writable<T_Preview_Type>('text');
 
-	preview_type_forFilename(filename: string): T_Preview_Type {
-		const ext = filename.split('.').pop()?.toLowerCase() || '';
-		if (Object.values(T_Image_Extension).includes(ext as T_Image_Extension)) return 'image';
-		if (Object.values(T_Text_Extension).includes(ext as T_Text_Extension)) return 'text';
-		return null;
-	}
-
-	async show_previewOf_file(fileId: string): Promise<boolean> {
-		let success = false;
-		if (h.db instanceof DB_Filesystem) {
-			const entry = h.db.get_file_information(fileId);
-			if (!!entry && !entry.isDirectory) {
-				const preview_type = this.preview_type_forFilename(entry.name);
-				if (!!preview_type) {
-					if (preview_type === 'image') {
-						this.w_preview_content.set(await h.db.readFileAsDataURL(fileId));
-					} else {
-						this.w_preview_content.set(await h.db.readFileAsText(fileId));
-					}
-					this.w_preview_type.set(preview_type);
-					this.w_preview_filename.set(entry.name);
-					show.w_id_popupView.set(T_Control.preview);
-					success = true;
-				}
-			}
-		}
-		return success;
-	}
 	
 	static readonly _____WRITE: unique symbol;
 
@@ -64,9 +36,9 @@ export default class Files {
 	async fetch_fromFile(file: File): Promise<any> {
 		const format = this.format_preference;
 		switch (format) {
-			case T_File_Format.seriously: return await this.extract_json_object_fromFile(file);
-			case T_File_Format.json:	  return await this.extract_json_object_fromFile(file);
-			case T_File_Format.csv:		  return await this.extract_csv_records_fromFile(file);
+			case T_File_Extension.seriously: return await this.extract_json_object_fromFile(file);
+			case T_File_Extension.json:	  return await this.extract_json_object_fromFile(file);
+			case T_File_Extension.csv:		  return await this.extract_csv_records_fromFile(file);
 			default:					  throw new Error(`Unsupported format: ${format}`);
 		}
 	}
@@ -140,7 +112,36 @@ export default class Files {
 		});
 	}
 	
-	static readonly _____FORMAT: unique symbol;
+	static readonly _____PREVIEW: unique symbol;
+
+	preview_type_forFilename(filename: string): T_Preview_Type {
+		const ext = filename.split('.').pop()?.toLowerCase() || '';
+		if (Object.values(T_Image_Extension).includes(ext as T_Image_Extension)) return 'image';
+		if (Object.values(T_Text_Extension).includes(ext as T_Text_Extension)) return 'text';
+		return null;
+	}
+
+	async show_previewOf_file(fileId: string): Promise<boolean> {
+		let success = false;
+		if (h.db instanceof DB_Filesystem) {
+			const entry = h.db.get_file_information(fileId);
+			if (!!entry && !entry.isDirectory) {
+				const preview_type = this.preview_type_forFilename(entry.name);
+				if (!!preview_type) {
+					if (preview_type === 'image') {
+						this.w_preview_content.set(await h.db.readFileAsDataURL(fileId));
+					} else {
+						this.w_preview_content.set(await h.db.readFileAsText(fileId));
+					}
+					this.w_preview_type.set(preview_type);
+					this.w_preview_filename.set(entry.name);
+					show.w_id_popupView.set(T_Control.preview);
+					success = true;
+				}
+			}
+		}
+		return success;
+	}
 
 	static readonly _____DIRECTORY_HANDLE: unique symbol;
 

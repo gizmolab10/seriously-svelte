@@ -6,7 +6,7 @@
 ## Contents
 
 - [Core](./core/)
-- [More](./more/)
+- [Internals](./internals/)
 - [Platforms](./platforms/)
 - [Ux](./ux/)
 

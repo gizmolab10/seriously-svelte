@@ -2,7 +2,7 @@
 
 Only one element in the app can react to the mouse. The **Hits** spatial index knows which one. It's the **single source of truth** for hover and click dispatch. Consistent behavior everywhere.
 
-For timing logic (autorepeat, long-click, double-click), see [timers.md](../more/timers.md).
+For timing logic (autorepeat, long-click, double-click), see [timers.md](../internals/timers.md).
 
 ## Table of Contents
 - [Overview & Status](#overview--status)
@@ -42,7 +42,7 @@ Centralized click handling using the Hits spatial index to dispatch `handle_s_mo
 ### Status
 
 - [x] **Complete** — Core hit detection and dispatch
-- [x] **Complete** — All mouse timing centralized (see [timers.md](../more/timers.md))
+- [x] **Complete** — All mouse timing centralized (see [timers.md](../internals/timers.md))
 - [ ] Remaining work
   - [ ] `Search_Results.svelte` — complex (dynamic rows, may be too granular)
   - [ ] breadcrumb button — not yet migrated to centralized autorepeat
@@ -71,7 +71,7 @@ On `mousedown`/`mouseup` at the document level (Events.ts):
 1. Call `hits.targets_atPoint(point)` to find targets under cursor
 2. Select topmost target using priority: dot → widget → ring → control → other
 3. Invoke `target.handle_s_mouse(s_mouse)` if defined
-4. Hits handles timing centrally (see [timers.md](../more/timers.md))
+4. Hits handles timing centrally (see [timers.md](../internals/timers.md))
 
 ```
 mousedown → Events.ts → hits.handle_click_at(point, s_mouse)
@@ -291,7 +291,7 @@ All tests assume a **widget is selected** in the graph or list view.
    - [x] widget drag/reveal buttons — fixed (respond on `isDown`)
    - [x] segmented controls — fixed (changed to `on:mousedown`)
 
-For timing tests (autorepeat, double-click, long-click), see [timers.md](../more/timers.md#testing).
+For timing tests (autorepeat, double-click, long-click), see [timers.md](../internals/timers.md#testing).
 
 ---
 

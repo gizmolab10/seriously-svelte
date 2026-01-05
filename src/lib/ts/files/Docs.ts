@@ -73,35 +73,35 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
-					id: 'architecture_more',
-					name: 'More',
+					id: 'architecture_internals',
+					name: 'Internals',
 					type: 'folder',
-					path: 'architecture/more',
-					link: 'architecture/more/index',
+					path: 'architecture/internals',
+					link: 'architecture/internals/index',
 					children: [
 						{
-							id: 'architecture_more_persistable',
+							id: 'architecture_internals_persistable',
 							name: 'Persistable',
 							type: 'file',
-							path: 'architecture/more/persistable'
+							path: 'architecture/internals/persistable'
 						},
 						{
-							id: 'architecture_more_reactivity',
+							id: 'architecture_internals_reactivity',
 							name: 'Reactivity',
 							type: 'file',
-							path: 'architecture/more/reactivity'
+							path: 'architecture/internals/reactivity'
 						},
 						{
-							id: 'architecture_more_styles',
+							id: 'architecture_internals_styles',
 							name: 'Styles',
 							type: 'file',
-							path: 'architecture/more/styles'
+							path: 'architecture/internals/styles'
 						},
 						{
-							id: 'architecture_more_timers',
+							id: 'architecture_internals_timers',
 							name: 'Timers',
 							type: 'file',
-							path: 'architecture/more/timers'
+							path: 'architecture/internals/timers'
 						},
 					]
 				},
@@ -298,6 +298,12 @@ export function getDocsStructure(): DocNode[] {
 					path: 'work/done',
 					link: 'work/done/index',
 					children: [
+						{
+							id: 'work_done_filesystem',
+							name: 'Filesystem',
+							type: 'file',
+							path: 'work/done/filesystem'
+						},
 						{
 							id: 'work_done_focus',
 							name: 'Focus',

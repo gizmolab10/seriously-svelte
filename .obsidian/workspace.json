@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "0cae149d59204659",
+        "id": "d07714e79fc78708",
         "type": "tabs",
         "children": [
           {
-            "id": "0d6205459baf7c18",
+            "id": "6d9f2b174dff242e",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/designs/work/filesystem.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "filesystem"
+              "title": "New tab"
             }
           }
         ]
@@ -78,7 +74,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 306.50390243530273
+    "width": 211.50390243530273
   },
   "right": {
     "id": "3a2b7a363fc7d49c",
@@ -140,13 +136,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/work/filesystem.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of filesystem"
+              "title": "Outline"
             }
           }
         ],
@@ -167,13 +162,21 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0d6205459baf7c18",
+  "active": "6d9f2b174dff242e",
   "lastOpenFiles": [
-    "notes/designs/guides/style.md",
+    "notes/designs/architecture/ux/filesystem.md",
+    "notes/designs/architecture/internals/timers.md",
+    "notes/designs/architecture/internals/styles.md",
+    "notes/designs/architecture/internals/reactivity.md",
+    "notes/designs/architecture/internals/persistable.md",
+    "notes/designs/architecture/internals/index.md",
+    "notes/designs/architecture/internals",
+    "notes/designs/work/done/filesystem.md",
+    "notes/designs/work/book.md",
     "notes/designs/work/filesystem.md",
+    "notes/designs/guides/style.md",
     "README.md",
     "CLAUDE.MD",
-    "notes/designs/work/book.md",
     "notes/designs/architecture/platforms/index.md",
     "notes/designs/architecture/more/index.md",
     "src/lib/svelte/main/Preview.svelte",
@@ -195,16 +198,8 @@
     "notes/designs/architecture/platforms/svelte.5.md",
     "notes/designs/architecture/platforms/bubble.md",
     "notes/designs/architecture/platforms",
-    "notes/designs/architecture/other/svelte.5.md",
-    "notes/designs/architecture/other/vitepress.md",
     "notes/designs/work/next-previous",
     "notes/tools/sync-index-files.sh",
-    "notes/tools/analyze-counts.sh",
-    "notes/designs/work/next-previous.md",
-    "notes/designs/work/search-links.md",
-    "notes/designs/work/done/search.md",
-    "notes/designs/overview.md",
-    "notes/designs/architecture/more/timers.md",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",

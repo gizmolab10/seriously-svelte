@@ -74,7 +74,30 @@ export default withMermaid(
               ]
             },
             {
-              text: 'Platform >',
+              text: 'More >',
+              link: '/architecture/more/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Persistable',
+                  link: '/notes/designs/architecture/internals/persistable'
+                },
+                {
+                  text: 'Reactivity',
+                  link: '/notes/designs/architecture/internals/reactivity'
+                },
+                {
+                  text: 'Styles',
+                  link: '/notes/designs/architecture/internals/styles'
+                },
+                {
+                  text: 'Timers',
+                  link: '/notes/designs/architecture/internals/timers'
+                }
+              ]
+            },
+            {
+              text: 'Platforms >',
               link: '/architecture/platforms/',
               collapsed: true,
               items: [
@@ -89,29 +112,6 @@ export default withMermaid(
                 {
                   text: 'VitePress',
                   link: '/architecture/platforms/vitepress'
-                }
-              ]
-            },
-            {
-              text: 'More >',
-              link: '/architecture/more/',
-              collapsed: true,
-              items: [
-                {
-                  text: 'Persistable',
-                  link: '/architecture/more/persistable'
-                },
-                {
-                  text: 'Reactivity',
-                  link: '/architecture/more/reactivity'
-                },
-                {
-                  text: 'Styles',
-                  link: '/architecture/more/styles'
-                },
-                {
-                  text: 'Timers',
-                  link: '/architecture/more/timers'
                 }
               ]
             },
@@ -221,6 +221,10 @@ export default withMermaid(
               link: '/work/done/',
               collapsed: true,
               items: [
+                {
+                  text: 'Filesystem',
+                  link: '/work/done/filesystem'
+                },
                 {
                   text: 'Focus',
                   link: '/work/done/focus'

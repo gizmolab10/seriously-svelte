@@ -1,6 +1,6 @@
 import { c, g, h, k, u, x, hits, g_graph_tree, debug, search, radial } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
-import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { T_File_Extension, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
@@ -296,9 +296,9 @@ export class Events {
 						case '<':				g_graph_tree.increase_depth_limit_by(-1); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 						case 'f':				search.activate(); break;
-						case 's':				h.persist_toFile(T_File_Format.json); return;
+						case 's':				h.persist_toFile(T_File_Extension.json); return;
 						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;
-						case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
+						case 'o':				h.select_file_toUpload(T_File_Extension.json, event.shiftKey); break;
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
 						case 'escape':			if (!!get(x.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;

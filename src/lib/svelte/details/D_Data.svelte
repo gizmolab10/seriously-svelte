@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, h, k, u, busy, show, colors, details, features, elements, databases } from '../../ts/common/Global_Imports';
-	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
+	import { T_File_Extension, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Hit_Target, T_Request, T_Preference } from '../../ts/common/Global_Imports';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Database } from '../../ts/database/DB_Common';
@@ -16,11 +16,11 @@
 	const { w_show_other_databases, w_show_save_data_button } = show;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
-	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
+	const ids_forOutputFormat = [T_File_Extension.csv, T_File_Extension.json, T_File_Extension.cancel];
 	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
 	const ids_forDatabase = [T_Database.test, T_Database.docs, T_Database.firebase]
 		.concat(DB_Filesystem.isSupported() ? [T_Database.filesystem] : []);
-	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
+	const ids_forInputFormat = [T_File_Extension.csv, T_File_Extension.json, T_File_Extension.seriously, T_File_Extension.cancel];
 	const s_selectFolder = elements.s_element_for(new Identifiable('select-folder'), T_Hit_Target.button, 'select-folder');
 	let s_element_dict_byStorageType: Dictionary<S_Element> = {};
 	let heights = [15, height_ofChoices(), 42, 28, 74, 26, 3];
@@ -47,7 +47,7 @@
 		reattachments++;
 	}
 
-	function ids_forFormat(): T_File_Format[] {
+	function ids_forFormat(): T_File_Extension[] {
 		return (storage_choice == T_File_Operation.import) ? ids_forInputFormat : ids_forOutputFormat;
 	}
 
@@ -125,8 +125,8 @@
 			if (beginning) {
 				storage_choice = choice;
 				details.t_storage_need = T_Storage_Need.format; // not reset
-			} else if (choice != T_File_Format.cancel) {
-				const format = choice as T_File_Format;
+			} else if (choice != T_File_Extension.cancel) {
+				const format = choice as T_File_Extension;
 				switch (storage_choice) {
 					case T_File_Operation.export: h.persist_toFile(format); break;
 					case T_File_Operation.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
