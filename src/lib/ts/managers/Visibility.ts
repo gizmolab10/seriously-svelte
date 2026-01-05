@@ -1,8 +1,7 @@
 import { T_Focus, T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference, T_Counts_Shown } from '../common/Global_Imports';
-import { T_Breadcrumbs, T_Cluster_Pager, T_Auto_Adjust_Graph, T_Control } from '../common/Global_Imports';
-import { g, h, k, p, core, files, g_graph_tree } from '../common/Global_Imports';
-import type { Dictionary, T_Preview_Type } from '../types/Types';
-import DB_Filesystem from '../database/DB_Filesystem';
+import { T_Breadcrumbs, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { g, k, p, core, g_graph_tree } from '../common/Global_Imports';
+import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import { x } from '../managers/UX';
 
@@ -25,9 +24,6 @@ export class Visibility {
 	w_show_details			= writable<boolean>(true);
 	w_show_other_databases	= writable<boolean>(true);
 
-	w_preview_filename		= writable<string>('');
-	w_preview_content		= writable<string | null>(null);
-	w_preview_type			= writable<'text' | 'image' | 'unsupported'>('text');
 	w_id_popupView			= writable<string | null>();
 	debug_cursor			= false;
 
@@ -110,27 +106,6 @@ export class Visibility {
 			writeAnd_reactTo(T_Preference.focus, flag);
 		});
     }
-
-	async show_previewOf_file(fileId: string): Promise<boolean> {
-		if (h.db instanceof DB_Filesystem) {
-			const entry = h.db.get_file_information(fileId);
-			if (!!entry && !entry.isDirectory) {
-				const preview_type = files.preview_type_forFilename(entry.name);
-				if (!!preview_type) {
-					if (preview_type === 'image') {
-						this.w_preview_content.set(await h.db.readFileAsDataURL(fileId));
-					} else {
-						this.w_preview_content.set(await h.db.readFileAsText(fileId));
-					}
-					this.w_preview_type.set(preview_type);
-					this.w_preview_filename.set(entry.name);
-					this.w_id_popupView.set(T_Control.preview);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 }
 
 export const show = new Visibility();

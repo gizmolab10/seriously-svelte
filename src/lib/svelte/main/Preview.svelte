@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { h, k, u, show, colors, Point } from '../../ts/common/Global_Imports';
+	import { h, k, u, show, files, colors, Point } from '../../ts/common/Global_Imports';
 	import DB_Filesystem from '../../ts/database/DB_Filesystem';
 	import Close_Button from '../mouse/Close_Button.svelte';
-	const { w_id_popupView, w_preview_content, w_preview_type, w_preview_filename } = show;
+	const { w_id_popupView } = show;
+	const { w_preview_content, w_preview_type, w_preview_filename } = files;
 	const { w_background_color } = colors;
 	let copyFeedback = '';
 

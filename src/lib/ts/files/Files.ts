@@ -1,15 +1,45 @@
-import { T_File_Format, T_Text_Extension, T_Image_Extension } from '../common/Enumerations';
+import { T_File_Format, T_Text_Extension, T_Image_Extension, T_Control } from '../common/Enumerations';
+import DB_Filesystem from '../database/DB_Filesystem';
 import { tu } from '../utilities/Testworthy_Utilities';
 import { T_Preview_Type } from '../types/Types';
+import { show } from '../managers/Visibility';
+import { h } from '../managers/Hierarchy';
+import { writable } from 'svelte/store';
 
 export default class Files {
 	format_preference: T_File_Format = T_File_Format.json;
+
+	w_preview_filename	= writable<string>('');
+	w_preview_content	= writable<string | null>(null);
+	w_preview_type		= writable<T_Preview_Type>('text');
 
 	preview_type_forFilename(filename: string): T_Preview_Type {
 		const ext = filename.split('.').pop()?.toLowerCase() || '';
 		if (Object.values(T_Image_Extension).includes(ext as T_Image_Extension)) return 'image';
 		if (Object.values(T_Text_Extension).includes(ext as T_Text_Extension)) return 'text';
 		return null;
+	}
+
+	async show_previewOf_file(fileId: string): Promise<boolean> {
+		let success = false;
+		if (h.db instanceof DB_Filesystem) {
+			const entry = h.db.get_file_information(fileId);
+			if (!!entry && !entry.isDirectory) {
+				const preview_type = this.preview_type_forFilename(entry.name);
+				if (!!preview_type) {
+					if (preview_type === 'image') {
+						this.w_preview_content.set(await h.db.readFileAsDataURL(fileId));
+					} else {
+						this.w_preview_content.set(await h.db.readFileAsText(fileId));
+					}
+					this.w_preview_type.set(preview_type);
+					this.w_preview_filename.set(entry.name);
+					show.w_id_popupView.set(T_Control.preview);
+					success = true;
+				}
+			}
+		}
+		return success;
 	}
 	
 	static readonly _____WRITE: unique symbol;
