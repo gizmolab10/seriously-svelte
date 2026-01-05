@@ -13,7 +13,7 @@
 	import { T_Graph } from '../../ts/common/Global_Imports';
 	const { w_t_graph, w_show_search_controls } = show;
 	const width = k.width.details;
-	const { w_s_search } = search;
+	const { w_t_search } = search;
 	const { w_count_details } = e;
 	const { w_ancestry_forDetails } = x;	
 	const { w_index: w_found } = x.si_found;
@@ -27,7 +27,7 @@
 
 	$: {
 		const _ = `${$w_found}
-		:::${$w_s_search}
+		:::${$w_t_search}
 		:::${$w_tags_description}
 		:::${$w_grabs_description}
 		:::${$w_traits_description}

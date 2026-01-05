@@ -251,7 +251,7 @@ export class Events {
 				const SHIFT = event.shiftKey;
 				const COMMAND = event.metaKey;
 				const EXTREME = SHIFT && OPTION;
-				if (get(search.w_s_search) != T_Search.off) {
+				if (get(search.w_t_search) != T_Search.off) {
 					switch (key) {
 						case 'enter':	
 						case 'escape':

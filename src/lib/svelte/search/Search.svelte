@@ -9,14 +9,14 @@
 	const { w_thing_fontFamily } = x;
 	const { w_rect_ofGraphView } = g;
 	const s_search = elements.s_element_for(null, T_Hit_Target.search, k.empty);
-	const { w_s_search, w_search_preferences, w_search_results_found } = search;
+	const { w_t_search, w_t_search_preferences, w_search_results_found } = search;
 	let input: HTMLInputElement;
 
 	$: if (!!input) {
 		s_search.html_element = input;				// so s_element_set_focus_to will work
 	}
 
-	$: if ($w_s_search != T_Search.enter) {
+	$: if ($w_t_search != T_Search.enter) {
 		setTimeout(() => {
 			elements.s_element_set_focus_to(s_search);	// so 'f' will not be added to the input
 		}, 1);
@@ -52,7 +52,7 @@
 		left={60}
 		origin={new Point(-12, 1)}
 		height={ k.height.button}
-		selected={[$w_search_preferences]}
+		selected={[$w_t_search_preferences]}
 		titles={[T_Search_Preference.title, T_Search_Preference.trait]}
 		handle_selection={(titles) => controls.handle_segmented_choices('search', titles)}/>
 	<input class='search-input'
@@ -62,7 +62,7 @@
 		autocomplete='off'
 		on:input={handle_input}
 		bind:value={search.search_text}
-		placeholder={'enter ' + $w_search_preferences + ' text'}
+		placeholder={'enter ' + $w_t_search_preferences + ' text'}
 		style='
 			top: 1px;
 			left: 94px;

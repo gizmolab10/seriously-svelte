@@ -28,7 +28,7 @@ class Controls {
 	
 	handle_segmented_choices(segmented_name: string, choices: string[]) {
 		switch (segmented_name) {
-			case 'search': search.w_search_preferences.set(choices[0] as unknown as T_Search_Preference); break;
+			case 'search': search.w_t_search_preferences.set(choices[0] as unknown as T_Search_Preference); break;
 			case 'tree':   g_graph_tree.set_tree_types(choices as Array<T_Kinship>); break;
 			case 'graph':  show.w_t_graph.set(choices[0] as unknown as T_Graph); break;
 			case 'focus':  show.w_t_focus.set(choices[0] as unknown as T_Focus); break;

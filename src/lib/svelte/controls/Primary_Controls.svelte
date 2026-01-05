@@ -9,7 +9,7 @@
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
-	const { w_s_search } = search;
+	const { w_t_search } = search;
 	const { w_rect_ofGraphView } = g;
 	const { w_count_window_resized } = e;
 	const { w_background_color } = colors;
@@ -48,7 +48,7 @@
 	}
 
 	$: {
-		const _ = $w_s_search;
+		const _ = $w_t_search;
 		layout_controls();
 	}
 

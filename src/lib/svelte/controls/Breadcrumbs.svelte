@@ -9,7 +9,7 @@
 	export let centered: boolean = false;
 	export let left: number = 28;
 	const { w_t_startup } = core;
-	const { w_s_search } = search;
+	const { w_t_search } = search;
 	const { w_thing_color } = colors;
 	const { w_t_breadcrumbs } = show;
 	const { w_rect_ofGraphView } = g;
@@ -39,7 +39,7 @@
 		:::${$w_t_breadcrumbs}
 		:::${$w_thing_color}
 		:::${$w_t_startup}
-		:::${$w_s_search}`;
+		:::${$w_t_search}`;
 		update();
 	}
 

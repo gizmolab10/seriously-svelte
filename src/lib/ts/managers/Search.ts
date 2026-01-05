@@ -1,4 +1,4 @@
-import { k, h, p, core, x, show, Thing, details, Ancestry, databases, features } from "../common/Global_Imports";
+import { k, h, p, x, core, show, Thing, details, Ancestry, databases, features } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference, T_Search_Preference } from "../common/Global_Imports";
 import { Search_Node } from '../types/Search_Node';
 import { get, writable } from 'svelte/store';
@@ -10,8 +10,8 @@ class Search {
 	private root_node: Search_Node	= new Search_Node();
 	w_search_results_found			= writable<number>(0);
 	w_search_results_changed		= writable<number>(0);		// re-render the search results when changed
-	w_s_search						= writable<T_Search>();		// observed by search_results, controls, and panel
-	w_search_preferences			= writable<T_Search_Preference>();
+	w_t_search						= writable<T_Search>();		// observed by search_results, controls, and panel
+	w_t_search_preferences			= writable<T_Search_Preference>();
 
 	constructor() {
 		setTimeout(() => {
@@ -25,8 +25,8 @@ class Search {
 	}
 
 	setup_defaults() {
-		this.w_s_search.set(T_Search.off);
-		this.w_search_preferences.set(T_Search_Preference.title);
+		this.w_t_search.set(T_Search.off);
+		this.w_t_search_preferences.set(T_Search_Preference.title);
 	}
 
 	activate() {
@@ -38,7 +38,7 @@ class Search {
 	deactivate() {
 		x.save_grabs(false);
 		this.w_search_results_found.set(0);
-		this.w_s_search.set(T_Search.off);
+		this.w_t_search.set(T_Search.off);
 		show.w_show_search_controls.set(false);
 		details.redraw();		// force re-render of details
 	}
@@ -59,7 +59,7 @@ class Search {
 
 	set selected_row(row: number) {
 		x.si_found.index = row;
-		this.w_s_search.set(T_Search.selected);
+		this.w_t_search.set(T_Search.selected);
 	}
 
 	get selected_ancestry(): Ancestry | null {
@@ -104,7 +104,7 @@ class Search {
 			this.search_words = [];
 			x.si_found.reset();
 			this.w_search_results_found.set(0);
-			this.w_s_search.set(T_Search.enter);
+			this.w_t_search.set(T_Search.enter);
 		} else {
 			// Split once here
 			this.search_words = this.search_text.split(/\s+/).filter(w => w.length > 0);
@@ -113,7 +113,7 @@ class Search {
 			x.si_found.items = this.root_node.search_for(this.search_words, this.use_AND_logic);
 			const show_results = x.si_found.items.length > 0;
 			this.w_search_results_found.set(x.si_found.items.length);
-			this.w_s_search.set(show_results ? T_Search.results : T_Search.enter);
+			this.w_t_search.set(show_results ? T_Search.results : T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {
 			x.si_found.index = -1;
