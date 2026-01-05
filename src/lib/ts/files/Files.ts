@@ -1,8 +1,16 @@
+import { T_File_Format, T_Text_Extension, T_Image_Extension } from '../common/Enumerations';
 import { tu } from '../utilities/Testworthy_Utilities';
-import { T_File_Format } from '../common/Enumerations';
+import { T_Preview_Type } from '../types/Types';
 
 export default class Files {
 	format_preference: T_File_Format = T_File_Format.json;
+
+	preview_type_forFilename(filename: string): T_Preview_Type {
+		const ext = filename.split('.').pop()?.toLowerCase() || '';
+		if (Object.values(T_Image_Extension).includes(ext as T_Image_Extension)) return 'image';
+		if (Object.values(T_Text_Extension).includes(ext as T_Text_Extension)) return 'text';
+		return null;
+	}
 	
 	static readonly _____WRITE: unique symbol;
 

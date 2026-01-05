@@ -3,6 +3,7 @@ import { SignalConnection } from 'typed-signals';
 import S_Mouse from '../state/S_Mouse';	
 
 export type Dictionary<T = any> = Record<string, T>;
+export type T_Preview_Type = 'image' | 'text' | null;
 export type Integer = number & { __brand: 'integer' };
 export type Handle_Result<T = Object, U = void> = (result: T) => U;
 export type Handle_S_Mouse = Handle_Result<S_Mouse, boolean>;

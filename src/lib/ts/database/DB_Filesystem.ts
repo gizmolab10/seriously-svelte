@@ -1,40 +1,39 @@
-import { g, h, k, T_Thing, T_Trait, T_Predicate, core } from '../common/Global_Imports';
-import { T_Persistence } from '../common/Enumerations';
+import { g, h, core, files, T_Thing, T_Trait, T_Predicate, T_Persistence } from '../common/Global_Imports';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
 // File System Access API types
-interface FileSystemHandle {
+interface File_System_Handle {
 	kind: 'file' | 'directory';
 	name: string;
 }
 
-interface FileSystemFileHandle extends FileSystemHandle {
+interface File_System_File_Handle extends File_System_Handle {
 	kind: 'file';
 	getFile(): Promise<File>;
 }
 
-interface FileSystemDirectoryHandle extends FileSystemHandle {
+interface File_System_Directory_Handle extends File_System_Handle {
 	kind: 'directory';
-	values(): AsyncIterableIterator<FileSystemHandle>;
+	values(): AsyncIterableIterator<File_System_Handle>;
 }
 
-interface FilePickerOptions {
+interface File_Picker_Options {
 	mode?: 'read' | 'readwrite';
 }
 
 declare global {
 	interface Window {
-		showDirectoryPicker(options?: FilePickerOptions): Promise<FileSystemDirectoryHandle>;
+		showDirectoryPicker(options?: File_Picker_Options): Promise<File_System_Directory_Handle>;
 	}
 }
 
-interface FileEntry {
+interface File_Entry {
 	id: string;
 	name: string;
 	path: string;
 	isDirectory: boolean;
-	handle: FileSystemHandle;
+	handle: File_System_Handle;
 	parentId: string | null;
 }
 
@@ -43,8 +42,8 @@ export default class DB_Filesystem extends DB_Common {
 	t_database = T_Database.filesystem;
 	idBase = DB_Name.filesystem;
 	
-	private rootHandle: FileSystemDirectoryHandle | null = null;
-	private fileEntries: Map<string, FileEntry> = new Map();
+	private rootHandle: File_System_Directory_Handle | null = null;
+	private file_information: Map<string, File_Entry> = new Map();
 	
 	get details_forStorage(): Object { 
 		const folderName = this.rootHandle?.name ?? 'none';
@@ -74,8 +73,8 @@ export default class DB_Filesystem extends DB_Common {
 		h.thing_remember_runtimeCreateUnique(
 			this.idBase,
 			'empty',
-			'Click "select folder" to browse',
-			'grey',
+			'Click here to browse a folder',
+			'blue',
 			T_Thing.root
 		);
 		return true;
@@ -90,16 +89,13 @@ export default class DB_Filesystem extends DB_Common {
 		
 		try {
 			this.rootHandle = await window.showDirectoryPicker({ mode: 'read' });
-			console.log('Folder selected:', this.rootHandle.name);
 			h.forget_all();
 			h.rootAncestry = null as any;
 			h.root = null as any;
 			(h as any).thing_dict_byAncestryHID = {};  // clear cached thing lookups
 			const success = await this.scanFromRoot();
-			console.log('Scan success:', success, 'things:', h.things.length, 'root:', h.root?.title);
 			if (success) {
 				await h.wrapUp_data_forUX();
-				console.log('After wrapUp - rootAncestry:', h.rootAncestry, 'hasRoot:', h.hasRoot);
 				core.w_hierarchy.set(h);
 				g.grand_build();
 			}
@@ -118,7 +114,7 @@ export default class DB_Filesystem extends DB_Common {
 		if (!this.rootHandle) return false;
 		
 		// Clear previous entries
-		this.fileEntries.clear();
+		this.file_information.clear();
 		
 		// Create predicates
 		h.predicate_defaults_remember_runtimeCreate();
@@ -133,7 +129,7 @@ export default class DB_Filesystem extends DB_Common {
 			T_Thing.root
 		);
 		
-		this.fileEntries.set(rootId, {
+		this.file_information.set(rootId, {
 			id: rootId,
 			name: this.rootHandle.name,
 			path: '',
@@ -149,7 +145,7 @@ export default class DB_Filesystem extends DB_Common {
 	}
 	
 	private async scanDirectory(
-		dirHandle: FileSystemDirectoryHandle,
+		dirHandle: File_System_Directory_Handle,
 		parentId: string,
 		parentPath: string,
 		depth: number = 0
@@ -164,7 +160,7 @@ export default class DB_Filesystem extends DB_Common {
 			const isDirectory = handle.kind === 'directory';
 			
 			// Store entry for later access
-			this.fileEntries.set(id, {
+			this.file_information.set(id, {
 				id,
 				name: handle.name,
 				path,
@@ -197,8 +193,8 @@ export default class DB_Filesystem extends DB_Common {
 				[order, 0]
 			);
 			
-			// Add link trait for files (stores path for access)
-			if (!isDirectory) {
+			// Add link trait only for previewable files
+			if (!isDirectory && this.isPreviewable(handle.name)) {
 				const traitId = `link_${id}`;
 				h.trait_remember_runtimeCreateUnique(
 					this.idBase,
@@ -214,7 +210,7 @@ export default class DB_Filesystem extends DB_Common {
 			// Recurse into directories
 			if (isDirectory) {
 				await this.scanDirectory(
-					handle as FileSystemDirectoryHandle,
+					handle as File_System_Directory_Handle,
 					id,
 					path,
 					depth + 1
@@ -254,23 +250,28 @@ export default class DB_Filesystem extends DB_Common {
 		return colorMap[ext] || 'grey';
 	}
 	
+	// Check if file extension supports preview
+	isPreviewable(filename: string): boolean {
+		return files.preview_type_forFilename(filename) !== null;
+	}
+	
 	// Get file handle for preview/download
-	getFileHandle(thingId: string): FileSystemHandle | null {
-		return this.fileEntries.get(thingId)?.handle || null;
+	get_file_handle(thingId: string): File_System_Handle | null {
+		return this.file_information.get(thingId)?.handle || null;
 	}
 	
 	// Get file entry info
-	getFileEntry(thingId: string): FileEntry | null {
-		return this.fileEntries.get(thingId) || null;
+	get_file_information(thingId: string): File_Entry | null {
+		return this.file_information.get(thingId) || null;
 	}
 	
 	// Read file contents (for preview)
 	async readFileAsText(thingId: string): Promise<string | null> {
-		const entry = this.fileEntries.get(thingId);
+		const entry = this.file_information.get(thingId);
 		if (!entry || entry.isDirectory) return null;
 		
 		try {
-			const fileHandle = entry.handle as FileSystemFileHandle;
+			const fileHandle = entry.handle as File_System_File_Handle;
 			const file = await fileHandle.getFile();
 			return await file.text();
 		} catch (error) {
@@ -281,11 +282,11 @@ export default class DB_Filesystem extends DB_Common {
 	
 	// Read file as data URL (for images/media preview)
 	async readFileAsDataURL(thingId: string): Promise<string | null> {
-		const entry = this.fileEntries.get(thingId);
+		const entry = this.file_information.get(thingId);
 		if (!entry || entry.isDirectory) return null;
 		
 		try {
-			const fileHandle = entry.handle as FileSystemFileHandle;
+			const fileHandle = entry.handle as File_System_File_Handle;
 			const file = await fileHandle.getFile();
 			return new Promise((resolve, reject) => {
 				const reader = new FileReader();
@@ -301,11 +302,11 @@ export default class DB_Filesystem extends DB_Common {
 	
 	// Download file
 	async downloadFile(thingId: string): Promise<void> {
-		const entry = this.fileEntries.get(thingId);
+		const entry = this.file_information.get(thingId);
 		if (!entry || entry.isDirectory) return;
 		
 		try {
-			const fileHandle = entry.handle as FileSystemFileHandle;
+			const fileHandle = entry.handle as File_System_File_Handle;
 			const file = await fileHandle.getFile();
 			
 			// Create download link
@@ -324,7 +325,7 @@ export default class DB_Filesystem extends DB_Common {
 	
 	// Copy path to clipboard
 	async copyPath(thingId: string): Promise<boolean> {
-		const entry = this.fileEntries.get(thingId);
+		const entry = this.file_information.get(thingId);
 		if (!entry) return false;
 		
 		try {

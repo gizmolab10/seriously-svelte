@@ -90,12 +90,12 @@ This document comprehensively addresses all idiosyncrasies found in the webserio
 - Getters: Use `get` prefix or property syntax: `get hasRoot()`, `get children_dots()`
 - Static methods: Include class name or be clear: `Identifiable.newID()`, `remove_item_byHID()`
 
-### Class Naming
+### Class and Interface Naming
 
-- **PascalCase**: `Visibility`, `Hierarchy`, `Ancestry`, `Relationship`
+- **Snake_Case** for `ts` classes: `Search_Node`, `Visibility`, `Hierarchy`
 - **State classes**: Prefix with `S_`: `S_Widget`, `S_Element`, `S_Alteration`
 - **Geometry classes**: Prefix with `G_`: `G_Point`, `G_Rectangle`, `G_Cluster`
-- **Export pattern**: Export singleton instance with lowercase single letter: `export const s = new Stores()`, `export const show = new Visibility()`
+- **Export pattern**: Export singleton instance with lowercase: `export const x = new S_UX(); export const show = new Visibility();`
 
 ### Enum Naming
 
@@ -581,6 +581,10 @@ get hasRoot(): boolean { return !!this.root; }
 - Use descriptive single letters: `<T>`, `<K, V>`
 - Use constraints when needed: `<T extends Identifiable>`
 - Use `Array<T>` instead of `T[]` for consistency
+
+### Control Flow
+
+- Do not use short-circuit flow, eg, `if (such is true) return;`
 
 ---
 

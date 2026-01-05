@@ -4,6 +4,7 @@ import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Impor
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
+
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import Mouse_Timer from './Mouse_Timer';
@@ -308,7 +309,7 @@ export class Events {
 			if (graph_needsSweep) {
 				g.grand_sweep();
 			}
-			if (features.allow_autoSave) {
+			if (features.allow_autoSave && h.db.isPersistent && h.isDirty) {
 				setTimeout( async () => {
 					await h.db.persist_all();
 				}, 1);

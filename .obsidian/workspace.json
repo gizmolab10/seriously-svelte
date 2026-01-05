@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/architecture/more/index.md",
+                "file": "notes/designs/guides/style.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "style"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/architecture/more/index.md",
+                "file": "notes/designs/guides/style.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of style"
             }
           }
         ],
@@ -167,13 +167,18 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "0d6205459baf7c18",
   "lastOpenFiles": [
+    "notes/designs/work/filesystem.md",
+    "README.md",
+    "CLAUDE.MD",
+    "notes/designs/work/book.md",
+    "notes/designs/architecture/platforms/index.md",
+    "notes/designs/architecture/more/index.md",
+    "notes/designs/guides/style.md",
     "src/lib/svelte/main/Preview.svelte",
     "src/lib/ts/database/DB_Filesystem.ts",
     "notes/designs/work/filesystem",
-    "notes/designs/architecture/platforms/index.md",
-    "notes/designs/work/book.md",
     "notes/designs/work/done/migration/index.md",
     "notes/designs/work/done/migration/focus.md",
     "notes/designs/work/done/migration/grow-shrink.md",
@@ -195,16 +200,11 @@
     "notes/designs/work/next-previous",
     "notes/tools/sync-index-files.sh",
     "notes/tools/analyze-counts.sh",
-    "notes/tools/create-docs-db-data.sh",
     "notes/designs/work/next-previous.md",
     "notes/designs/work/search-links.md",
     "notes/designs/work/done/search.md",
     "notes/designs/overview.md",
-    "notes/designs/architecture/more/index.md",
     "notes/designs/architecture/more/timers.md",
-    "notes/designs/architecture/more/styles.md",
-    "notes/designs/architecture/more/reactivity.md",
-    "notes/designs/architecture/more/persistable.md",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",

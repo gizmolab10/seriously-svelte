@@ -40,6 +40,7 @@ import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
+import { T_Image_Extension, T_Text_Extension } from './Enumerations';
 import { T_Graph, T_Banner, T_Control, T_Focus } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Thing, T_Trait, T_Kinship, T_Predicate } from './Enumerations';
@@ -97,14 +98,15 @@ export {
 	G_Cluster, G_RadialGraph, G_Cluster_Pager,
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 
-	colors, radial, signals, 
+	core, features,
+	e, c, g, h, k, p, u, x,
+	colors, radial, signals,
 	interact, transparentize,
-	e, c, g, h, k, p, core, u, x,
+	search, details, controls,
 	debug, svgPaths, databases,
 	hits, elements, components,
 	g_graph_tree, g_graph_radial,
 	busy, show, files, builds, print,
-	search, details, controls, features,
 
 	Angle, Direction, 
 	Rect, Size, Point,
@@ -113,6 +115,7 @@ export {
 	Ancestry, Hierarchy, Seriously_Range,
 	Tag, Thing, Trait, Predicate, Relationship,
 	
+	T_Focus,
 	T_Debug, T_Timer,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
@@ -123,8 +126,8 @@ export {
 	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Format, T_File_Operation, T_Storage_Need,
 	T_Auto_Adjust_Graph, T_Cluster_Pager, T_Counts_Shown,
-	T_Focus,
 	T_Signal, T_Control, T_Hit_Target, T_Mouse_Detection,
 	T_Banner, T_Detail, T_Request, T_Action, T_Button_SVG,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,
+	T_Image_Extension, T_Text_Extension,
 };

@@ -1,11 +1,12 @@
 import { T_Create, T_Startup, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { g, k, p, u, x, busy, show, debug, controls, features } from '../common/Global_Imports';
+import { g, k, p, u, x, busy, show, debug, controls, features, databases } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { DB_Name, T_Database } from '../database/DB_Common';
-import { files, colors, databases } from '../common/Global_Imports';
+import DB_Filesystem from '../database/DB_Filesystem';
 import type { Integer, Dictionary } from '../types/Types';
+import { files, colors } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
@@ -979,6 +980,13 @@ export class Hierarchy {
 		if (!OPTION) {
 			const thing = ancestry.thing;
 			if (!!thing) {
+				// db == filesystem, show preview for previewable files
+				if (RIGHT && get(databases.w_t_database) === T_Database.filesystem && this.db instanceof DB_Filesystem) {
+					if (!ancestry.hasChildren && this.db.isPreviewable(thing.title)) {
+						show.show_previewOf_file(thing.id);
+						return;
+					}
+				}
 				if (RIGHT && thing.persistence.needsBulkFetch) {
 					await this.ancestry_redraw_persistentFetchBulk_browseRight(thing, ancestry, true);
 				} else {

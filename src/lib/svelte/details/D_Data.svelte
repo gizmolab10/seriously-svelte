@@ -16,11 +16,12 @@
 	const { w_show_other_databases, w_show_save_data_button } = show;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
-	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
-	const s_selectFolder = elements.s_element_for(new Identifiable('select-folder'), T_Hit_Target.button, 'select-folder');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
-	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test, T_Database.docs, T_Database.filesystem];
+	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
+	const ids_forDatabase = [T_Database.test, T_Database.docs, T_Database.firebase]
+		.concat(DB_Filesystem.isSupported() ? [T_Database.filesystem] : []);
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
+	const s_selectFolder = elements.s_element_for(new Identifiable('select-folder'), T_Hit_Target.button, 'select-folder');
 	let s_element_dict_byStorageType: Dictionary<S_Element> = {};
 	let heights = [15, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;

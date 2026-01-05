@@ -355,3 +355,25 @@ export enum T_Preference {
 	tree			  = 'tree',
 	db				  = 'db',
 }
+
+export enum T_Image_Extension {
+	jpg    = 'jpg',
+	jpeg   = 'jpeg',
+	png    = 'png',
+	gif    = 'gif',
+	svg    = 'svg',
+	webp   = 'webp',
+}
+
+export enum T_Text_Extension {
+	txt    = 'txt',
+	md     = 'md',
+	json   = 'json',
+	js     = 'js',
+	ts     = 'ts',
+	svelte = 'svelte',
+	html   = 'html',
+	css    = 'css',
+	csv    = 'csv',
+	sh     = 'sh',
+}
