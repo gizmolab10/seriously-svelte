@@ -1,10 +1,15 @@
 import { T_File_Format, T_Text_Extension, T_Image_Extension, T_Control } from '../common/Enumerations';
-import DB_Filesystem from '../database/DB_Filesystem';
 import { tu } from '../utilities/Testworthy_Utilities';
+import DB_Filesystem from '../database/DB_Filesystem';
 import { T_Preview_Type } from '../types/Types';
 import { show } from '../managers/Visibility';
 import { h } from '../managers/Hierarchy';
 import { writable } from 'svelte/store';
+
+interface File_System_Directory_Handle {
+	name: string;
+	requestPermission(descriptor?: { mode?: 'read' | 'readwrite' }): Promise<'granted' | 'denied' | 'prompt'>;
+}
 
 export default class Files {
 	format_preference: T_File_Format = T_File_Format.json;
@@ -136,6 +141,85 @@ export default class Files {
 	}
 	
 	static readonly _____FORMAT: unique symbol;
+
+	static readonly _____DIRECTORY_HANDLE: unique symbol;
+
+	private readonly DB_NAME = 'webseriously-files';
+	private readonly STORE_NAME = 'directory-handles';
+	private readonly HANDLE_KEY = 'last-folder';
+
+	private async openDatabase(): Promise<IDBDatabase> {
+		return new Promise((resolve, reject) => {
+			const request = indexedDB.open(this.DB_NAME, 1);
+			request.onerror = () => reject(request.error);
+			request.onsuccess = () => resolve(request.result);
+			request.onupgradeneeded = (event) => {
+				const db = (event.target as IDBOpenDBRequest).result;
+				if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+					db.createObjectStore(this.STORE_NAME);
+				}
+			};
+		});
+	}
+
+	async save_directoryHandle(handle: File_System_Directory_Handle): Promise<boolean> {
+		let success = false;
+		try {
+			const db = await this.openDatabase();
+			const tx = db.transaction(this.STORE_NAME, 'readwrite');
+			const store = tx.objectStore(this.STORE_NAME);
+			store.put(handle, this.HANDLE_KEY);
+			await new Promise<void>((resolve, reject) => {
+				tx.oncomplete = () => resolve();
+				tx.onerror = () => reject(tx.error);
+			});
+			db.close();
+			success = true;
+		} catch (error) {
+			console.warn('Failed to save directory handle:', error);
+		}
+		return success;
+	}
+
+	async restore_directoryHandle(): Promise<File_System_Directory_Handle | null> {
+		let handle: File_System_Directory_Handle | null = null;
+		try {
+			const db = await this.openDatabase();
+			const tx = db.transaction(this.STORE_NAME, 'readonly');
+			const store = tx.objectStore(this.STORE_NAME);
+			const request = store.get(this.HANDLE_KEY);
+			handle = await new Promise<File_System_Directory_Handle | null>((resolve, reject) => {
+				request.onsuccess = () => resolve(request.result || null);
+				request.onerror = () => reject(request.error);
+			});
+			db.close();
+			if (!!handle) {
+				const permission = await handle.requestPermission({ mode: 'read' });
+				if (permission !== 'granted') {
+					handle = null;
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to restore directory handle:', error);
+		}
+		return handle;
+	}
+
+	async clear_directoryHandle(): Promise<void> {
+		try {
+			const db = await this.openDatabase();
+			const tx = db.transaction(this.STORE_NAME, 'readwrite');
+			const store = tx.objectStore(this.STORE_NAME);
+			store.delete(this.HANDLE_KEY);
+			await new Promise<void>((resolve, reject) => {
+				tx.oncomplete = () => resolve();
+				tx.onerror = () => reject(tx.error);
+			});
+			db.close();
+		} catch (error) {
+			console.warn('Failed to clear directory handle:', error);
+		}
+	}
 
 }
 

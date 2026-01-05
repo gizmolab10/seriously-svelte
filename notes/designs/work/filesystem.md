@@ -35,6 +35,9 @@ Build `DB_Filesystem` plugin that:
 - [x] Copy-path button for manual OS opening (copies file path to clipboard for pasting into Finder/Explorer)
 - [x] in D_Data, remove `filesystem` from `ids_forDatabase` if isSupported returns `false`
 - [x] When a file is selected, that `isPreviewable`, and the user clicks the right arrow, then also show preview for that file
+- [ ] Remember and make it easy to revisit the last folder choice
+	- [ ] Use a Preferences key
+	- [ ] Change the behavior of click on "Clik here to brow..." to do this
 
 **Limitations:** Safari/Firefox users won't get folder picking (can still manually add files)
 

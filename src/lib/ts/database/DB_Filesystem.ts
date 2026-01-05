@@ -16,6 +16,7 @@ interface File_System_File_Handle extends File_System_Handle {
 interface File_System_Directory_Handle extends File_System_Handle {
 	kind: 'directory';
 	values(): AsyncIterableIterator<File_System_Handle>;
+	requestPermission(descriptor?: { mode?: 'read' | 'readwrite' }): Promise<'granted' | 'denied' | 'prompt'>;
 }
 
 interface File_Picker_Options {
@@ -63,7 +64,15 @@ export default class DB_Filesystem extends DB_Common {
 			return false;
 		}
 		
-		// If folder already selected, scan it
+		// Try to restore previously selected folder
+		if (!this.rootHandle) {
+			const restored = await files.restore_directoryHandle();
+			if (!!restored) {
+				this.rootHandle = restored as File_System_Directory_Handle;
+			}
+		}
+		
+		// If folder available, scan it
 		if (this.rootHandle) {
 			return await this.scanFromRoot();
 		}
@@ -89,6 +98,7 @@ export default class DB_Filesystem extends DB_Common {
 		
 		try {
 			this.rootHandle = await window.showDirectoryPicker({ mode: 'read' });
+			await files.save_directoryHandle(this.rootHandle);
 			h.forget_all();
 			h.rootAncestry = null as any;
 			h.root = null as any;

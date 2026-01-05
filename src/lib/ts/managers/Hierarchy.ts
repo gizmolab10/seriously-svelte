@@ -983,7 +983,7 @@ export class Hierarchy {
 				// db == filesystem, show preview for previewable files
 				if (RIGHT && get(databases.w_t_database) === T_Database.filesystem && this.db instanceof DB_Filesystem) {
 					if (!ancestry.hasChildren && this.db.isPreviewable(thing.title)) {
-						show.show_previewOf_file(thing.id);
+						files.show_previewOf_file(thing.id);
 						return;
 					}
 				}

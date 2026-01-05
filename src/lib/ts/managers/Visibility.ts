@@ -1,9 +1,8 @@
 import { T_Focus, T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference, T_Counts_Shown } from '../common/Global_Imports';
 import { T_Breadcrumbs, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { g, k, p, core, g_graph_tree } from '../common/Global_Imports';
+import { g, k, p, x, core, g_graph_tree } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
-import { x } from '../managers/UX';
 
 export class Visibility {
 	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
