@@ -165,6 +165,9 @@ export default class Geometry {
 	get breadcrumbs_top(): number { return this.windowSize.height - this.controls_boxHeight; }
 
 	layout_breadcrumbs(ancestries: Array<Ancestry>, centered: boolean, left: number, thresholdWidth: number): [Array<Ancestry>, Array<number>, Array<number>, number] {
+		if (!ancestries) {
+			return [[], [], [], 0];
+		}
 		const crumb_ancestries: Array<Ancestry> = [];
 		const widths: Array<number> = [];
 		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
