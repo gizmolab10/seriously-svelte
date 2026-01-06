@@ -309,7 +309,7 @@ export class Events {
 			if (graph_needsSweep) {
 				g.grand_sweep();
 			}
-			if (features.allow_autoSave && h.db.isPersistent && h.isDirty) {
+			if (features.allow_autoSave && !!h && h.db.isPersistent && h.isDirty) {
 				setTimeout( async () => {
 					await h.db.persist_all();
 				}, 1);

@@ -3,7 +3,7 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(
   defineConfig({
-    title: "Webseriously Internals",
+    title: "Webseriously Inside Peak",
     description: "Project documentation and design notes",
     srcDir: './notes/designs',
     srcExclude: ['obsolete/**', 'next/**'],
@@ -110,6 +110,10 @@ export default withMermaid(
                   link: '/architecture/platforms/svelte.5'
                 },
                 {
+                  text: 'Svelte',
+                  link: '/architecture/platforms/svelte'
+                },
+                {
                   text: 'VitePress',
                   link: '/architecture/platforms/vitepress'
                 }
@@ -209,12 +213,20 @@ export default withMermaid(
           collapsed: true,
           items: [
             {
+              text: 'Bad.tree.center',
+              link: '/work/bad.tree.center'
+            },
+            {
               text: 'Book',
               link: '/work/book'
             },
             {
-              text: 'Ethernet',
-              link: '/work/ethernet'
+              text: 'Claude.write',
+              link: '/work/claude.write'
+            },
+            {
+              text: 'Layout',
+              link: '/work/layout'
             },
             {
               text: 'Search Links',
@@ -225,6 +237,10 @@ export default withMermaid(
               link: '/work/done/',
               collapsed: true,
               items: [
+                {
+                  text: 'Ethernet',
+                  link: '/work/done/ethernet'
+                },
                 {
                   text: 'Filesystem',
                   link: '/work/done/filesystem'

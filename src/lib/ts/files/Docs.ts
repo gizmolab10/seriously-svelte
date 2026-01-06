@@ -125,6 +125,12 @@ export function getDocsStructure(): DocNode[] {
 							path: 'architecture/platforms/svelte.5'
 						},
 						{
+							id: 'architecture_platforms_svelte',
+							name: 'Svelte',
+							type: 'file',
+							path: 'architecture/platforms/svelte'
+						},
+						{
 							id: 'architecture_platforms_vitepress',
 							name: 'Vitepress',
 							type: 'file',
@@ -286,10 +292,22 @@ export function getDocsStructure(): DocNode[] {
 			link: 'work/index',
 			children: [
 				{
+					id: 'work_bad_tree_center',
+					name: 'Bad.tree.center',
+					type: 'file',
+					path: 'work/bad.tree.center'
+				},
+				{
 					id: 'work_book',
 					name: 'Book',
 					type: 'file',
 					path: 'work/book'
+				},
+				{
+					id: 'work_claude_write',
+					name: 'Claude.write',
+					type: 'file',
+					path: 'work/claude.write'
 				},
 				{
 					id: 'work_done',
@@ -298,6 +316,12 @@ export function getDocsStructure(): DocNode[] {
 					path: 'work/done',
 					link: 'work/done/index',
 					children: [
+						{
+							id: 'work_done_ethernet',
+							name: 'Ethernet',
+							type: 'file',
+							path: 'work/done/ethernet'
+						},
 						{
 							id: 'work_done_filesystem',
 							name: 'Filesystem',
@@ -382,10 +406,10 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
-					id: 'work_ethernet',
-					name: 'Ethernet',
+					id: 'work_layout',
+					name: 'Layout',
 					type: 'file',
-					path: 'work/ethernet'
+					path: 'work/layout'
 				},
 				{
 					id: 'work_next',

@@ -6,7 +6,9 @@ Documentation of ongoing and completed work.
 
 - [Done](./done/)
 - [Next](./next/)
+- [Bad.tree.center](./bad.tree.center.md)
 - [Book](./book.md)
-- [Ethernet](ethernet.md)
+- [Claude.write](./claude.write.md)
+- [Layout](./layout.md)
 - [Search Links](./search-links.md)
 

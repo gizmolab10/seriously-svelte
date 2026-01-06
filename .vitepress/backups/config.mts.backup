@@ -3,7 +3,7 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(
   defineConfig({
-    title: "Webseriously Internals",
+    title: "Webseriously Inside Peak",
     description: "Project documentation and design notes",
     srcDir: './notes/designs',
     srcExclude: ['obsolete/**', 'next/**'],
@@ -211,6 +211,10 @@ export default withMermaid(
             {
               text: 'Book',
               link: '/work/book'
+            },
+            {
+              text: 'Ethernet',
+              link: '/work/ethernet'
             },
             {
               text: 'Search Links',

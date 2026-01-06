@@ -18,8 +18,8 @@
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const ids_forOutputFormat = [T_File_Extension.csv, T_File_Extension.json, T_File_Extension.cancel];
 	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
-	const ids_forDatabase = [T_Database.test, T_Database.docs, T_Database.firebase]
-		.concat(DB_Filesystem.isSupported() ? [T_Database.filesystem] : []);
+	const ids_forDatabase = [T_Database.test, T_Database.docs]
+		.concat(DB_Filesystem.isSupported() ? [T_Database.filesystem, T_Database.firebase] : [T_Database.firebase]);
 	const ids_forInputFormat = [T_File_Extension.csv, T_File_Extension.json, T_File_Extension.seriously, T_File_Extension.cancel];
 	const s_selectFolder = elements.s_element_for(new Identifiable('select-folder'), T_Hit_Target.button, 'select-folder');
 	let s_element_dict_byStorageType: Dictionary<S_Element> = {};

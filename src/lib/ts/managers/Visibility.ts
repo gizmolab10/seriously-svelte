@@ -32,6 +32,10 @@ export class Visibility {
 				this.w_t_details.subscribe((t_details: Array<T_Detail>) => {
 					x.update_grabs_forSearch();
 				});
+				this.w_show_details.subscribe(() => {
+					g.update_rect_ofGraphView();
+					g.layout();
+				});
 			}
 		});
 	}

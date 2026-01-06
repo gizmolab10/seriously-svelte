@@ -19,9 +19,9 @@
 	const show_reveal_count = reveal_count > 1;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_t_countDots, w_show_countsAs } = show;
-	const count_fontSize = reveal_count < 10 ? 8 : 7;
-	const reveal_count_top = reveal_count < 10 ? 3.4 : 4;
 	const { w_thing_color, w_background_color } = colors;
+	const count_fontSize = reveal_count < 100 ? reveal_count < 10 ? 10 : 7 : 5;
+	const reveal_count_top = reveal_count < 100 ? reveal_count < 10 ? 2 : 4 : 5.6;
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;

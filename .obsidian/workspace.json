@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/designs/work/claude.write.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "claude.write"
+              "title": "README"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/designs/work/claude.write.md",
+                "file": "README.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of claude.write"
+              "title": "Outline of README"
             }
           }
         ],
@@ -167,12 +167,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "a31db9146ba0cdfb",
   "lastOpenFiles": [
-    "notes/designs/work/svelte.md",
+    "notes/designs/work/layout.md",
+    "notes/designs/architecture/platforms/svelte.5.md",
+    "notes/designs/architecture/platforms/svelte.md",
+    "notes/designs/work/claude.write.md",
+    "src/lib/ts/managers/Preferences 2.ts",
     "src/lib/ts/runtime/Identifiable 2.ts",
     "notes/designs/work/quaternions.md",
-    "notes/designs/work/claude.write.md",
     "node_modules/gl-matrix/vec3/package.json",
     "node_modules/gl-matrix/vec2/package.json",
     "node_modules/gl-matrix/types.d.ts/package.json",
@@ -181,7 +184,6 @@
     "node_modules/gl-matrix/quat/package.json",
     "node_modules/gl-matrix/esm/common.js",
     "node_modules/gl-matrix/esm/vec4.js",
-    "node_modules/gl-matrix/mat2/package.json",
     "node_modules/gl-matrix/README.md",
     "node_modules/gl-matrix/LICENSE.md",
     "notes/designs/overview.md",
@@ -203,8 +205,6 @@
     "notes/designs/work/done/migration/index.md",
     "notes/designs/work/done/migration/focus.md",
     "notes/designs/work/done/migration/grow-shrink.md",
-    "notes/designs/work/done/migration/ancestry-focus.md",
-    "notes/designs/work/done/migration/grow-shrink-migration.md",
     "node_modules/non-layered-tidy-tree-layout/screenshots/1.png",
     "node_modules/cytoscape-fcose/demo/demo.gif",
     "node_modules/cytoscape-fcose/demo/incrementalConstraints.gif",
