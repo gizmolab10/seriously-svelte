@@ -60,8 +60,8 @@
 			3: 108,																		// search toggle
 			4: features.allow_search	   ? -32 : 6,									// easter egg
 			5: 2,																		// separator
-			6: 50,																		// breadcrumbs types
-			7: 124,																		// recents
+			6: 0,																		// breadcrumbs types
+			7: 6,																		// recents
 			8: 44,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
@@ -81,7 +81,7 @@
 		<Next_Previous name='recents'
 			size={28}
 			origin={Point.x(lefts[7])}
-			top_offset={y_center - 18}
+			top_offset={y_center - 17.66}
 			closure={handle_recents_mouseClick}/>
 		{#if !$w_id_popupView}
 			{#if features.has_details_button}
@@ -150,16 +150,16 @@
 				length={g.controls_boxHeight + 0.5}
 				thickness={k.thickness.separator.main}
 				corner_radius={k.radius.gull_wings.thick}/>
-			<Segmented name='breadcrumb-type'
-				width={80}
-				origin={Point.x(lefts[6])}
-				selected={[$w_t_breadcrumbs]}
-				handle_selection={handle_breadcrumbs}
-				titles={[T_Breadcrumbs.focus, T_Breadcrumbs.selection, T_Breadcrumbs.recents]}/>
 			<Breadcrumbs
 				left={lefts[8]}
 				centered={true}
-				width={g.windowSize.width - lefts[8] - 10}/>
+				width={g.windowSize.width - lefts[8] - 170}/>
+			<Segmented name='breadcrumb-type'
+				width={80}
+				selected={[$w_t_breadcrumbs]}
+				origin={Point.x(width - 114)}
+				handle_selection={handle_breadcrumbs}
+				titles={[T_Breadcrumbs.focus, T_Breadcrumbs.selection, T_Breadcrumbs.recents]}/>
 		{/if}
 	</div>
 	<Separator name='bottom-separator'

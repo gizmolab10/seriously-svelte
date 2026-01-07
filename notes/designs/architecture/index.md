@@ -9,4 +9,5 @@
 - [Internals](./internals/)
 - [Platforms](./platforms/)
 - [Ux](./ux/)
+- [Layout](./layout.md)
 

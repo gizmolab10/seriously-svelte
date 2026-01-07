@@ -22,9 +22,11 @@ Negative offset moves tree left. But details panel opens on the left, so tree sh
 
 **File**: `src/lib/ts/geometry/G_TreeGraph.ts`
 
-Flipped sign in two locations:
+~~Flipped sign in two locations:~~
 
-1. `adjust_focus_ofTree` (line ~80): `-k.width.details` → `k.width.details`
-2. `layout_focus_ofTree` (line ~93): `-k.width.details` → `k.width.details`
+~~1. `adjust_focus_ofTree` (line ~80): `-k.width.details` → `k.width.details`~~
+~~2. `layout_focus_ofTree` (line ~93): `-k.width.details` → `k.width.details`~~
 
-**Status**: ✅ Fix applied, verified working
+**REVERTED** - This was not the fix. The actual fix was adding the subscription (see layout.md).
+
+**Status**: ✅ Fixed via `layout.md` fix #2 (subscription)

@@ -20,7 +20,7 @@
 			0: 10,		// initial offset (for tree types start position)
 			1: 122,		// tree types segmented control width
 			2: 22,		// separator width
-			3: 92,		// focus-response-type segmented control width
+			3: 94,		// focus-response-type segmented control width
 			4: 117,		// slider width
 			5: 42,		// depth value width
 		};

@@ -337,4 +337,4 @@ details.details_toggle_visibility()
 - [x] Listed key stores affecting layout
 - [x] Identified common bug locations
 - [x] Created flow diagrams for focus change and details toggle
-- [x] **Fixed**: Added `show.w_show_details` subscription in `Geometry` constructor to trigger `update_rect_ofGraphView()` + `layout()` when details visibility changes
+- [x] **Fixed**: Added `show.w_show_details` subscription in `Geometry.setup_subscriptions()` (called from `Configuration.configure()`) to trigger `update_rect_ofGraphView()` + `layout()` when details visibility changes

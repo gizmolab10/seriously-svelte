@@ -106,6 +106,12 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
+					id: 'architecture_layout',
+					name: 'Layout',
+					type: 'file',
+					path: 'architecture/layout'
+				},
+				{
 					id: 'architecture_platforms',
 					name: 'Platforms',
 					type: 'folder',
@@ -292,22 +298,10 @@ export function getDocsStructure(): DocNode[] {
 			link: 'work/index',
 			children: [
 				{
-					id: 'work_bad_tree_center',
-					name: 'Bad.tree.center',
-					type: 'file',
-					path: 'work/bad.tree.center'
-				},
-				{
 					id: 'work_book',
 					name: 'Book',
 					type: 'file',
 					path: 'work/book'
-				},
-				{
-					id: 'work_claude_write',
-					name: 'Claude.write',
-					type: 'file',
-					path: 'work/claude.write'
 				},
 				{
 					id: 'work_done',
@@ -316,6 +310,18 @@ export function getDocsStructure(): DocNode[] {
 					path: 'work/done',
 					link: 'work/done/index',
 					children: [
+						{
+							id: 'work_done_bad_tree_center',
+							name: 'Bad.tree.center',
+							type: 'file',
+							path: 'work/done/bad.tree.center'
+						},
+						{
+							id: 'work_done_claude_write',
+							name: 'Claude.write',
+							type: 'file',
+							path: 'work/done/claude.write'
+						},
 						{
 							id: 'work_done_ethernet',
 							name: 'Ethernet',
@@ -406,12 +412,6 @@ export function getDocsStructure(): DocNode[] {
 					]
 				},
 				{
-					id: 'work_layout',
-					name: 'Layout',
-					type: 'file',
-					path: 'work/layout'
-				},
-				{
 					id: 'work_next',
 					name: 'Next',
 					type: 'folder',
@@ -437,6 +437,12 @@ export function getDocsStructure(): DocNode[] {
 							path: 'work/next/Resize_Optimization_AI'
 						},
 					]
+				},
+				{
+					id: 'work_relocate_controls',
+					name: 'Relocate.controls',
+					type: 'file',
+					path: 'work/relocate.controls'
 				},
 				{
 					id: 'work_search_links',

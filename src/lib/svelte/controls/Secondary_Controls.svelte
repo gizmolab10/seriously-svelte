@@ -4,9 +4,9 @@
 	import Tree_Controls from './Tree_Controls.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Search from '../search/Search.svelte';
-	const height = g.controls_boxHeight;
-	const top = g.controls_boxHeight - 5;
 	const { w_show_search_controls, w_t_graph } = show;
+	const top = g.controls_boxHeight - 5;
+	const height = g.controls_boxHeight;
 	let isVisible = false;
 
 	// two states: search and tree preferences
@@ -21,12 +21,12 @@
 {#if isVisible}
 	<div class='secondary'
 		style='
-			top: {top}px;
 			left: 0px;
+			top: {top}px;
 			height: {height}px;
-			width: {g.windowSize.width}px;
 			position: absolute;
-			z-index: {T_Layer.frontmost};'>
+			z-index: {T_Layer.frontmost};
+			width: {g.windowSize.width}px;'>
 		{#if $w_show_search_controls}
 			<Search top={8}/>
 		{:else if $w_t_graph == T_Graph.tree}

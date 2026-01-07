@@ -39,6 +39,10 @@ export default withMermaid(
           collapsed: true,
           items: [
             {
+              text: 'Layout',
+              link: '/architecture/layout'
+            },
+            {
               text: 'Core >',
               link: '/architecture/core/',
               collapsed: true,
@@ -213,20 +217,12 @@ export default withMermaid(
           collapsed: true,
           items: [
             {
-              text: 'Bad.tree.center',
-              link: '/work/bad.tree.center'
-            },
-            {
               text: 'Book',
               link: '/work/book'
             },
             {
-              text: 'Claude.write',
-              link: '/work/claude.write'
-            },
-            {
-              text: 'Layout',
-              link: '/work/layout'
+              text: 'Relocate.controls',
+              link: '/work/relocate.controls'
             },
             {
               text: 'Search Links',
@@ -237,6 +233,14 @@ export default withMermaid(
               link: '/work/done/',
               collapsed: true,
               items: [
+                {
+                  text: 'Bad.tree.center',
+                  link: '/work/done/bad.tree.center'
+                },
+                {
+                  text: 'Claude.write',
+                  link: '/work/done/claude.write'
+                },
                 {
                   text: 'Ethernet',
                   link: '/work/done/ethernet'
