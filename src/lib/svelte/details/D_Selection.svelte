@@ -148,8 +148,8 @@
 		</div>
 		<Separator name='toggle-properties'
 			isHorizontal={true}
-			has_gull_wings={true}
-			has_both_wings={true}
+			has_fillets={true}
+			has_double_fillet={true}
 			has_thin_divider={false}
 			origin={new Point(1, 125)}
 			zindex={T_Layer.frontmost + 1}

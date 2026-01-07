@@ -65,7 +65,7 @@
 		length={segmented_height + 19}
 		origin={new Point(lefts[1], -0.5)}
 		thickness={k.thickness.separator.main}
-		corner_radius={k.radius.gull_wings.thick}/>
+		corner_radius={k.radius.fillets.thick}/>
 	<Segmented name='focus-response-type'
 		width={50}
 		allow_multiple={false}

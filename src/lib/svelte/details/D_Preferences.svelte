@@ -105,7 +105,7 @@
 		length={width}
 		isHorizontal={true}
 		position={position}
-		has_gull_wings={true}
+		has_fillets={true}
 		margin={k.details_margin}
 		origin={Point.y(tops[0])}
 		title='show list sizes as'
@@ -126,7 +126,7 @@
 			length={width}
 			isHorizontal={true}
 			position={position}
-			has_gull_wings={true}
+			has_fillets={true}
 			margin={k.details_margin}
 			origin={Point.y(tops[2])}
 			title='show tiny dots for'
@@ -148,7 +148,7 @@
 			length={width}
 			isHorizontal={true}
 			position={position}
-			has_gull_wings={true}
+			has_fillets={true}
 			margin={k.details_margin}
 			origin={Point.y(tops[2 + offset])}
 			title_left={k.separator_title_left}
@@ -182,7 +182,7 @@
 			position={position}
 			isHorizontal={true}
 			title='accent color'
-			has_gull_wings={true}
+			has_fillets={true}
 			has_thin_divider={true}
 			margin={k.details_margin}
 			origin={Point.y(tops[4 + offset])}

@@ -59,7 +59,7 @@
 		width={g.windowSize.width}
 		thickness={k.thickness.separator.main}
 		height={g.windowSize.height + 0.5}
-		corner_radius={k.radius.gull_wings.thick}>
+		corner_radius={k.radius.fillets.thick}>
 		<div class='panel'
 			style='
 				top: 0px;

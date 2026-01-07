@@ -13,7 +13,7 @@
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let font_sizes: Array<number>;
-	export let has_gull_wings = true;
+	export let has_fillets = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
 	export let row_name = k.empty;
@@ -95,7 +95,7 @@
 				length={width}
 				title={row_title}
 				isHorizontal={true}
-				has_gull_wings={has_gull_wings}
+				has_fillets={has_fillets}
 				thickness={separator_thickness}
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>

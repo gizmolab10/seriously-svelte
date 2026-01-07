@@ -149,7 +149,7 @@
 				origin={new Point(lefts[5], -6)}
 				length={g.controls_boxHeight + 0.5}
 				thickness={k.thickness.separator.main}
-				corner_radius={k.radius.gull_wings.thick}/>
+				corner_radius={k.radius.fillets.thick}/>
 			<Breadcrumbs
 				left={lefts[8]}
 				centered={true}
@@ -164,10 +164,10 @@
 	</div>
 	<Separator name='bottom-separator'
 		origin={new Point(2, g.controls_boxHeight - 5)}
-		corner_radius={k.radius.gull_wings.thick}
+		corner_radius={k.radius.fillets.thick}
 		thickness={k.thickness.separator.main}
 		length={g.windowSize.width + 2.5}
 		zindex={T_Layer.frontmost}
-		has_both_wings={true}
+		has_double_fillet={true}
 		isHorizontal={true}/>
 {/key}

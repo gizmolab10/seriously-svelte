@@ -80,10 +80,10 @@
 {/key}
 <Separator name='right-of-details'
 	isHorizontal={false}
-	has_both_wings={true}
+	has_double_fillet={true}
 	margin={k.details_margin}
 	thickness={k.thickness.separator.main}
-	corner_radius={k.radius.gull_wings.thick}
+	corner_radius={k.radius.fillets.thick}
 	length={details_height + 6.5}
 	origin={new Point(k.width.details - 2, details_top - 2.5)}
 />

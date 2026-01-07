@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import Separator from './Separator.svelte';
-    export let corner_radius: number = k.radius.gull_wings.thick;
+    export let corner_radius: number = k.radius.fillets.thick;
     export let thickness: number = k.thickness.separator.main;
     export let showBottom: boolean = true;
     export let showRight: boolean = true;
@@ -57,7 +57,7 @@
             origin={Point.zero}
             isHorizontal={true}
             thickness={thickness}
-			has_gull_wings={false}
+			has_fillets={false}
             corner_radius={corner_radius}/>
     {/if}
     {#if showBottom}
@@ -65,7 +65,7 @@
             length={width + 2}
             isHorizontal={true}
             thickness={thickness}
-			has_gull_wings={false}
+			has_fillets={false}
             corner_radius={corner_radius}
             origin={Point.y(height - thickness)}/>
     {/if}

@@ -114,7 +114,7 @@ export default class SVG_Paths {
 		}
     }
 
-	gull_wings(center: Point, radius: number, direction: Direction): string {
+	fillets(center: Point, radius: number, direction: Direction): string {
 		const baseAngle = direction + Angle.half;
 		const leftEndAngle = baseAngle + Angle.quarter;
 		const rightEndAngle = baseAngle - Angle.quarter;

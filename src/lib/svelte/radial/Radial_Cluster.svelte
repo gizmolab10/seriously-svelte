@@ -3,7 +3,7 @@
 	import { Point, T_Layer, G_Cluster, T_Cluster_Pager, S_Mouse } from '../../ts/common/Global_Imports';
 	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
-	import Gull_Wings from '../draw/Gull_Wings.svelte';
+	import Fillets from '../draw/Fillets.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	export let g_cluster: G_Cluster;
 	export let color = 'red';

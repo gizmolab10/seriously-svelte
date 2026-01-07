@@ -34,11 +34,11 @@
 		{/if}
 		{#if features.allow_tree_mode}
 			<Separator name='secondary-bottom-separator'
-				corner_radius={k.radius.gull_wings.thick}
+				corner_radius={k.radius.fillets.thick}
 				thickness={k.thickness.separator.main}
 				length={g.windowSize.width + 2.5}
 				origin={new Point(2, top)}
-				has_both_wings={true}
+				has_double_fillet={true}
 				isHorizontal={true}/>
 		{/if}
 	</div>

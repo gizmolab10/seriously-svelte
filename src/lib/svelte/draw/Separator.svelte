@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
-	import Gull_Wings from '../draw/Gull_Wings.svelte';
+	import Fillets from '../draw/Fillets.svelte';
 	export let handle_mouseUp: (event: Event) => {} | null = null;
-	export let corner_radius = k.radius.gull_wings.ultra_thin;
+	export let corner_radius = k.radius.fillets.ultra_thin;
 	export let title_font_size = k.font_size.separator;
 	export let thickness = k.thickness.separator.main;
 	export let title_left: number | null= null;
@@ -11,8 +11,8 @@
 	export let zindex = T_Layer.details;
 	export let length = k.width.details;
 	export let has_thin_divider = false;
-	export let has_gull_wings = true;
-	export let has_both_wings = true;
+	export let has_fillets = true;
+	export let has_double_fillet = true;
 	export let position = 'absolute';
 	export let origin = Point.zero;
 	export let isHorizontal = true;
@@ -27,18 +27,18 @@
 
 	// origin			is the center at the start of the separator
 	// isHorizontal		true -> starts at origin.x, false -> starts at top
-	// has_gull_wings	has gull wings at either one or both ends
-	// has_both_wings	if has_gull_wings is true, then has gull wings at both ends
+	// has_fillets		has fillets at either one or both ends
+	// has_both_fillets	if has_fillets is true, then has fillets at both ends
 	// length			length of the separator
 	// margin		
 	// zindex
 	// handle_mouseUp		renders as a clickable label instead
 
 	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, $w_separator_color);
-	$: wingsCenter_single = wingsCenter_for(isHorizontal, length, thickness, false);
-	$: wingsCenter_dual = wingsCenter_for(isHorizontal, length, thickness, true);
-	$: wingsDirection_single = isHorizontal ? Direction.right : Direction.down;
-	$: wingsDirection_dual = isHorizontal ? Direction.left : Direction.up;
+	$: filletsCenter_single = filletsCenter_for(isHorizontal, length, thickness, false);
+	$: filletsCenter_dual = filletsCenter_for(isHorizontal, length, thickness, true);
+	$: filletsDirection_single = isHorizontal ? Direction.right : Direction.down;
+	$: filletsDirection_dual = isHorizontal ? Direction.left : Direction.up;
 	$: title_left = (length - title_width - 20) / 2;
 
 	function style_for(isHorizontal: boolean, line_left: number, zindex: number, top: number, origin_y: number, margin: number, thickness: number, length: number, $w_separator_color: string): string {
@@ -47,7 +47,7 @@
 			: `left:${line_left}px; z-index:${zindex}; position:${position}; top:${origin_y + margin}px; width:${thickness}px; height:${length - 6 - margin * 2}px; background-color:${$w_separator_color};`;
 	}
 
-	function wingsCenter_for(isHorizontal: boolean, length: number, thickness: number, forOtherEnd: boolean): Point {
+	function filletsCenter_for(isHorizontal: boolean, length: number, thickness: number, forOtherEnd: boolean): Point {
 		return isHorizontal
 			? new Point(forOtherEnd ? length - 6 : 0, thickness / 2)
 			: new Point(thickness / 2, forOtherEnd ? length - 6 : 0);
@@ -56,20 +56,20 @@
 </script>
 
 <div class={class_name} style={separatorStyle}>
-	{#if has_gull_wings}
-		<Gull_Wings
+	{#if has_fillets}
+		<Fillets
 			thickness={thickness}
 			radius={corner_radius}
 			color={$w_separator_color}
-			center={wingsCenter_single}
-			direction={wingsDirection_single}/>
-		{#if has_both_wings}
-			<Gull_Wings
+			center={filletsCenter_single}
+			direction={filletsDirection_single}/>
+		{#if has_double_fillet}
+			<Fillets
 				thickness={thickness}
 				radius={corner_radius}
-				center={wingsCenter_dual}
+				center={filletsCenter_dual}
 				color={$w_separator_color}
-				direction={wingsDirection_dual}/>
+				direction={filletsDirection_dual}/>
 		{/if}
 	{/if}
 </div>

@@ -51,7 +51,7 @@
 		origin={Point.zero}
 		isHorizontal={true}
 		has_thin_divider={true}
-		corner_radius={k.radius.gull_wings.thin}
+		corner_radius={k.radius.fillets.thin}
 		thickness={k.thickness.separator.banners}/>
 	{#each g_repeater.titles as title, index}
 		<Glow_Button
@@ -69,13 +69,13 @@
 				isHorizontal={false}
 				has_thin_divider={true}
 				thickness={k.thickness.separator.banners}
-				corner_radius={k.radius.gull_wings.ultra_thin}
+				corner_radius={k.radius.fillets.ultra_thin}
 				origin={new Point(g_repeater.button_left_for(index), 1)}/>
 		{/if}
 	{/each}
 	<Separator name='bottom-of-banner'
 		isHorizontal={true}
 		origin={Point.y(height)}
-		corner_radius={k.radius.gull_wings.thin}
+		corner_radius={k.radius.fillets.thin}
 		thickness={k.thickness.separator.banners}/>
 </div> 

@@ -143,8 +143,8 @@
 	{#if features.has_every_detail}
 		<Separator name='show-other-databases'
 			isHorizontal={true}
-			has_gull_wings={true}
-			has_both_wings={true}
+			has_fillets={true}
+			has_double_fillet={true}
 			has_thin_divider={false}
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
@@ -217,5 +217,5 @@
 		length={k.width.details + 1.5}
 		origin={new Point(-0.6, tops[5])}
 		thickness={k.thickness.separator.main}
-		corner_radius={k.radius.gull_wings.thick}/>
+		corner_radius={k.radius.fillets.thick}/>
 </div>
