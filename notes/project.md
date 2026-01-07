@@ -3,7 +3,7 @@
 
 **Webseriously** is a sophisticated Svelte-based visualization and data management application with hierarchical graph displays, interactive UI components, and multi-database support. Can be embedded as a Bubble.io plugin or run standalone.
 
-Deeper Dives, beyond the scope of this file, [can be found here](./notes/designs/index.md).
+Deeper Dives, beyond the scope of this file, [can be found here](./index.md).
 ## Table of Contents
 - [Project Overview](#project-overview)
   - [Naming Conventions](#naming-conventions)
@@ -122,43 +122,43 @@ const ancestry = h.ancestry_forThing(thing);
 
 State objects (S_* classes) persist across component recreation and provide computed properties via getters. Svelte stores (w_* writables) provide reactivity. Stores organized by manager domain.
 
-See [architecture/core/state.md](notes/designs/architecture/core/state.md) for state objects, stores inventory, and why we use this hybrid approach.
+See [architecture/core/state.md](./architecture/core/state.md) for state objects, stores inventory, and why we use this hybrid approach.
 
 #### 2. Manager Pattern
 
 16 singleton managers coordinate different aspects: Components, Configuration, Controls, Core (system state), Details, Elements, Features, Geometry (layout), Hierarchy (data), Hits (click/hover), Preferences, Radial, Search, Styles, UX (focus/grabs), Visibility.
 
-See [architecture/core/managers.md](notes/designs/architecture/core/managers.md) for complete responsibilities, access patterns, and examples.
+See [architecture/core/managers.md](./architecture/core/managers.md) for complete responsibilities, access patterns, and examples.
 
 #### 3. Persistable Pattern
 
 8 data models extend `Persistable`: Access, Persistable (base), Predicate, Relationship, Tag, Thing, Trait, User. Each has hash-based ID, database-agnostic CRUD, and serialization.
 
-See [architecture/internals/persistable.md](notes/designs/architecture/internals/persistable.md) for identity, serialization, and lifecycle.
+See [architecture/internals/persistable.md](./architecture/internals/persistable.md) for identity, serialization, and lifecycle.
 
 #### 4. Database Abstraction
 
 Supports 5 database backends: Local (IndexedDB), Firebase, Airtable, Bubble plugin, and Test (in-memory).
 
-See [architecture/core/databases.md](notes/designs/architecture/core/databases.md) for architecture, switching, and implementation.
+See [architecture/core/databases.md](./architecture/core/databases.md) for architecture, switching, and implementation.
 
 #### 5. Component Architecture
 
 11 component directories: controls/, details/, draw/ (SVG primitives), experimental/, main/ (app core), mouse/ (interactive), radial/, search/, text/, tree/, widget/. Components manager tracks S_Component state for complex interactive components.
 
-See [architecture/core/components.md](notes/designs/architecture/core/components.md) for organization, patterns, state management, and Components manager.
+See [architecture/core/components.md](./architecture/core/components.md) for organization, patterns, state management, and Components manager.
 
 #### 6. Hit Testing & Hover
 
 Centralized hit testing with RBush spatial indexing. Priority: dots > widgets > rings > controls > rubberband.
 
-See [architecture/core/hits.md](notes/designs/architecture/core/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
+See [architecture/core/hits.md](./architecture/core/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
 
 #### 7. Geometry Layout
 
 Coordinates layout algorithms for tree and radial graph modes.
 
-See [architecture/core/geometry.md](notes/designs/architecture/core/geometry.md) for responsibilities, layout invocation, and coordination patterns.
+See [architecture/core/geometry.md](./architecture/core/geometry.md) for responsibilities, layout invocation, and coordination patterns.
 
 ## Development
 
@@ -209,7 +209,7 @@ Tests in `src/lib/ts/tests/`, naming: `*.test.ts` or `*Test.ts`
 
 ### Code Style
 
-**CRITICAL** - See [guides/style.md](notes/designs/guides/style.md) for:
+**CRITICAL** - See [guides/style.md](./guides/style.md) for:
 - Length-based ordering (imports, props, CSS, case statements)
 - Tab-based alignment
 - Svelte formatting
@@ -244,7 +244,7 @@ class MyThing extends Persistable {
 
 ### Debugging
 
-**Two Principles** (see [guides/debugging.md](notes/designs/guides/debugging.md)):
+**Two Principles** (see [guides/debugging.md](./guides/debugging.md)):
 1. **Verify source first** - Check imports/destructuring before assuming usage issues
 2. **Be systematic** - Form multiple hypotheses, test complete pipeline
 
@@ -266,7 +266,7 @@ class MyThing extends Persistable {
 - Hit testing: spatial indexing, register targets properly
 - Widget layout differences: tree vs radial modes
 - Focus widget (radial): no reveal dot
-- Race conditions (see [guides/gotchas.md](notes/designs/guides/gotchas.md))
+- Race conditions (see [guides/gotchas.md](./guides/gotchas.md))
 
 ## Notes
 
@@ -306,31 +306,31 @@ class MyThing extends Persistable {
 
 **Internal Documentation**:
 
-**Index**: [index.md](notes/designs/index.md) - Complete index of all design documentation
+**Index**: [index.md](./index.md) - Complete index of all design documentation
 
-**Architecture** (notes/designs/architecture/):
-- [buttons.md](notes/designs/architecture/ux/buttons.md) - Button hierarchy, SVG icons
-- [components.md](notes/designs/architecture/core/components.md) - Component architecture: organization and Components manager
-- [controls.md](notes/designs/architecture/ux/controls.md) - Control components
-- [database.md](notes/designs/architecture/core/databases.md) - Database abstraction layer
-- [details.md](notes/designs/architecture/ux/details.md) - Details panel architecture
-- [geometry.md](notes/designs/architecture/core/geometry.md) - Layout coordination and positioning
-- [hits.md](notes/designs/architecture/core/hits.md) - Click/hover system, migration guide
-- [managers.md](notes/designs/architecture/core/managers.md) - Singleton manager pattern and responsibilities
-- [paging.md](notes/designs/architecture/ux/paging.md) - Radial paging system
-- [persistable.md](notes/designs/architecture/internals/persistable.md) - Persistable data models and serialization
-- [preferences.md](notes/designs/architecture/ux/preferences.md) - Settings management
-- [search.md](notes/designs/architecture/ux/search.md) - Search functionality
-- [state.md](notes/designs/architecture/core/state.md) - State objects and stores architecture
-- [styles.md](notes/designs/architecture/internals/styles.md) - Styling system
-- [ux.md](notes/designs/architecture/core/ux.md) - UX manager (focus, grabs, details)
+**Architecture** (architecture/):
+- [buttons.md](./architecture/ux/buttons.md) - Button hierarchy, SVG icons
+- [components.md](./architecture/core/components.md) - Component architecture: organization and Components manager
+- [controls.md](./architecture/ux/controls.md) - Control components
+- [database.md](./architecture/core/databases.md) - Database abstraction layer
+- [details.md](./architecture/ux/details.md) - Details panel architecture
+- [geometry.md](./architecture/core/geometry.md) - Layout coordination and positioning
+- [hits.md](./architecture/core/hits.md) - Click/hover system, migration guide
+- [managers.md](./architecture/core/managers.md) - Singleton manager pattern and responsibilities
+- [paging.md](./architecture/ux/paging.md) - Radial paging system
+- [persistable.md](./architecture/internals/persistable.md) - Persistable data models and serialization
+- [preferences.md](./architecture/ux/preferences.md) - Settings management
+- [search.md](./architecture/ux/search.md) - Search functionality
+- [state.md](./architecture/core/state.md) - State objects and stores architecture
+- [styles.md](./architecture/internals/styles.md) - Styling system
+- [ux.md](./architecture/core/ux.md) - UX manager (focus, grabs, details)
 
-**Guides** (notes/designs/guides/):
-- [style.md](notes/designs/guides/style.md) - **CRITICAL** - Complete codebase conventions
-- [debugging.md](notes/designs/guides/debugging.md) - Systematic debugging methodology
-- [gotchas.md](notes/designs/guides/gotchas.md) - Common pitfalls
-- [refactoring.md](notes/designs/guides/refactoring.md) - Refactoring principles
-- [markdown.md](notes/designs/guides/markdown.md) - Markdown formatting
+**Guides** (guides/):
+- [style.md](./guides/style.md) - **CRITICAL** - Complete codebase conventions
+- [debugging.md](./guides/debugging.md) - Systematic debugging methodology
+- [gotchas.md](./guides/gotchas.md) - Common pitfalls
+- [refactoring.md](./guides/refactoring.md) - Refactoring principles
+- [markdown.md](./guides/markdown.md) - Markdown formatting
 
 ---
 

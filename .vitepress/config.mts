@@ -3,10 +3,10 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(
   defineConfig({
+    srcDir: './notes',
     title: "Webseriously Inside Peak",
+    srcExclude: ['archives/**', 'tools/**'],
     description: "Project documentation and design notes",
-    srcDir: './notes/designs',
-    srcExclude: ['obsolete/**', 'next/**'],
 
     vite: {
       server: {
@@ -26,10 +26,6 @@ export default withMermaid(
         link: '/project'
         }, // @keep
         {
-        text: 'Overview',
-        link: '/overview'
-        }, // @keep
-        {
           text: 'Digest',
           link: '/digest'
         },
@@ -39,8 +35,8 @@ export default withMermaid(
           collapsed: true,
           items: [
             {
-              text: 'Layout',
-              link: '/architecture/layout'
+              text: 'Overview',
+              link: '/architecture/overview'
             },
             {
               text: 'Core >',
@@ -82,6 +78,10 @@ export default withMermaid(
               link: '/architecture/internals/',
               collapsed: true,
               items: [
+                {
+                  text: 'Layout',
+                  link: '/architecture/internals/layout'
+                },
                 {
                   text: 'Persistable',
                   link: '/architecture/internals/persistable'
@@ -221,8 +221,8 @@ export default withMermaid(
               link: '/work/book'
             },
             {
-              text: 'Relocate.controls',
-              link: '/work/relocate.controls'
+              text: 'Docs',
+              link: '/work/docs'
             },
             {
               text: 'Search Links',
@@ -252,6 +252,10 @@ export default withMermaid(
                 {
                   text: 'Focus',
                   link: '/work/done/focus'
+                },
+                {
+                  text: 'Relocate.controls',
+                  link: '/work/done/relocate.controls'
                 },
                 {
                   text: 'Migration >',
@@ -305,6 +309,25 @@ export default withMermaid(
                       link: '/work/done/vitepress/webseriously-driven-docs'
                     }
                   ]
+                }
+              ]
+            },
+            {
+              text: 'Next >',
+              link: '/work/next/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Ai Ux Spider Guide',
+                  link: '/work/next/ai-ux-spider-guide'
+                },
+                {
+                  text: 'Holons.api',
+                  link: '/work/next/holons.api'
+                },
+                {
+                  text: 'Resize Optimization AI',
+                  link: '/work/next/Resize_Optimization_AI'
                 }
               ]
             }

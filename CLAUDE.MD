@@ -16,9 +16,9 @@ REPO: `~/GitHub/webseriously`
 
 EXECUTE: Always granted—just do it FILESYSTEM: Full read/write/execute within \~/GitHub
 
-WORK TRACKING: Keep `notes/designs/work/<file>.md` updated as we go
+WORK TRACKING: Keep `notes/work/<file>.md` updated as we go
 
-GUIDES: Read all md files in `notes/designs/guides/` at start of session
+GUIDES: Read all md files in `notes/guides/` at start of session
 
 ## Workarounds
 
