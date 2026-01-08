@@ -33,7 +33,7 @@ function(instance, properties) {
 		//  instance.data.attempts tracks unhydrated properties	//
 		//														//
 		//////////////////////////////////////////////////////////
-		
+
 		instance.data.attempts = instance.data.attempts || {};
 		let to_send = {};
 		field_labels.forEach(label => {

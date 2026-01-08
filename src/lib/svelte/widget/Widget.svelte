@@ -65,7 +65,7 @@
 			s_widget.set_html_element(element);
 		}
 		// Set up double-click detection on s_widget
-		s_widget.mouse_detection = T_Mouse_Detection.double;
+		s_widget.mouse_detection = T_Mouse_Detection.none;
 		s_widget.doubleClick_callback = (s_mouse: S_Mouse) => {
 			const trait = ancestry.thing?.trait_forType(T_Trait.link);
 			const link = trait?.text;

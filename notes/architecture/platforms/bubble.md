@@ -21,6 +21,7 @@ Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage t
 - [Update Flow (update.js)](#update-flow-updatejs)
 - [Debugging](#debugging)
 - [Standalone vs Plugin Mode](#standalone-vs-plugin-mode)
+- [Publishing a New Tag](#publishing-a-new-tag)
 - [Edge Cases](#edge-cases)
 - [Best Practices](#best-practices)
 - [Related Files](#related-files)
@@ -309,6 +310,67 @@ get isStandalone(): boolean {
 Used throughout codebase to conditionally enable/disable features:
 - Standalone: Full UI with database switcher
 - Plugin: Minimal UI, Bubble owns data and controls
+
+## Adding a State
+
+When i need to expose new state to Bubble, there's a dance between TypeScript and JavaScript. Here's the checklist.
+
+### 1. Add the postMessage (TypeScript)
+
+In `DB_Bubble.ts`, inside `prepare_to_signal_bubble_plugin()`:
+
+```typescript
+window.parent.postMessage({
+    type: 'my_new_tag',
+    value: whatever_value
+}, '*');
+```
+
+Subscribe to the relevant store so it fires when state changes:
+
+```typescript
+my_store.subscribe(() => {
+    this.prepare_to_signal_bubble_plugin();
+});
+```
+
+### 2. Handle the message (JavaScript)
+
+In `bubble/initialize.js`, add a case to `handle_webseriously_message()`:
+
+```javascript
+case 'my_new_tag':
+    instance.publishState('my_new_tag', event.data.value);
+    break;
+```
+
+### 3. Register the state in Bubble
+
+In the Bubble plugin editor:
+1. Go to "Exposed States"
+2. Add `my_new_tag` with the appropriate type (text, number, list, etc.)
+3. Save and deploy
+
+### 4. Test the flow
+
+1. Enable `?debug=bubble` in the URL
+2. Trigger the state change in Webseriously
+3. Check console for the postMessage
+4. Verify Bubble's plugin inspector shows the new state
+
+### Gotcha
+
+Bubble's plugin editor is finicky. If you rename or change the type of an exposed state, existing workflows using it may break silently. Better to add a new state than modify an existing one.
+
+## Publishing a New Version
+
+The Catalyst team wants a stable version of webseriously, isolated from ongoing work. To do this, I create a git branch and point netlify at it, then tell bubble.io. This has the effect of freezing the work i give to them.
+
+The most self-documenting name for the tag is plugin-major-minor-incremental (eg, plugin-0-3-4), and for the numbers to refer to the about-to-be-published version in the bubble plugin editor. In the project directory, the command would be:
+
+`git branch plugin-0-3-5`
+
+
 
 ## Edge Cases
 

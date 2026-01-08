@@ -4,8 +4,8 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 export default withMermaid(
   defineConfig({
     srcDir: './notes',
-    srcExclude: ['archives/**'],
     title: "Webseriously Inside Peak",
+    srcExclude: ['archives/**', 'tools/**'],
     description: "Project documentation and design notes",
 
     vite: {
@@ -26,10 +26,6 @@ export default withMermaid(
         link: '/project'
         }, // @keep
         {
-        text: 'Overview',
-        link: '/notes/architecture/overview'
-        }, // @keep
-        {
           text: 'Digest',
           link: '/digest'
         },
@@ -39,8 +35,8 @@ export default withMermaid(
           collapsed: true,
           items: [
             {
-              text: 'Layout',
-              link: '/architecture/layout'
+              text: 'Overview',
+              link: '/architecture/overview'
             },
             {
               text: 'Core >',
@@ -49,31 +45,31 @@ export default withMermaid(
               items: [
                 {
                   text: 'Components',
-                  link: '/notes/architecture/core/components'
+                  link: '/architecture/core/components'
                 },
                 {
                   text: 'Databases',
-                  link: '/notes/architecture/core/databases'
+                  link: '/architecture/core/databases'
                 },
                 {
                   text: 'Geometry',
-                  link: '/notes/architecture/core/geometry'
+                  link: '/architecture/core/geometry'
                 },
                 {
                   text: 'Hits',
-                  link: '/notes/architecture/core/hits'
+                  link: '/architecture/core/hits'
                 },
                 {
                   text: 'Managers',
-                  link: '/notes/architecture/core/managers'
+                  link: '/architecture/core/managers'
                 },
                 {
                   text: 'State',
-                  link: '/notes/architecture/core/state'
+                  link: '/architecture/core/state'
                 },
                 {
                   text: 'UX',
-                  link: '/notes/architecture/core/ux'
+                  link: '/architecture/core/ux'
                 }
               ]
             },
@@ -83,8 +79,12 @@ export default withMermaid(
               collapsed: true,
               items: [
                 {
+                  text: 'Layout',
+                  link: '/architecture/internals/layout'
+                },
+                {
                   text: 'Persistable',
-                  link: '/notes/architecture/internals/persistable'
+                  link: '/architecture/internals/persistable'
                 },
                 {
                   text: 'Reactivity',
@@ -92,7 +92,7 @@ export default withMermaid(
                 },
                 {
                   text: 'Styles',
-                  link: '/notes/architecture/internals/styles'
+                  link: '/architecture/internals/styles'
                 },
                 {
                   text: 'Timers',
@@ -134,27 +134,27 @@ export default withMermaid(
                 },
                 {
                   text: 'Buttons',
-                  link: '/notes/architecture/ux/buttons'
+                  link: '/architecture/ux/buttons'
                 },
                 {
                   text: 'Controls',
-                  link: '/notes/architecture/ux/controls'
+                  link: '/architecture/ux/controls'
                 },
                 {
                   text: 'Details',
-                  link: '/notes/architecture/ux/details'
+                  link: '/architecture/ux/details'
                 },
                 {
                   text: 'Paging',
-                  link: '/notes/architecture/ux/paging'
+                  link: '/architecture/ux/paging'
                 },
                 {
                   text: 'Preferences',
-                  link: '/notes/architecture/ux/preferences'
+                  link: '/architecture/ux/preferences'
                 },
                 {
                   text: 'Search',
-                  link: '/notes/architecture/ux/search'
+                  link: '/architecture/ux/search'
                 },
                 {
                   text: 'Titles',
@@ -183,15 +183,15 @@ export default withMermaid(
             },
             {
               text: 'Debugging',
-              link: '/notes/guides/debugging'
+              link: '/guides/debugging'
             },
             {
               text: 'Gotchas',
-              link: '/notes/guides/gotchas'
+              link: '/guides/gotchas'
             },
             {
               text: 'Markdown',
-              link: '/notes/guides/markdown'
+              link: '/guides/markdown'
             },
             {
               text: 'Migration',
@@ -199,11 +199,11 @@ export default withMermaid(
             },
             {
               text: 'Refactoring',
-              link: '/notes/guides/refactoring'
+              link: '/guides/refactoring'
             },
             {
               text: 'Style',
-              link: '/notes/guides/style'
+              link: '/guides/style'
             },
             {
               text: 'Voice',
@@ -221,8 +221,8 @@ export default withMermaid(
               link: '/work/book'
             },
             {
-              text: 'Relocate.controls',
-              link: '/notes/work/done/relocate.controls'
+              text: 'Docs',
+              link: '/work/docs'
             },
             {
               text: 'Search Links',
@@ -252,6 +252,10 @@ export default withMermaid(
                 {
                   text: 'Focus',
                   link: '/work/done/focus'
+                },
+                {
+                  text: 'Relocate.controls',
+                  link: '/work/done/relocate.controls'
                 },
                 {
                   text: 'Migration >',
@@ -305,6 +309,25 @@ export default withMermaid(
                       link: '/work/done/vitepress/webseriously-driven-docs'
                     }
                   ]
+                }
+              ]
+            },
+            {
+              text: 'Next >',
+              link: '/work/next/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Ai Ux Spider Guide',
+                  link: '/work/next/ai-ux-spider-guide'
+                },
+                {
+                  text: 'Holons.api',
+                  link: '/work/next/holons.api'
+                },
+                {
+                  text: 'Resize Optimization AI',
+                  link: '/work/next/Resize_Optimization_AI'
                 }
               ]
             }

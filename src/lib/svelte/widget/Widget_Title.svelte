@@ -53,7 +53,7 @@
 		// Both s_title and s_widget need the handler since either might be selected
 		s_title.handle_s_mouse = handle_s_mouse;
 		s_widget.handle_s_mouse = handle_s_mouse;
-		s_title.mouse_detection = T_Mouse_Detection.double;
+		s_title.mouse_detection = T_Mouse_Detection.none;
 		setup_doubleClick_forwarding();
 		setTimeout(() => {
 			updateInputWidth();

@@ -1,7 +1,7 @@
 function(instance) {
-    instance.data.enable_logging	    		= false;
-	instance.data.iframe_is_instantiated		= false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
-	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.enable_logging && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
+	instance.data.enable_logging = false;
+	instance.data.iframe_is_instantiated = false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
+	instance.data.LOG = function (message, value, ...optionalParams) { if (instance.data.enable_logging && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
 		if (!instance.data.iframe_is_instantiated) {
 			instance.data.enable_logging = properties.enable_logging;
@@ -25,7 +25,7 @@ function(instance) {
 
 	function url_from_properties(properties) {
 		const pairs = {
-			db:	   'bubble',
+			db: 'bubble',
 			theme: 'bubble',
 			debug: 'bubble',
 			erase: properties.erase_user_settings ? 'settings' : 'unknown'
@@ -40,7 +40,7 @@ function(instance) {
 				urlParams.set(key, override || value);
 			}
 		});
-		const url = 'https://webseriously.netlify.app/?' + urlParams.toString().replace(/%2C/g, ',');
+		const url = 'https://plugin.webseriously.org/?' + urlParams.toString().replace(/%2C/g, ',');
 		LOG('initializing with url:', url);
 		return url;
 	}
@@ -92,7 +92,7 @@ function(instance) {
 					break;
 				default:
 					break;
-				}
+			}
 		}
 	}
 

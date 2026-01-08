@@ -11,10 +11,14 @@
             "id": "a31db9146ba0cdfb",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "notes/architecture/platforms/bubble.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "bubble"
             }
           }
         ]
@@ -136,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "README.md",
+                "file": "notes/architecture/platforms/bubble.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of README"
+              "title": "Outline of bubble"
             }
           }
         ],
@@ -163,7 +167,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "a31db9146ba0cdfb",
   "lastOpenFiles": [
     "notes/architecture/internals/layout.md",
     "vite.config.js.timestamp-1767749233548-3d64e0b36fcd5.mjs",
