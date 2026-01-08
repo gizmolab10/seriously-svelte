@@ -169,6 +169,7 @@
   },
   "active": "a31db9146ba0cdfb",
   "lastOpenFiles": [
+    "notes/tools/index.md",
     "notes/architecture/internals/layout.md",
     "vite.config.js.timestamp-1767749233548-3d64e0b36fcd5.mjs",
     "notes/project.md",
@@ -199,7 +200,6 @@
     "notes/work/done/relocate.controls.md",
     "notes/work/done/refactoring",
     "notes/work/done/migration",
-    "notes/work/done/claude.write.md",
     "notes/work/next",
     "notes/work/done",
     "notes/work",

@@ -8,6 +8,6 @@
 - [Core](./core/)
 - [Internals](./internals/)
 - [Platforms](./platforms/)
-- [Ux](./core/ux.md)
-- [Layout](./internals/layout.md)
+- [Ux](./ux/)
+- [Overview](./overview.md)
 

@@ -6,7 +6,25 @@
 # To prevent an index.md from being overwritten, add this comment:
 #   <!-- @manual -->
 
-DESIGNS_DIR="/Users/sand/GitHub/webseriously/notes/designs"
+NOTES_DIR="/Users/sand/GitHub/webseriously/notes"
+
+# Folders to exclude (by name, not path)
+EXCLUDE_FOLDERS=(
+    "archives"
+    "dist"
+    "docs"
+    "done"
+    "lib"
+)
+
+# Function to check if folder should be excluded
+is_excluded() {
+    local folder_name="$1"
+    for excluded in "${EXCLUDE_FOLDERS[@]}"; do
+        [ "$folder_name" = "$excluded" ] && return 0
+    done
+    return 1
+}
 
 # Function to check if index.md is manually maintained
 is_manual() {
@@ -126,6 +144,11 @@ process_directory() {
         local subdir_name=$(basename "$subdir")
         # Skip hidden directories
         [[ "$subdir_name" == .* ]] && continue
+        # Skip excluded directories
+        if is_excluded "$subdir_name"; then
+            echo "Skipping excluded folder: $subdir_name"
+            continue
+        fi
         process_directory "$subdir"
     done
 }
@@ -134,7 +157,7 @@ echo "Syncing index.md files..."
 echo ""
 
 # Start from designs directory
-process_directory "$DESIGNS_DIR"
+process_directory "$NOTES_DIR"
 
 echo ""
 echo "✅ All index.md files synced!"

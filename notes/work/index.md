@@ -7,6 +7,6 @@ Documentation of ongoing and completed work.
 - [Done](./done/)
 - [Next](./next/)
 - [Book](./book.md)
-- [Relocate.controls](./done/relocate.controls.md)
+- [Docs](./docs.md)
 - [Search Links](./search-links.md)
 
