@@ -11,6 +11,7 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 - [Gotchas](./gotchas.md)
 - [Markdown](./markdown.md)
 - [Migration](./migration.md)
+- [Plugin](./plugin.md)
 - [Refactoring](./refactoring.md)
 - [Style](./style.md)
 - [Voice](./voice.md)

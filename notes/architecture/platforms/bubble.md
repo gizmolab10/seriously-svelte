@@ -3,28 +3,28 @@
 Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage to synchronize with bubble. Ugly stuff here, but it works.
 
 ## Table of Contents
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Plugin Files](#plugin-files)
-- [Initialization Flow](#initialization-flow)
-- [PostMessage Protocol](#postmessage-protocol)
-  - [From Webseriously → Bubble Plugin](#from-webseriously--bubble-plugin)
-  - [From Bubble Plugin → Webseriously](#from-bubble-plugin--webseriously)
-- [Plugin Implementation](#plugin-implementation)
-  - [Initialize (initialize.js)](#initialize-initializejs)
-  - [Message Handler](#message-handler)
-  - [Send to Webseriously](#send-to-webseriously)
-- [DB_Bubble Implementation](#db_bubble-implementation)
-  - [State Publishing](#state-publishing)
-  - [Command Handling](#command-handling)
-- [Bubble Plugin Properties](#bubble-plugin-properties)
-- [Update Flow (update.js)](#update-flow-updatejs)
-- [Debugging](#debugging)
-- [Standalone vs Plugin Mode](#standalone-vs-plugin-mode)
-- [Publishing a New Tag](#publishing-a-new-tag)
-- [Edge Cases](#edge-cases)
-- [Best Practices](#best-practices)
-- [Related Files](#related-files)
+
+* [Overview](#overview)
+* [Architecture](#architecture)
+* [Plugin Files](#plugin-files)
+* [Initialization Flow](#initialization-flow)
+* [PostMessage Protocol](#postmessage-protocol)
+  * [From Webseriously → Bubble Plugin](#from-webseriously--bubble-plugin)
+  * [From Bubble Plugin → Webseriously](#from-bubble-plugin--webseriously)
+* [Plugin Implementation](#plugin-implementation)
+  * [Initialize (initialize.js)](#initialize-initializejs)
+  * [Message Handler](#message-handler)
+  * [Send to Webseriously](#send-to-webseriously)
+* [DB_Bubble Implementation](#db_bubble-implementation)
+  * [State Publishing](#state-publishing)
+  * [Command Handling](#command-handling)
+* [Bubble Plugin Properties](#bubble-plugin-properties)
+* [Update Flow (update.js)](#update-flow-updatejs)
+* [Standalone vs Plugin Mode](#standalone-vs-plugin-mode)
+* [Edge Cases](#edge-cases)
+* [Related Files](#related-files)
+
+For how-to guides (debugging, adding state, publishing), see [plugin.md](../../guides/plugin.md).
 
 ## Overview
 
@@ -33,20 +33,22 @@ Webseriously can be embedded as a Bubble.io plugin, running inside an iframe wit
 ## Architecture
 
 **Bubble Plugin** (JavaScript in `bubble/` directory)
-- Creates and manages iframe
-- Handles postMessage communication
-- Publishes state to Bubble
-- Sends commands to Webseriously
+
+* Creates and manages iframe
+* Handles postMessage communication
+* Publishes state to Bubble
+* Sends commands to Webseriously
 
 **DB_Bubble** (TypeScript backend)
-- Database backend for Bubble mode
-- Sends state updates via postMessage
-- Receives commands from plugin
+
+* Database backend for Bubble mode
+* Sends state updates via postMessage
+* Receives commands from plugin
 
 ## Plugin Files
 
 | File | Purpose |
-|------|---------|
+|----|----|
 | `initialize.js` | Create iframe, setup message handlers |
 | `update.js` | Handle property updates from Bubble |
 | `change_focus.js` | Command to change focus |
@@ -55,6 +57,9 @@ Webseriously can be embedded as a Bubble.io plugin, running inside an iframe wit
 | `replace_hierarchy.js` | Command to replace entire hierarchy |
 
 ## Initialization Flow
+
+
+
 
 1. **Plugin loads** in Bubble page
 2. **initialize.js** creates iframe pointing to `https://webseriously.netlify.app/?db=bubble&theme=bubble&debug=bubble`
@@ -134,10 +139,11 @@ instance.data.assure_iframe_is_instantiated = function(properties) {
 ```
 
 URL parameters:
-- `db=bubble` - Use Bubble database backend
-- `theme=bubble` - Use Bubble theme
-- `debug=bubble` - Enable Bubble debugging
-- `erase=settings` - Clear user settings (optional)
+
+* `db=bubble` - Use Bubble database backend
+* `theme=bubble` - Use Bubble theme
+* `debug=bubble` - Enable Bubble debugging
+* `erase=settings` - Clear user settings (optional)
 
 ### Message Handler
 
@@ -209,9 +215,10 @@ prepare_to_signal_bubble_plugin() {
 ```
 
 Called when:
-- Focus changes (`x.w_ancestry_focus` subscription)
-- Selection changes (`x.si_grabs.w_items` subscription)
-- Graph mode changes (`controls` subscription)
+
+* Focus changes (`x.w_ancestry_focus` subscription)
+* Selection changes (`x.si_grabs.w_items` subscription)
+* Graph mode changes (`controls` subscription)
 
 ### Command Handling
 
@@ -253,14 +260,14 @@ setup_remote_handlers() {
 Configured in Bubble plugin editor:
 
 | Property | Type | Purpose |
-|----------|------|---------|
+|----|----|----|
 | `enable_logging` | boolean | Enable console logging |
 | `erase_user_settings` | boolean | Clear settings on load |
 
 Exposed state (readable from Bubble workflows):
 
 | State | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | `focus_id` | string | Current focus thing ID |
 | `details_id` | string | Current details thing ID |
 | `selected_ids` | list | Array of selected thing IDs |
@@ -287,18 +294,6 @@ function(instance, properties, context) {
 }
 ```
 
-## Debugging
-
-Enable logging via `enable_logging: true` plugin property. All messages logged with `[PLUGIN]` prefix:
-
-```javascript
-LOG('initializing with url:', url);
-LOG('PUBLISH --> focus_id:', event.data.id);
-LOG('LISTENING');
-```
-
-From Webseriously side, use `?debug=bubble` parameter to enable DB_Bubble logging.
-
 ## Standalone vs Plugin Mode
 
 ```typescript
@@ -308,71 +303,12 @@ get isStandalone(): boolean {
 ```
 
 Used throughout codebase to conditionally enable/disable features:
-- Standalone: Full UI with database switcher
-- Plugin: Minimal UI, Bubble owns data and controls
 
-## Adding a State
-
-When i need to expose new state to Bubble, there's a dance between TypeScript and JavaScript. Here's the checklist.
-
-### 1. Add the postMessage (TypeScript)
-
-In `DB_Bubble.ts`, inside `prepare_to_signal_bubble_plugin()`:
-
-```typescript
-window.parent.postMessage({
-    type: 'my_new_tag',
-    value: whatever_value
-}, '*');
-```
-
-Subscribe to the relevant store so it fires when state changes:
-
-```typescript
-my_store.subscribe(() => {
-    this.prepare_to_signal_bubble_plugin();
-});
-```
-
-### 2. Handle the message (JavaScript)
-
-In `bubble/initialize.js`, add a case to `handle_webseriously_message()`:
-
-```javascript
-case 'my_new_tag':
-    instance.publishState('my_new_tag', event.data.value);
-    break;
-```
-
-### 3. Register the state in Bubble
-
-In the Bubble plugin editor:
-1. Go to "Exposed States"
-2. Add `my_new_tag` with the appropriate type (text, number, list, etc.)
-3. Save and deploy
-
-### 4. Test the flow
-
-1. Enable `?debug=bubble` in the URL
-2. Trigger the state change in Webseriously
-3. Check console for the postMessage
-4. Verify Bubble's plugin inspector shows the new state
-
-### Gotcha
-
-Bubble's plugin editor is finicky. If you rename or change the type of an exposed state, existing workflows using it may break silently. Better to add a new state than modify an existing one.
-
-## Publishing a New Version
-
-The Catalyst team wants a stable version of webseriously, isolated from ongoing work. To do this, I create a git branch and point netlify at it, then tell bubble.io. This has the effect of freezing the work i give to them.
-
-The most self-documenting name for the tag is plugin-major-minor-incremental (eg, plugin-0-3-4), and for the numbers to refer to the about-to-be-published version in the bubble plugin editor. In the project directory, the command would be:
-
-`git branch plugin-0-3-5`
-
-
+* Standalone: Full UI with database switcher
+* Plugin: Minimal UI, Bubble owns data and controls
 
 ## Edge Cases
+
 
 1. **Pending messages**: Commands sent before iframe ready are queued
 2. **Mobile**: Plugin not used on mobile (c.w_device_isMobile check)
@@ -380,29 +316,17 @@ The most self-documenting name for the tag is plugin-major-minor-incremental (eg
 4. **State sync**: Bubble state may lag during rapid changes
 5. **Hierarchy replacement**: Async operation, requires rebuild
 
-## Best Practices
-
-✅ **DO**:
-- Check `iframeIsListening` before sending messages
-- Queue messages if iframe not ready
-- Use `[PLUGIN]` prefix for logging
-- Handle missing IDs gracefully
-- Validate message types
-
-❌ **DON'T**:
-- Send messages before `listening` received
-- Assume synchronous state updates
-- Mix TypeScript and JavaScript (bubble/ is JS only)
-- Test in Bubble without proper plugin setup
-- Skip error handling in message handlers
-
 ## Related Files
 
 **TypeScript (src/lib/ts/)**:
-- `database/DB_Bubble.ts` - Backend implementation
-- `managers/Configuration.ts` - `w_device_isMobile` check
+
+* `database/DB_Bubble.ts` - Backend implementation
+* `managers/Configuration.ts` - `w_device_isMobile` check
 
 **JavaScript (bubble/)**:
-- `initialize.js` - Plugin initialization
-- `update.js` - Property updates
-- `change_*.js` - Command implementations
+
+* `initialize.js` - Plugin initialization
+* `update.js` - Property updates
+* `change_*.js` - Command implementations
+
+
