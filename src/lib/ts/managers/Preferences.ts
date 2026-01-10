@@ -1,5 +1,6 @@
-import { Ancestry, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
-import { c, g, h, k, u, x, show, debug, radial, databases } from '../common/Global_Imports';
+import { T_Preference, T_Cluster_Pager, T_Breadcrumbs, T_Counts_Shown, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases } from '../common/Global_Imports';
+import { spec_dict_byType } from '../common/Enumerations';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -22,8 +23,8 @@ export class Preferences {
 	static readonly _____READ_WRITE: unique symbol;
 
 	dump() 									 { console.log(localStorage); }
-	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
-	readDB_key	   (key: string): any | null { const dbKey = this.db_keyFor(key); return !dbKey ? null : this.read_key(dbKey); }
+	get_forKey	   (key: string): any | null { return this.parse(localStorage[key]); }
+	readDB_key	   (key: string): any | null { const dbKey = this.db_keyFor(key); return !dbKey ? null : this.get_forKey(dbKey); }
 	writeDB_key<T> (key: string, value: T)	 { const dbKey = this.db_keyFor(key); if (!!dbKey) { this.write_key(dbKey, value); } }
 
 	write_key<T> (key: string, value: T) {
@@ -40,7 +41,7 @@ export class Preferences {
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
 		if (!!dbKey) {
-			const sub_keys: string[] = this.read_key(dbKey) ?? [];
+			const sub_keys: string[] = this.get_forKey(dbKey) ?? [];
 			const pair = this.keyPair_for(dbKey, sub_key);
 			this.write_key(pair, value);			// first store the value by key pair
 			if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
@@ -54,15 +55,33 @@ export class Preferences {
 		let values: Array<any> = [];
 		const dbKey = this.db_keyFor(key);
 		if (!!dbKey) {
-			const sub_keys: string[] = this.read_key(dbKey) ?? [];
+			const sub_keys: string[] = this.get_forKey(dbKey) ?? [];
 			for (const sub_key of sub_keys) {
-				const value = this.read_key(this.keyPair_for(dbKey, sub_key));
+				const value = this.get_forKey(this.keyPair_for(dbKey, sub_key));
 				if (!!value) {												// ignore undefined or null
 					values.push(value);
 				}
 			}
 		}
 		return values;
+	}
+
+	read_key(key: T_Preference): any {
+		const spec   = spec_dict_byType[key];
+		const stored = this.get_forKey(key);
+		if (stored !== null) {
+			if (!spec || !spec.enum_type) {
+				return stored;
+			}
+			if (Object.values(spec.enum_type).includes(stored)) {
+				return stored;
+			}
+		}
+		const defaultValue = spec?.defaultValue ?? null;
+		if (defaultValue !== null) {
+			this.write_key(key, defaultValue);
+		}
+		return defaultValue;
 	}
 	
 	static readonly _____RESTORE: unique symbol;
@@ -145,12 +164,12 @@ export class Preferences {
 	}
 
 	restore_preferences() {
-		show.w_t_auto_adjust_graph  .set( this.read_key(T_Preference.auto_adjust)	 ?? null);
-		x.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
-		x.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
-		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
-		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.focus);
-		show.w_show_countsAs  .set( this.read_key(T_Preference.show_countsAs) ?? T_Counts_Shown.dots);
+		show.w_t_auto_adjust_graph.set(this.read_key(T_Preference.auto_adjust));
+		show.w_t_cluster_pager    .set(this.read_key(T_Preference.paging_style));
+		show.w_t_breadcrumbs      .set(this.read_key(T_Preference.breadcrumbs));
+		show.w_show_countsAs      .set(this.read_key(T_Preference.show_countsAs));
+		x.w_thing_title           .set(this.read_key(T_Preference.thing));
+		x.w_thing_fontFamily      .set(this.read_key(T_Preference.font));
 		this.reactivity_subscribe()
 	}
 	
