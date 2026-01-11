@@ -33,3 +33,4 @@ experimental
 
 # Local Netlify folder
 .netlify
+.vitepress/cache/

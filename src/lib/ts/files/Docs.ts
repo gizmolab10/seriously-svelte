@@ -1,7 +1,6 @@
 // Documentation structure for DB_Docs
-// This represents the /notes/designs hierarchy
 // AUTO-GENERATED - DO NOT EDIT MANUALLY
-// Run: bash notes/tools/create_docs_db_data.sh to regenerate
+// Run: bash shared/tools/create-docs-db-data.sh to regenerate
 
 export interface DocNode {
 	id: string;

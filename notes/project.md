@@ -209,7 +209,7 @@ Tests in `src/lib/ts/tests/`, naming: `*.test.ts` or `*Test.ts`
 
 ### Code Style
 
-**CRITICAL** - See [guides/style.md](./guides/style.md) for:
+**CRITICAL** - Follow these conventions:
 - Length-based ordering (imports, props, CSS, case statements)
 - Tab-based alignment
 - Svelte formatting
@@ -244,7 +244,7 @@ class MyThing extends Persistable {
 
 ### Debugging
 
-**Two Principles** (see [guides/debugging.md](./guides/debugging.md)):
+**Two Principles**:
 1. **Verify source first** - Check imports/destructuring before assuming usage issues
 2. **Be systematic** - Form multiple hypotheses, test complete pipeline
 
@@ -266,7 +266,7 @@ class MyThing extends Persistable {
 - Hit testing: spatial indexing, register targets properly
 - Widget layout differences: tree vs radial modes
 - Focus widget (radial): no reveal dot
-- Race conditions (see [guides/gotchas.md](./guides/gotchas.md))
+- Race conditions
 
 ## Notes
 
@@ -324,13 +324,6 @@ class MyThing extends Persistable {
 - [state.md](./architecture/core/state.md) - State objects and stores architecture
 - [styles.md](./architecture/internals/styles.md) - Styling system
 - [ux.md](./architecture/core/ux.md) - UX manager (focus, grabs, details)
-
-**Guides** (guides/):
-- [style.md](./guides/style.md) - **CRITICAL** - Complete codebase conventions
-- [debugging.md](./guides/debugging.md) - Systematic debugging methodology
-- [gotchas.md](./guides/gotchas.md) - Common pitfalls
-- [refactoring.md](./guides/refactoring.md) - Refactoring principles
-- [markdown.md](./guides/markdown.md) - Markdown formatting
 
 ---
 

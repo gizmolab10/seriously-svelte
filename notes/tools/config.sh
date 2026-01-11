@@ -7,8 +7,7 @@
 NOTES_DIR="notes"
 DOCS_SOURCE_DIR="notes/designs"
 DOCS_OUTPUT="src/lib/ts/files/Docs.ts"
-DOCS_LOG_FILE="notes/tools/reset-docs-log.txt"
-TOOLS_DIST="notes/tools/dist"
+DOCS_LOG_FILE="notes/tools/docs/reset-docs-log.txt"
 
 # === NETLIFY ===
 NETLIFY_SITE_ID="0770f16d-e009-48e8-a548-38a5bb2c18f5"
